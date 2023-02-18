@@ -1,16 +1,17 @@
 import gameBoardFactory from '../src/gameBoard';
 
-test('initializes with 100 Square objects', () => {
-  const gameBoard = gameBoardFactory();
-  expect(gameBoard.squares[8][9]).toBeInstanceOf(Object);
-  expect(gameBoard.squares[0][4]).toHaveProperty('ship');
-  expect(gameBoard.squares[1][10]).toBeUndefined();
-});
+let gameBoard;
+beforeEach(() => gameBoard = gameBoardFactory());
+
+describe('initialization', () => {
+  test('initializes with 100 Square objects', () => {
+    expect(gameBoard.squares[8][9]).toBeInstanceOf(Object);
+    expect(gameBoard.squares[0][4]).toHaveProperty('ship');
+    expect(gameBoard.squares[1][10]).toBeUndefined();
+  });
+})
 
 describe('placeShip', () => {
-  let gameBoard;
-  beforeEach(() => gameBoard = gameBoardFactory());
-
   test('places ship given coordinates', () => {
     gameBoard.placeShip([
       [0, 3],
@@ -85,3 +86,50 @@ describe('placeShip', () => {
   });
 })
 
+describe('receive attack', () => {
+  test('cannot attack the same square twice', () => {
+    gameBoard.receiveAttack([2, 3]);
+    gameBoard.receiveAttack([3, 4]);
+    gameBoard.receiveAttack([8, 9]);
+    expect(() => gameBoard.receiveAttack([2, 3])).toThrow('this square has already been attacked');
+  })
+
+  test('can sink a ship', () => {
+    gameBoard.placeShip([
+      [1, 2],
+      [2, 2],
+      [3, 2],
+    ]);
+    const ship = gameBoard.squares[2][2].ship;
+    gameBoard.receiveAttack([1, 2]);
+    gameBoard.receiveAttack([2, 2]);
+    expect(ship.isSunk()).toBe(false);
+    gameBoard.receiveAttack([3, 2]);
+    expect(ship.isSunk()).toBe(true);
+  });
+})
+
+describe ('gameOver', () => {
+  test('reports whether all ships have sunk', () => {
+    gameBoard.placeShip([
+      [1, 2],
+      [2, 2],
+      [3, 2],
+    ]);
+    gameBoard.placeShip([
+      [6, 6],
+      [6, 9],
+      [6, 8],
+      [6, 7]
+    ]);
+    gameBoard.receiveAttack([1, 2]);
+    gameBoard.receiveAttack([2, 2]);
+    gameBoard.receiveAttack([3, 2]);
+    expect(gameBoard.gameOver()).toBe(false);
+    gameBoard.receiveAttack([6, 6]);
+    gameBoard.receiveAttack([6, 9]);
+    gameBoard.receiveAttack([6, 8]);
+    gameBoard.receiveAttack([6, 7]);
+    expect(gameBoard.gameOver()).toBe(true);
+  })
+})

@@ -18,6 +18,7 @@ export default function gameBoardFactory() {
 
     const newShip = shipFactory(coords.length);
     coords.forEach((coord) => (squares[coord[0]][coord[1]].ship = newShip));
+    totalShips++;
   };
 
   const isOccupied = (coords) => {
@@ -45,11 +46,21 @@ export default function gameBoardFactory() {
     return false;
   }
 
+  function receiveAttack(coords) {
+    const square = squares[coords[0]][coords[1]];
+    if (square.attacked) throw new Error('this square has already been attacked');
+    if(square.ship) {
+      square.ship.hit();
+      if(square.ship.isSunk()) shipsSunk++;
+    }
+    square.attacked = true;
+  }
+
   function gameOver() {
     return totalShips === shipsSunk;
   }
 
-  return { squares, placeShip };
+  return { squares, placeShip, receiveAttack, gameOver };
 }
 
 function squareFactory() {
