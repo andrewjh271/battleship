@@ -1,12 +1,17 @@
-function playerFactory(opponentBoard) {
+function playerFactory(homeBoard, opponentBoard) {
   function attack(coords) {
     opponentBoard.receiveAttack(coords);
   }
 
-  return { attack };
+  function placeShip(coords) {
+    homeBoard.placeShip(coords);
+  }
+
+  return { attack, placeShip };
 }
 
-function computerFactory(opponentBoard) {
+function computerFactory(homeBoard, opponentBoard) {
+  const { placeShip } = playerFactory(homeBoard);
   const size = 10;
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {
@@ -24,7 +29,7 @@ function computerFactory(opponentBoard) {
     opponentBoard.receiveAttack(move);
   }
 
-  return { attack }
+  return { attack, placeShip }
 }
 
 export { playerFactory, computerFactory };
