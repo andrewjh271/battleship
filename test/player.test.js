@@ -27,10 +27,18 @@ describe('placing ships', () => {
     expect(homeBoard.squares[3][4].ship).toBe(homeBoard.squares[6][4].ship);
   })
 
-  test('computers can also place ships', () => {
+  test('computers place all ships at once', () => {
     const homeBoard = gameBoardFactory();
     const computer = computerFactory(homeBoard);
-    computer.placeShip([[3, 4], [4, 4], [5, 4], [6, 4]]);
-    expect(homeBoard.squares[3][4].ship).toBe(homeBoard.squares[6][4].ship);
+    computer.placeAllShips();
+    let totalShipLength = 0;
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        if (homeBoard.squares[i][j].ship) {
+          totalShipLength++;
+        }
+      }
+    }
+    expect(totalShipLength).toBe(17);
   })
 })
