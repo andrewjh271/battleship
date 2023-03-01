@@ -23,6 +23,11 @@ describe('placeShip', () => {
     expect(gameBoard.squares[0][4].ship).toBe(ship);
   });
 
+  test('placed ships can have names', () => {
+    gameBoard.placeShip([[3, 4], [4, 4]], 'Destroyer');
+    expect(gameBoard.squares[4][4].ship.name).toBe('Destroyer');
+  })
+
   test('will not place a ship onto another ship', () => {
     gameBoard.placeShip([
       [1, 2],

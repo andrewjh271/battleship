@@ -11,7 +11,7 @@ export default function gameBoardFactory() {
     }
   }
 
-  const placeShip = (coords) => {
+  const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
     if (isOccupied(coords)) throw new Error('Ships cannot be on top of ships');
     if (!inLine(coords))
@@ -19,7 +19,7 @@ export default function gameBoardFactory() {
         'Ships must be placed vertically or horizontally in an unbroken line'
       );
 
-    const newShip = shipFactory(coords.length);
+    const newShip = shipFactory(coords.length, name);
     coords.forEach((coord) => (squares[coord[0]][coord[1]].ship = newShip));
     totalShips++;
   };
