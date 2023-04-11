@@ -12,7 +12,7 @@ describe('attacking', () => {
   test('computers can randomly attack unoccupied squares', () => {
     const opponentBoard = gameBoardFactory();
     const computer = computerFactory(null, opponentBoard);
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 100; i++) {
       computer.attack();
     }
     expect(() => computer.attack().toThrow('there are no moves left'));

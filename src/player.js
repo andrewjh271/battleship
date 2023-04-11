@@ -50,7 +50,7 @@ function computerFactory(homeBoard, opponentBoard) {
     if (possibleMoves.length == 0) throw new Error('there are no moves left');
     const index = Math.floor(Math.random() * possibleMoves.length);
     const move = possibleMoves[index];
-    possibleMoves[index] = [possibleMoves.length - 1];
+    possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
     possibleMoves.pop();
     opponentBoard.receiveAttack(move);
   }
