@@ -1,6 +1,11 @@
 function playerFactory(homeBoard, opponentBoard) {
   function attack(coords) {
-    opponentBoard.receiveAttack(coords);
+    const coordinates = coords || getCoords();
+    opponentBoard.receiveAttack(coordinates);
+  }
+
+  function getCoords() {
+    // get coordinates from User/DOM
   }
 
   function placeShip(coords) {

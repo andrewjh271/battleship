@@ -1,4 +1,4 @@
-export default function shipFactory(length) {
+export default function shipFactory(length, name) {
   let hits = 0;
   const hit = () => {
     if (hits < length) {
@@ -10,5 +10,5 @@ export default function shipFactory(length) {
   const isSunk = () => {
     return hits === length;
   };
-  return { hit, isSunk };
+  return { hit, isSunk, name };
 }

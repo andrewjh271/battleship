@@ -21,3 +21,8 @@ test('determines whether a ship is sunk', () => {
   ship.hit();
   expect(ship.isSunk()).toBeTruthy();
 });
+
+test('can have a name', () => {
+  const ship = shipFactory(3, 'Submarine');
+  expect(ship.name).toBe('Submarine');
+})
