@@ -1,4 +1,4 @@
-function playerFactory(homeBoard, opponentBoard) {
+function humanPlayerFactory(homeBoard, opponentBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
     opponentBoard.receiveAttack(coordinates);
@@ -25,7 +25,7 @@ function playerFactory(homeBoard, opponentBoard) {
   return { attack, placeShip, isComputer };
 }
 
-function computerFactory(homeBoard, opponentBoard) {
+function computerPlayerFactory(homeBoard, opponentBoard) {
   const ships = {
     'Carrier': 5,
     'Battleship': 4,
@@ -68,4 +68,4 @@ function computerFactory(homeBoard, opponentBoard) {
   return { attack, placeAllShips, isComputer }
 }
 
-export { playerFactory, computerFactory };
+export { humanPlayerFactory, computerPlayerFactory };
