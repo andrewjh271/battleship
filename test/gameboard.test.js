@@ -1,4 +1,4 @@
-import gameBoardFactory from '../src/gameBoard';
+import gameBoardFactory from '../src/gameboard';
 
 let gameBoard;
 beforeEach(() => (gameBoard = gameBoardFactory()));

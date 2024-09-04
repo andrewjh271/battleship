@@ -41,13 +41,13 @@ export default function gameBoardFactory() {
       // horizontal
       coords.sort((a, b) => a[1] - b[1]);
       return coords.every(
-        (coord, index) => index === 0 || Math.abs(coord[1] - coords[index - 1][1]) === 1
+        (coord, index) => index === 0 || coord[1] - coords[index - 1][1] === 1
       );
     } else if (coords.every((coord) => coord[1] === coords[0][1])) {
       // vertical
       coords.sort((a, b) => a[0] - b[0]);
       return coords.every(
-        (coord, index) => index === 0 || Math.abs(coord[0] - coords[index - 1][0]) === 1
+        (coord, index) => index === 0 || coord[0] - coords[index - 1][0] === 1
       );
     }
     return false;

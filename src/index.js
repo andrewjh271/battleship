@@ -1,3 +1,2 @@
-import './sandbox';
-
-console.log('test');
+// import './setup';
+import './DOMController';

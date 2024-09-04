@@ -17,8 +17,9 @@ html {
   grid-template-rows: repeat(10, 1fr);
   background-color: rgb(41, 41, 41);
   grid-gap: 1px;
-
-  .cell {
-    background-color: white;
-  }
 }
+.board .cell {
+  background-color: white;
+}
+
+/*# sourceMappingURL=style.css.map */

@@ -1,4 +1,4 @@
-import gameBoardFactory from '../src/gameBoard';
+import gameBoardFactory from '../src/gameboard';
 import { humanPlayerFactory, computerPlayerFactory } from '../src/player';
 
 describe('attacking', () => {
