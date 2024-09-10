@@ -11,6 +11,10 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player */ "./src/player.js");
 /* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./drag */ "./src/drag.js");
+
+
 
 
 
@@ -25,10 +29,20 @@ function createGrid(numberOfCells, board) {
 }
 
 const board1 = document.querySelector('#board1');
-const board2 = document.querySelector('#board2');
+// const board2 = document.querySelector('#board2');
+
+(0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEvent', checkHover);
 
 createGrid(100, board1);
-createGrid(100, board2);
+// createGrid(100, board2);
+
+function checkHover(positionData) {
+  const { top, left } = positionData;
+  console.log(left, top);
+
+  const bound = board1.cells[0].getBoundingClientRect();
+  console.log(bound.left, bound.top);
+}
 
 
 function listenForAttack(board) {
@@ -70,6 +84,183 @@ function indexToCoordinates(index) {
 
 function coordinatesToIndex(coords) {
   return coords[1] * 10 + coords[0];
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/drag.js":
+/*!*********************!*\
+  !*** ./src/drag.js ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+
+
+
+const stagingArea = document.querySelector('.staging-area');
+const previews = document.querySelectorAll('.img-preview');
+
+const rotateButton = document.querySelector('.rotate');
+
+previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
+rotateButton.addEventListener('click', rotate);
+
+let cursorOffsetX;
+let cursurOffsetY;
+let staged;
+
+function showStagedImage(e) {
+  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
+  image.addEventListener('mousedown', dragStart);
+  stagingArea.appendChild(image);
+  staged = image;
+}
+
+function rotate() {
+  if (!staged) return;
+  const matchData = staged.style.transform.match(/\d+/);
+  const deg = matchData ? Number(matchData[0]) + 90 : 90;
+  staged.style.transform = `rotate(${deg}deg)`;
+}
+
+function dragStart(e) {
+  e.preventDefault();
+  cursorOffsetX = e.clientX - this.offsetLeft;
+  cursurOffsetY = e.clientY - this.offsetTop;
+
+  const boundDragMove = dragMove.bind(this);
+  document.addEventListener('mousemove', boundDragMove);
+  document.addEventListener(
+    'mouseup',
+    () => {
+      document.removeEventListener('mousemove', boundDragMove);
+    },
+    { once: true }
+  );
+}
+
+function dragMove(e) {
+  console.log(this);
+  this.style.top = (e.clientY - cursurOffsetY).toString() + 'px';
+  this.style.left = (e.clientX - cursorOffsetX).toString() + 'px';
+  const positionData = {
+    top: this.offsetTop,
+    left: this.offsetLeft,
+    width: this.offsetWidth,
+    height: this.offsetHeight,
+  };
+
+  (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('dragEvent', positionData);
+}
+
+function dragEnd(e) {
+  document.removeEventListener('mousemove', dragMove.bind(this));
+  document.removeEventListener('mouseup', dragEnd);
+}
+
+
+/***/ }),
+
+/***/ "./src/imageGenerator.js":
+/*!*******************************!*\
+  !*** ./src/imageGenerator.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "clarinet": () => (/* binding */ clarinet),
+/* harmony export */   "flute": () => (/* binding */ flute),
+/* harmony export */   "trombone": () => (/* binding */ trombone),
+/* harmony export */   "violin": () => (/* binding */ violin)
+/* harmony export */ });
+const board = document.querySelector('.board');
+
+const boardWidth = 500;
+const squareWidth = boardWidth / 10; // 50
+
+const targetWidth = 3; // number of squares flute should occupy
+const targetHeight = 1; // number of squares flute should occupy
+
+// flute width should be 150; height should be 50
+
+function flute() {
+  const image = new Image();
+  image.src = './images/flute.png';
+  image.classList.add('staging-img');
+  image.style.height = `${squareWidth * 3}px`;
+  return image;
+}
+
+function trombone() {
+  const image = new Image();
+  image.src = './images/trombone.png';
+  image.classList.add('staging-img');
+  image.style.height = `${squareWidth * 5}px`;
+  return image;
+}
+
+function clarinet() {
+  const image = new Image();
+  image.src = './images/clarinet.png';
+  image.classList.add('staging-img');
+  image.style.height = `${squareWidth * 3}px`;
+  return image;
+}
+
+function violin() {
+  const image = new Image();
+  image.src = './images/violin.png';
+  image.classList.add('staging-img');
+  image.style.height = `${squareWidth * 4}px`;
+  return image;
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/observer.js":
+/*!*************************!*\
+  !*** ./src/observer.js ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "emit": () => (/* binding */ emit),
+/* harmony export */   "off": () => (/* binding */ off),
+/* harmony export */   "on": () => (/* binding */ on)
+/* harmony export */ });
+const events = {};
+
+function on(eventName, fn) {
+  events[eventName] ||= [];
+  events[eventName].push(fn);
+}
+
+function off(eventName, fn) {
+  if (!events[eventName]) return;
+
+  for (let i = 0; i < events[eventName].length; i++) {
+    if (events[eventName][i] === fn) {
+      events[eventName].splice(i, 1);
+      break;
+    }
+  }
+}
+
+function emit(eventName, data) {
+  if (!events[eventName]) return;
+
+  events[eventName].forEach((fn) => fn(data));
 }
 
 

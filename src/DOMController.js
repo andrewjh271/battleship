@@ -1,5 +1,7 @@
 import { humanPlayerFactory, computerPlayerFactory } from "./player";
 import { indexToCoordinates } from "./coordinates";
+import { on } from './observer';
+import "./drag";
 
 function createGrid(numberOfCells, board) {
   board.cells = [];
@@ -12,10 +14,20 @@ function createGrid(numberOfCells, board) {
 }
 
 const board1 = document.querySelector('#board1');
-const board2 = document.querySelector('#board2');
+// const board2 = document.querySelector('#board2');
+
+on('dragEvent', checkHover);
 
 createGrid(100, board1);
-createGrid(100, board2);
+// createGrid(100, board2);
+
+function checkHover(positionData) {
+  const { top, left } = positionData;
+  console.log(left, top);
+
+  const bound = board1.cells[0].getBoundingClientRect();
+  console.log(bound.left, bound.top);
+}
 
 
 function listenForAttack(board) {
