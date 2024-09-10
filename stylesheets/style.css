@@ -1,10 +1,17 @@
 *, *:before, *:after {
   box-sizing: inherit;
   font-family: inherit;
+  margin: 0;
 }
 
 html {
   box-sizing: border-box;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 110px 420px;
 }
 
 .board {
@@ -17,9 +24,25 @@ html {
   grid-template-rows: repeat(10, 1fr);
   background-color: rgb(41, 41, 41);
   grid-gap: 1px;
+  grid-row: span 2;
 }
 .board .cell {
   background-color: white;
+}
+
+.preview-container {
+  margin-top: 30px;
+}
+
+.img-preview {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.staging-img {
+  max-height: 100%;
+  max-width: 100%;
+  position: absolute;
 }
 
 /*# sourceMappingURL=style.css.map */
