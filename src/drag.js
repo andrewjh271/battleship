@@ -9,13 +9,13 @@ const clearButton = document.querySelector('.clear');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 rotateButton.addEventListener('click', rotate);
-clearButton.addEventListener('click', clearStagedImages);
+clearButton.addEventListener('click', clearPlacedImages);
 
 let cursorOffsetX;
 let cursurOffsetY;
 let staged;
 
-function showStagedImage(e) {
+function showStagedImage() {
   const image = imageGenerator[this.id]();
   image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
@@ -28,18 +28,17 @@ function showStagedImage(e) {
 
 function rotate() {
   if (!staged) return;
-  const matchData = staged.style.transform.match(/\d+/);
-  const deg = matchData ? Number(matchData[0]) + 90 : 90;
-  staged.style.transform = `rotate(${deg}deg)`;
+  const rotation = Number(staged.style.transform.match(/\d+(?=deg)/)) % 360;
+  staged.style.transform = `rotate(${rotation + 90}deg)`;
 }
 
-function clearStagedImages() {
+function clearPlacedImages() {
   const children = Array.from(board1.children);
   for (const node of children) {
     if (node.classList.contains('placed-img-wrapper')) {
       node.remove();
     } else {
-      node.classList.remove('placed');
+      node.classList.remove('highlight-placed');
     }
   }
 }

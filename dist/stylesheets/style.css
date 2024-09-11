@@ -30,10 +30,10 @@ html {
   background-color: white;
   border: 0.5px solid black;
 }
-.board .highlight {
+.board .highlight-hovered {
   background-color: aquamarine;
 }
-.board .placed {
+.board .highlight-placed {
   background-color: lightslategrey;
   z-index: 2;
   opacity: 0.3;

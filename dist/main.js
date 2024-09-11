@@ -20,27 +20,28 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const ROWS = 10;
+
+const board1 = document.getElementById('board1');
+createGrid(ROWS * ROWS, board1);
+
 function createGrid(numberOfCells, board) {
   board.cells = [];
   for (let i = 0; i < numberOfCells; i++) {
     board.cells[i] = document.createElement('div');
     board.cells[i].classList.add('cell');
-    board.cells[i].style.gridArea = `${Math.floor(i / 10) + 1} / ${
-      (i % 10) + 1
+    board.cells[i].style.gridArea = `${Math.floor(i / ROWS) + 1} / ${
+      (i % ROWS) + 1
     } / span 1 / span 1`;
     board.cells[i].dataset.index = i;
     board.appendChild(board.cells[i]);
   }
 }
 
-const board1 = document.querySelector('#board1');
-
-(0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEvent', checkHover);
+(0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEvent', highlightHoveredCells);
 (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEnd', handleRelease);
 
-createGrid(100, board1);
-
-function checkHover(positionData) {
+function highlightHoveredCells(positionData) {
   const { startX, endX, startY, endY } = positionData;
 
   board1.cells.forEach((cell) => {
@@ -53,28 +54,34 @@ function checkHover(positionData) {
     const minBottom = bound.bottom - half;
 
     if (startX < maxLeft && endX > minRight && startY < maxTop && endY > minBottom) {
-      cell.classList.add('highlight');
+      cell.classList.add('highlight-hovered');
     } else {
-      cell.classList.remove('highlight');
+      cell.classList.remove('highlight-hovered');
     }
   });
 }
 
 function handleRelease(element) {
-  const area = board1.cells.reduce(
+  const validArea = board1.cells.reduce(
     (sum, cell) =>
-      cell.classList.contains('highlight') && !cell.classList.contains('placed')
+      cell.classList.contains('highlight-hovered') && !cell.classList.contains('highlight-placed')
         ? sum + 1
         : sum,
     0
   );
-  if (area === element.area) {
+  if (validArea === element.area) {
     placeImage(element);
+    element.remove();
+    updateHighlights();
   } else {
-    element.style.top = '';
-    element.style.left = '';
-    removeHighlights();
+    resetDraggedImage(element);
+    removeDraggedHighlights();
   }
+}
+
+function resetDraggedImage(element) {
+  element.style.top = '';
+  element.style.left = '';
 }
 
 function placeImage(element) {
@@ -83,41 +90,47 @@ function placeImage(element) {
   const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_3__[element.type]();
   image.classList.add('placed-img');
 
-  const start = board1.cells.findIndex((cell) => cell.classList.contains('highlight'));
+  const startingCell = board1.cells.findIndex((cell) =>
+    cell.classList.contains('highlight-hovered')
+  );
 
-  const matchData = element.style.transform.match(/\d+/);
-  if (matchData && Number(matchData) % 360 !== 0) {
-    if (Number(matchData) % 180 !== 0) {
-      imageWrapper.style.height = image.style.width;
-      [element.spanY, element.spanX] = [element.spanX, element.spanY];
-    }
-    if (matchData == 90) {
-      image.style.transform = `translateX(${image.style.height}) rotate(${matchData}deg)`;
-    } else if (matchData == 270) {
-      image.style.transform = `translateY(${image.style.width}) rotate(${matchData}deg)`;
-    } else {
-      image.style.transform = `translateY(100%) translateX(100%) rotate(${matchData}deg)`;
-    }
-  }
+  rotationAdjust(element, image, imageWrapper);
 
-  imageWrapper.style.gridRow = `${Math.floor(start / 10) + 1} / span ${element.spanY}`;
-  imageWrapper.style.gridColumn = `${(start % 10) + 1} / span ${element.spanX}`;
+  imageWrapper.style.gridRow = `${Math.floor(startingCell / ROWS) + 1} / span ${element.spanY}`;
+  imageWrapper.style.gridColumn = `${(startingCell % ROWS) + 1} / span ${element.spanX}`;
 
-  element.remove();
-  transformHighlights();
   imageWrapper.appendChild(image);
   board1.appendChild(imageWrapper);
 }
 
-function removeHighlights() {
-  board1.cells.forEach((cell) => cell.classList.remove('highlight'));
+function rotationAdjust(draggedImage, newImage, wrapper) {
+  const rotation = Number(draggedImage.style.transform.match(/\d+(?=deg)/)) % 360;
+  if (!rotation) return;
+  switch (rotation) {
+    case 90:
+      newImage.style.transform = `translateX(${newImage.style.height}) rotate(${rotation}deg)`;
+      break;
+    case 180:
+      newImage.style.transform = `translateY(100%) translateX(100%) rotate(${rotation}deg)`;
+      break;
+    case 270:
+      newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
+  }
+  if (rotation !== 180) {
+    wrapper.style.height = newImage.style.width;
+    [draggedImage.spanY, draggedImage.spanX] = [draggedImage.spanX, draggedImage.spanY];
+  }
 }
 
-function transformHighlights() {
+function removeDraggedHighlights() {
+  board1.cells.forEach((cell) => cell.classList.remove('highlight-hovered'));
+}
+
+function updateHighlights() {
   board1.cells.forEach((cell) => {
-    if (cell.classList.contains('highlight')) {
-      cell.classList.remove('highlight');
-      cell.classList.add('placed');
+    if (cell.classList.contains('highlight-hovered')) {
+      cell.classList.remove('highlight-hovered');
+      cell.classList.add('highlight-placed');
     }
   });
 }
@@ -187,13 +200,13 @@ const clearButton = document.querySelector('.clear');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 rotateButton.addEventListener('click', rotate);
-clearButton.addEventListener('click', clearStagedImages);
+clearButton.addEventListener('click', clearPlacedImages);
 
 let cursorOffsetX;
 let cursurOffsetY;
 let staged;
 
-function showStagedImage(e) {
+function showStagedImage() {
   const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
   image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
@@ -206,18 +219,17 @@ function showStagedImage(e) {
 
 function rotate() {
   if (!staged) return;
-  const matchData = staged.style.transform.match(/\d+/);
-  const deg = matchData ? Number(matchData[0]) + 90 : 90;
-  staged.style.transform = `rotate(${deg}deg)`;
+  const rotation = Number(staged.style.transform.match(/\d+(?=deg)/)) % 360;
+  staged.style.transform = `rotate(${rotation + 90}deg)`;
 }
 
-function clearStagedImages() {
+function clearPlacedImages() {
   const children = Array.from(board1.children);
   for (const node of children) {
     if (node.classList.contains('placed-img-wrapper')) {
       node.remove();
     } else {
-      node.classList.remove('placed');
+      node.classList.remove('highlight-placed');
     }
   }
 }
