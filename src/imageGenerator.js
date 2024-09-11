@@ -1,43 +1,56 @@
 const board = document.querySelector('.board');
 
 const boardWidth = 500;
-const squareWidth = boardWidth / 10; // 50
-
-const targetWidth = 3; // number of squares flute should occupy
-const targetHeight = 1; // number of squares flute should occupy
-
-// flute width should be 150; height should be 50
+const squareWidth = boardWidth / 10; // number of cells in row
 
 function flute() {
-  const image = new Image();
-  image.src = './images/flute.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 3}px`;
-  return image;
+  return newImage('flute', 1, 3);
 }
 
 function trombone() {
-  const image = new Image();
-  image.src = './images/trombone.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 5}px`;
+  const image = newImage('trombone', 1, 5);
+  image.classList.add('stretch');
   return image;
 }
 
 function clarinet() {
-  const image = new Image();
-  image.src = './images/clarinet.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 3}px`;
-  return image;
+  return newImage('clarinet', 1, 3);
 }
 
 function violin() {
+  return newImage('violin', 1, 3);
+}
+
+function bassoon() {
+  return newImage('bassoon', 1, 4);
+}
+
+function cello() {
+  return newImage('cello', 2, 5);
+}
+
+function horn() {
+  return newImage('horn', 2, 2);
+}
+
+function piccolo() {
+  return newImage('piccolo', 1, 2);
+}
+
+function trumpet() {
+  return newImage('trumpet', 1, 3);
+}
+
+function newImage(type, width, height) {
   const image = new Image();
-  image.src = './images/violin.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 4}px`;
+  image.src = `./images/${type}.png`;
+  image.style.width = `${squareWidth * width}px`;
+  image.style.height = `${squareWidth * height}px`;
+  image.spanX = width;
+  image.spanY = height;
+  image.area = width * height;
+  image.type = type;
   return image;
 }
 
-export { clarinet, flute, trombone, violin };
+export { clarinet, flute, trombone, violin, bassoon, cello, horn, trumpet, piccolo };

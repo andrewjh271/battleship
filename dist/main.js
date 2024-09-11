@@ -12,7 +12,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player */ "./src/player.js");
 /* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./drag */ "./src/drag.js");
+/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
+/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./drag */ "./src/drag.js");
+
 
 
 
@@ -23,27 +25,102 @@ function createGrid(numberOfCells, board) {
   for (let i = 0; i < numberOfCells; i++) {
     board.cells[i] = document.createElement('div');
     board.cells[i].classList.add('cell');
+    board.cells[i].style.gridArea = `${Math.floor(i / 10) + 1} / ${
+      (i % 10) + 1
+    } / span 1 / span 1`;
     board.cells[i].dataset.index = i;
     board.appendChild(board.cells[i]);
   }
 }
 
 const board1 = document.querySelector('#board1');
-// const board2 = document.querySelector('#board2');
 
 (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEvent', checkHover);
+(0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEnd', handleRelease);
 
 createGrid(100, board1);
-// createGrid(100, board2);
 
 function checkHover(positionData) {
-  const { top, left } = positionData;
-  console.log(left, top);
+  const { startX, endX, startY, endY } = positionData;
 
-  const bound = board1.cells[0].getBoundingClientRect();
-  console.log(bound.left, bound.top);
+  board1.cells.forEach((cell) => {
+    const bound = cell.getBoundingClientRect();
+    const half = bound.width / 2;
+
+    const maxLeft = bound.left + half;
+    const minRight = bound.right - half;
+    const maxTop = bound.top + half;
+    const minBottom = bound.bottom - half;
+
+    if (startX < maxLeft && endX > minRight && startY < maxTop && endY > minBottom) {
+      cell.classList.add('highlight');
+    } else {
+      cell.classList.remove('highlight');
+    }
+  });
 }
 
+function handleRelease(element) {
+  const area = board1.cells.reduce(
+    (sum, cell) =>
+      cell.classList.contains('highlight') && !cell.classList.contains('placed')
+        ? sum + 1
+        : sum,
+    0
+  );
+  if (area === element.area) {
+    placeImage(element);
+  } else {
+    element.style.top = '';
+    element.style.left = '';
+    removeHighlights();
+  }
+}
+
+function placeImage(element) {
+  const imageWrapper = document.createElement('div');
+  imageWrapper.classList.add('placed-img-wrapper');
+  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_3__[element.type]();
+  image.classList.add('placed-img');
+
+  const start = board1.cells.findIndex((cell) => cell.classList.contains('highlight'));
+
+  const matchData = element.style.transform.match(/\d+/);
+  if (matchData && Number(matchData) % 360 !== 0) {
+    if (Number(matchData) % 180 !== 0) {
+      imageWrapper.style.height = image.style.width;
+      [element.spanY, element.spanX] = [element.spanX, element.spanY];
+    }
+    if (matchData == 90) {
+      image.style.transform = `translateX(${image.style.height}) rotate(${matchData}deg)`;
+    } else if (matchData == 270) {
+      image.style.transform = `translateY(${image.style.width}) rotate(${matchData}deg)`;
+    } else {
+      image.style.transform = `translateY(100%) translateX(100%) rotate(${matchData}deg)`;
+    }
+  }
+
+  imageWrapper.style.gridRow = `${Math.floor(start / 10) + 1} / span ${element.spanY}`;
+  imageWrapper.style.gridColumn = `${(start % 10) + 1} / span ${element.spanX}`;
+
+  element.remove();
+  transformHighlights();
+  imageWrapper.appendChild(image);
+  board1.appendChild(imageWrapper);
+}
+
+function removeHighlights() {
+  board1.cells.forEach((cell) => cell.classList.remove('highlight'));
+}
+
+function transformHighlights() {
+  board1.cells.forEach((cell) => {
+    if (cell.classList.contains('highlight')) {
+      cell.classList.remove('highlight');
+      cell.classList.add('placed');
+    }
+  });
+}
 
 function listenForAttack(board) {
   board.addEventListener('click', handleAttack);
@@ -54,14 +131,13 @@ function unListenForAttack(board) {
 }
 
 function handleAttack(e) {
-
   const { index } = e.target.dataset;
   if (!index) return;
   console.log((0,_coordinates__WEBPACK_IMPORTED_MODULE_1__.indexToCoordinates)(index));
-  
 }
 
 listenForAttack(board1);
+
 
 /***/ }),
 
@@ -107,9 +183,11 @@ const stagingArea = document.querySelector('.staging-area');
 const previews = document.querySelectorAll('.img-preview');
 
 const rotateButton = document.querySelector('.rotate');
+const clearButton = document.querySelector('.clear');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 rotateButton.addEventListener('click', rotate);
+clearButton.addEventListener('click', clearStagedImages);
 
 let cursorOffsetX;
 let cursurOffsetY;
@@ -117,7 +195,11 @@ let staged;
 
 function showStagedImage(e) {
   const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
+  image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
+  if (stagingArea.firstChild) {
+    stagingArea.removeChild(stagingArea.firstChild);
+  }
   stagingArea.appendChild(image);
   staged = image;
 }
@@ -129,10 +211,22 @@ function rotate() {
   staged.style.transform = `rotate(${deg}deg)`;
 }
 
+function clearStagedImages() {
+  const children = Array.from(board1.children);
+  for (const node of children) {
+    if (node.classList.contains('placed-img-wrapper')) {
+      node.remove();
+    } else {
+      node.classList.remove('placed');
+    }
+  }
+}
+
 function dragStart(e) {
   e.preventDefault();
   cursorOffsetX = e.clientX - this.offsetLeft;
   cursurOffsetY = e.clientY - this.offsetTop;
+  this.classList.add('grabbing');
 
   const boundDragMove = dragMove.bind(this);
   document.addEventListener('mousemove', boundDragMove);
@@ -140,28 +234,24 @@ function dragStart(e) {
     'mouseup',
     () => {
       document.removeEventListener('mousemove', boundDragMove);
+      (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('dragEnd', this);
     },
     { once: true }
   );
 }
 
 function dragMove(e) {
-  console.log(this);
   this.style.top = (e.clientY - cursurOffsetY).toString() + 'px';
   this.style.left = (e.clientX - cursorOffsetX).toString() + 'px';
+  const bound = this.getBoundingClientRect();
   const positionData = {
-    top: this.offsetTop,
-    left: this.offsetLeft,
-    width: this.offsetWidth,
-    height: this.offsetHeight,
+    startX: bound.left,
+    endX: bound.right,
+    startY: bound.top,
+    endY: bound.bottom,
   };
 
   (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('dragEvent', positionData);
-}
-
-function dragEnd(e) {
-  document.removeEventListener('mousemove', dragMove.bind(this));
-  document.removeEventListener('mouseup', dragEnd);
 }
 
 
@@ -175,50 +265,68 @@ function dragEnd(e) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "bassoon": () => (/* binding */ bassoon),
+/* harmony export */   "cello": () => (/* binding */ cello),
 /* harmony export */   "clarinet": () => (/* binding */ clarinet),
 /* harmony export */   "flute": () => (/* binding */ flute),
+/* harmony export */   "horn": () => (/* binding */ horn),
+/* harmony export */   "piccolo": () => (/* binding */ piccolo),
 /* harmony export */   "trombone": () => (/* binding */ trombone),
+/* harmony export */   "trumpet": () => (/* binding */ trumpet),
 /* harmony export */   "violin": () => (/* binding */ violin)
 /* harmony export */ });
 const board = document.querySelector('.board');
 
 const boardWidth = 500;
-const squareWidth = boardWidth / 10; // 50
-
-const targetWidth = 3; // number of squares flute should occupy
-const targetHeight = 1; // number of squares flute should occupy
-
-// flute width should be 150; height should be 50
+const squareWidth = boardWidth / 10; // number of cells in row
 
 function flute() {
-  const image = new Image();
-  image.src = './images/flute.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 3}px`;
-  return image;
+  return newImage('flute', 1, 3);
 }
 
 function trombone() {
-  const image = new Image();
-  image.src = './images/trombone.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 5}px`;
+  const image = newImage('trombone', 1, 5);
+  image.classList.add('stretch');
   return image;
 }
 
 function clarinet() {
-  const image = new Image();
-  image.src = './images/clarinet.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 3}px`;
-  return image;
+  return newImage('clarinet', 1, 3);
 }
 
 function violin() {
+  return newImage('violin', 1, 3);
+}
+
+function bassoon() {
+  return newImage('bassoon', 1, 4);
+}
+
+function cello() {
+  return newImage('cello', 2, 5);
+}
+
+function horn() {
+  return newImage('horn', 2, 2);
+}
+
+function piccolo() {
+  return newImage('piccolo', 1, 2);
+}
+
+function trumpet() {
+  return newImage('trumpet', 1, 3);
+}
+
+function newImage(type, width, height) {
   const image = new Image();
-  image.src = './images/violin.png';
-  image.classList.add('staging-img');
-  image.style.height = `${squareWidth * 4}px`;
+  image.src = `./images/${type}.png`;
+  image.style.width = `${squareWidth * width}px`;
+  image.style.height = `${squareWidth * height}px`;
+  image.spanX = width;
+  image.spanY = height;
+  image.area = width * height;
+  image.type = type;
   return image;
 }
 

@@ -1,4 +1,6 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
   font-family: inherit;
   margin: 0;
@@ -16,18 +18,25 @@ html {
 
 .board {
   margin: 30px;
-  border: 1px solid rgb(0, 0, 0);
+  border: 0.5px solid rgb(0, 0, 0);
   height: 500px;
   width: 500px;
   display: inline-grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  background-color: rgb(41, 41, 41);
-  grid-gap: 1px;
   grid-row: span 2;
 }
 .board .cell {
   background-color: white;
+  border: 0.5px solid black;
+}
+.board .highlight {
+  background-color: aquamarine;
+}
+.board .placed {
+  background-color: lightslategrey;
+  z-index: 2;
+  opacity: 0.3;
 }
 
 .preview-container {
@@ -38,11 +47,47 @@ html {
   max-height: 100%;
   max-width: 100%;
 }
+.img-preview:hover {
+  cursor: pointer;
+}
+
+.staging-area {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
 
 .staging-img {
   max-height: 100%;
   max-width: 100%;
   position: absolute;
+  object-fit: contain;
+  padding: 5px;
+  z-index: 2;
+}
+.staging-img:hover {
+  cursor: grab;
+}
+
+.placed-img {
+  object-fit: contain;
+  padding: 5px;
+  transform-origin: 0 0;
+}
+
+.placed-img-wrapper {
+  border: 0.5px solid black;
+  background-color: white;
+  overflow: hidden;
+}
+
+.grabbing {
+  cursor: grabbing !important;
+}
+
+.stretch {
+  object-fit: fill;
+  padding: 20px 1px 20px 1px;
 }
 
 /*# sourceMappingURL=style.css.map */

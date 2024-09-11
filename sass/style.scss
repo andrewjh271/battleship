@@ -1,4 +1,6 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
   font-family: inherit;
   margin: 0;
@@ -12,24 +14,34 @@ html {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 110px 420px;
-
 }
 
 .board {
   margin: 30px;
-  border: 1px solid rgb(0, 0, 0);
+  border: 0.5px solid rgb(0, 0, 0);
   height: 500px;
   width: 500px;
   display: inline-grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  background-color: rgb(41, 41, 41);
-  grid-gap: 1px;
+  // background-color: rgb(41, 41, 41);
+  // grid-gap: 1px;
 
   grid-row: span 2;
 
   .cell {
     background-color: white;
+    border: 0.5px solid black;
+  }
+
+  .highlight {
+    background-color: aquamarine;
+  }
+
+  .placed {
+    background-color: lightslategrey;
+    z-index: 2;
+    opacity: 0.3;
   }
 }
 
@@ -44,14 +56,48 @@ html {
   max-height: 100%;
   // max-height: 80px;
   max-width: 100%;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .staging-area {
-  
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
 }
 
 .staging-img {
   max-height: 100%;
   max-width: 100%;
   position: absolute;
+  object-fit: contain;
+  padding: 5px;
+  z-index: 2;
+
+  &:hover {
+    cursor: grab;
+  }
+}
+
+.placed-img {
+  object-fit: contain;
+  padding: 5px;
+  transform-origin: 0 0;
+}
+
+.placed-img-wrapper {
+  border: 0.5px solid black;
+  background-color: white;
+  overflow: hidden;
+}
+
+.grabbing {
+  cursor: grabbing !important;
+}
+
+.stretch {
+  object-fit: fill;
+  padding: 20px 1px 20px 1px;
 }
