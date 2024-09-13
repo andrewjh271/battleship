@@ -1,12 +1,13 @@
 import gameBoardFactory from '../src/gameboard';
 
 let gameBoard;
-beforeEach(() => (gameBoard = gameBoardFactory()));
+beforeEach(() => {
+  gameBoard = gameBoardFactory();
+});
 
 describe('initialization', () => {
-  test('initializes with 100 Square objects', () => {
+  test('initializes with 100 objects', () => {
     expect(gameBoard.squares[8][9]).toBeInstanceOf(Object);
-    expect(gameBoard.squares[0][4]).toHaveProperty('ship');
     expect(gameBoard.squares[1][10]).toBeUndefined();
   });
 });
@@ -19,14 +20,20 @@ describe('placeShip', () => {
       [0, 5],
       [0, 6],
     ]);
-    const ship = gameBoard.squares[0][3].ship;
+    const { ship } = gameBoard.squares[0][3];
     expect(gameBoard.squares[0][4].ship).toBe(ship);
   });
 
   test('placed ships can have names', () => {
-    gameBoard.placeShip([[3, 4], [4, 4]], 'Destroyer');
+    gameBoard.placeShip(
+      [
+        [3, 4],
+        [4, 4],
+      ],
+      'Destroyer'
+    );
     expect(gameBoard.squares[4][4].ship.name).toBe('Destroyer');
-  })
+  });
 
   test('will not place a ship onto another ship', () => {
     gameBoard.placeShip([
@@ -92,7 +99,7 @@ describe('placeShip', () => {
         [2, 4],
         [2, 3],
       ]);
-      const ship = gameBoard.squares[2][5].ship;
+      const { ship } = gameBoard.squares[2][5];
       expect(gameBoard.squares[2][3].ship).toBe(ship);
     });
 
@@ -105,7 +112,7 @@ describe('placeShip', () => {
         [9, 5],
         [9, 6],
       ]);
-      const ship = gameBoard.squares[9][3].ship;
+      const { ship } = gameBoard.squares[9][3];
       expect(gameBoard.squares[9][5].ship).toBe(ship);
     });
   });
@@ -116,9 +123,7 @@ describe('receive attack', () => {
     gameBoard.receiveAttack([2, 3]);
     gameBoard.receiveAttack([3, 4]);
     gameBoard.receiveAttack([8, 9]);
-    expect(() => gameBoard.receiveAttack([2, 3])).toThrow(
-      'this square has already been attacked'
-    );
+    expect(() => gameBoard.receiveAttack([2, 3])).toThrow('this square has already been attacked');
   });
 
   test('can sink a ship', () => {
@@ -127,7 +132,7 @@ describe('receive attack', () => {
       [2, 2],
       [3, 2],
     ]);
-    const ship = gameBoard.squares[2][2].ship;
+    const { ship } = gameBoard.squares[2][2];
     gameBoard.receiveAttack([1, 2]);
     gameBoard.receiveAttack([2, 2]);
     expect(ship.isSunk()).toBe(false);
@@ -432,5 +437,5 @@ describe('randomly placing  ships', () => {
     gameBoard.placeShip([[0, 9]]);
     expect(gameBoard.findSets(2).length).toBe(178);
     expect(gameBoard.findSets(1).length).toBe(99);
-  })
+  });
 });

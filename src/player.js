@@ -12,11 +12,11 @@ function humanPlayerFactory(homeBoard, opponentBoard) {
     homeBoard.placeShip(coords);
   }
 
-  function placeAllShips() {
-    // while (remainingShips)
-      // get name and coordinates of ship from User/DOM
-      // placeShip
-  }
+  // function placeAllShips() {
+  //   while (remainingShips)
+  //     get name and coordinates of ship from User/DOM
+  //     placeShip
+  // }
 
   function isComputer() {
     return false;
@@ -47,7 +47,7 @@ function computerPlayerFactory(homeBoard, opponentBoard) {
   }
 
   function attack() {
-    if (possibleMoves.length == 0) throw new Error('there are no moves left');
+    if (possibleMoves.length === 0) throw new Error('there are no moves left');
     const index = Math.floor(Math.random() * possibleMoves.length);
     const move = possibleMoves[index];
     possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
@@ -56,13 +56,13 @@ function computerPlayerFactory(homeBoard, opponentBoard) {
   }
 
   function placeAllShips() {
-    for (const ship in ships) {
-      const name = ship;
-      const length =  ships[ship];
+    Object.entries(ships).forEach(ship => {
+      const name = ship[0];
+      const length = ship[1];
       const set = homeBoard.findSets(length);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
-    }
+    })
   }
 
   return { attack, placeAllShips, isComputer }

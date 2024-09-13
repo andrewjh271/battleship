@@ -7,8 +7,6 @@ export default function shipFactory(length, name) {
       throw new Error('You already sank this ship!');
     }
   };
-  const isSunk = () => {
-    return hits === length;
-  };
+  const isSunk = () => hits === length;
   return { hit, isSunk, name };
 }

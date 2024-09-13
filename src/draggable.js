@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { emit } from './observer';
 
 let cursorOffsetX;
@@ -35,4 +36,9 @@ function dragMove(e) {
   emit('dragEvent', positionData);
 }
 
-export { dragStart }
+function resetDraggedImage(element) {
+  element.style.top = '';
+  element.style.left = '';
+}
+
+export { dragStart, resetDraggedImage }

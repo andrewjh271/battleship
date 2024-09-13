@@ -1,6 +1,5 @@
 const board = document.querySelector('.board');
-
-const boardWidth = 500;
+const boardWidth = board.offsetWidth;
 const squareWidth = boardWidth / 10; // number of cells in row
 
 function flute() {

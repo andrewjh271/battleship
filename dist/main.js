@@ -122,13 +122,13 @@ function showStagedImage() {
 
 function clearPlacedImages() {
   const children = Array.from(currentBoard.children);
-  for (const node of children) {
-    if (node.classList.contains('placed-img-wrapper')) {
-      node.remove();
+  children.forEach(element => {
+    if (element.classList.contains('placed-img-wrapper')) {
+      element.remove();
     } else {
-      node.classList.remove('highlight-placed');
+      element.classList.remove('highlight-placed');
     }
-  }
+  })
 }
 
 (0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEvent', highlightHoveredCells);
@@ -164,14 +164,9 @@ function handleRelease(element) {
     element.remove();
     updateHighlights();
   } else {
-    resetDraggedImage(element);
+    (0,_draggable__WEBPACK_IMPORTED_MODULE_2__.resetDraggedImage)(element);
     removeDraggedHighlights();
   }
-}
-
-function resetDraggedImage(element) {
-  element.style.top = '';
-  element.style.left = '';
 }
 
 function placeImage(element) {
@@ -248,9 +243,11 @@ function coordinatesToIndex(coords) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "dragStart": () => (/* binding */ dragStart)
+/* harmony export */   "dragStart": () => (/* binding */ dragStart),
+/* harmony export */   "resetDraggedImage": () => (/* binding */ resetDraggedImage)
 /* harmony export */ });
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* eslint-disable no-param-reassign */
 
 
 let cursorOffsetX;
@@ -288,6 +285,11 @@ function dragMove(e) {
   (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEvent', positionData);
 }
 
+function resetDraggedImage(element) {
+  element.style.top = '';
+  element.style.left = '';
+}
+
 
 
 /***/ }),
@@ -311,8 +313,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "violin": () => (/* binding */ violin)
 /* harmony export */ });
 const board = document.querySelector('.board');
-
-const boardWidth = 500;
+const boardWidth = board.offsetWidth;
 const squareWidth = boardWidth / 10; // number of cells in row
 
 function flute() {
@@ -436,11 +437,11 @@ function humanPlayerFactory(homeBoard, opponentBoard) {
     homeBoard.placeShip(coords);
   }
 
-  function placeAllShips() {
-    // while (remainingShips)
-      // get name and coordinates of ship from User/DOM
-      // placeShip
-  }
+  // function placeAllShips() {
+  //   while (remainingShips)
+  //     get name and coordinates of ship from User/DOM
+  //     placeShip
+  // }
 
   function isComputer() {
     return false;
@@ -471,7 +472,7 @@ function computerPlayerFactory(homeBoard, opponentBoard) {
   }
 
   function attack() {
-    if (possibleMoves.length == 0) throw new Error('there are no moves left');
+    if (possibleMoves.length === 0) throw new Error('there are no moves left');
     const index = Math.floor(Math.random() * possibleMoves.length);
     const move = possibleMoves[index];
     possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
@@ -480,13 +481,13 @@ function computerPlayerFactory(homeBoard, opponentBoard) {
   }
 
   function placeAllShips() {
-    for (const ship in ships) {
-      const name = ship;
-      const length =  ships[ship];
+    Object.entries(ships).forEach(ship => {
+      const name = ship[0];
+      const length = ship[1];
       const set = homeBoard.findSets(length);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
-    }
+    })
   }
 
   return { attack, placeAllShips, isComputer }
@@ -509,6 +510,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "rotate": () => (/* binding */ rotate),
 /* harmony export */   "setStagedImage": () => (/* binding */ setStagedImage)
 /* harmony export */ });
+/* eslint-disable no-param-reassign */
 const rotateButton = document.querySelector('.rotate');
 rotateButton.addEventListener('click', rotate);
 
@@ -534,7 +536,7 @@ function adjustForRotation(draggedImage, newImage, wrapper) {
     case 180:
       newImage.style.transform = `translateY(100%) translateX(100%) rotate(${rotation}deg)`;
       break;
-    case 270:
+    default: // 270
       newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
   }
   if (rotation !== 180) {

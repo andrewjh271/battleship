@@ -1,6 +1,6 @@
 import * as imageGenerator from './imageGenerator';
 import { on } from './observer';
-import { dragStart } from './draggable';
+import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
 
 // const setupContainer = document.querySelector('.board-setup-container');
@@ -30,13 +30,13 @@ function showStagedImage() {
 
 function clearPlacedImages() {
   const children = Array.from(currentBoard.children);
-  for (const node of children) {
-    if (node.classList.contains('placed-img-wrapper')) {
-      node.remove();
+  children.forEach(element => {
+    if (element.classList.contains('placed-img-wrapper')) {
+      element.remove();
     } else {
-      node.classList.remove('highlight-placed');
+      element.classList.remove('highlight-placed');
     }
-  }
+  })
 }
 
 on('dragEvent', highlightHoveredCells);
@@ -75,11 +75,6 @@ function handleRelease(element) {
     resetDraggedImage(element);
     removeDraggedHighlights();
   }
-}
-
-function resetDraggedImage(element) {
-  element.style.top = '';
-  element.style.left = '';
 }
 
 function placeImage(element) {

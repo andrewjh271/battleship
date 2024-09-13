@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const rotateButton = document.querySelector('.rotate');
 rotateButton.addEventListener('click', rotate);
 
@@ -23,7 +24,7 @@ function adjustForRotation(draggedImage, newImage, wrapper) {
     case 180:
       newImage.style.transform = `translateY(100%) translateX(100%) rotate(${rotation}deg)`;
       break;
-    case 270:
+    default: // 270
       newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
   }
   if (rotation !== 180) {

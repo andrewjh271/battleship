@@ -1,5 +1,5 @@
-import gameBoardFactory from '../src/gameboard';
-import { humanPlayerFactory, computerPlayerFactory } from '../src/player';
+import gameBoardFactory from "./gameboard";
+import { humanPlayerFactory, computerPlayerFactory } from "./player";
 
 function initialize(p1, p2) {
   const board1 = gameBoardFactory();

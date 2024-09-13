@@ -7,22 +7,9 @@ export default function gameBoardFactory() {
   for (let i = 0; i < 10; i++) {
     squares[i] = [];
     for (let j = 0; j < 10; j++) {
-      squares[i][j] = squareFactory();
+      squares[i][j] = {};
     }
   }
-
-  const placeShip = (coords, name) => {
-    if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
-    if (isOccupied(coords)) throw new Error('Ships cannot be on top of ships');
-    if (!inLine(coords))
-      throw new Error(
-        'Ships must be placed vertically or horizontally in an unbroken line'
-      );
-
-    const newShip = shipFactory(coords.length, name);
-    coords.forEach((coord) => (squares[coord[0]][coord[1]].ship = newShip));
-    totalShips++;
-  };
 
   const isOccupied = (coords) => {
     for (let i = 0; i < coords.length; i++) {
@@ -32,25 +19,33 @@ export default function gameBoardFactory() {
     return false;
   };
 
-  const outOfRange = (coords) => {
-    return coords.flat().some((coord) => coord < 0 || coord > 9);
-  };
+  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > 9);
 
   const inLine = (coords) => {
     if (coords.every((coord) => coord[0] === coords[0][0])) {
       // horizontal
       coords.sort((a, b) => a[1] - b[1]);
-      return coords.every(
-        (coord, index) => index === 0 || coord[1] - coords[index - 1][1] === 1
-      );
-    } else if (coords.every((coord) => coord[1] === coords[0][1])) {
+      return coords.every((coord, index) => index === 0 || coord[1] - coords[index - 1][1] === 1);
+    }
+    if (coords.every((coord) => coord[1] === coords[0][1])) {
       // vertical
       coords.sort((a, b) => a[0] - b[0]);
-      return coords.every(
-        (coord, index) => index === 0 || coord[0] - coords[index - 1][0] === 1
-      );
+      return coords.every((coord, index) => index === 0 || coord[0] - coords[index - 1][0] === 1);
     }
     return false;
+  };
+
+  const placeShip = (coords, name) => {
+    if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
+    if (isOccupied(coords)) throw new Error('Ships cannot be on top of ships');
+    if (!inLine(coords))
+      throw new Error('Ships must be placed vertically or horizontally in an unbroken line');
+
+    const newShip = shipFactory(coords.length, name);
+    coords.forEach((coord) => {
+      squares[coord[0]][coord[1]].ship = newShip;
+    });
+    totalShips++;
   };
 
   function receiveAttack(coords) {
@@ -94,22 +89,20 @@ export default function gameBoardFactory() {
     while (rt < row.length) {
       if (squares[row[lft][0]][row[lft][1]].ship) {
         lft = rt;
-        rt = rt + 1;
+        rt += 1;
       } else if (squares[row[rt][0]][row[rt][1]].ship) {
         lft = rt + 1;
-        rt = rt + 2;
-      } else {
-        if (rt - lft + 1 === length) {
-          const set = [];
-          for (let j = lft; j <= rt; j++) {
-            set.push(row[j]);
-          }
-          sets.push(set);
-          lft++;
-          rt++;
-        } else {
-          rt++;
+        rt += 2;
+      } else if (rt - lft + 1 === length) {
+        const set = [];
+        for (let j = lft; j <= rt; j++) {
+          set.push(row[j]);
         }
+        sets.push(set);
+        lft++;
+        rt++;
+      } else {
+        rt++;
       }
     }
     return sets;
@@ -128,10 +121,4 @@ export default function gameBoardFactory() {
   }
 
   return { squares, placeShip, receiveAttack, gameOver, findSets };
-}
-
-function squareFactory() {
-  let ship;
-  let attacked = false;
-  return { ship, attacked };
 }
