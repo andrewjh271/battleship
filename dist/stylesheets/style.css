@@ -10,6 +10,10 @@ html {
   box-sizing: border-box;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -40,6 +44,7 @@ html {
 }
 
 .preview-container {
+  height: 150px;
   margin-top: 30px;
 }
 

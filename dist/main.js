@@ -10,11 +10,9 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player */ "./src/player.js");
-/* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
-/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
-/* harmony import */ var _drag__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./drag */ "./src/drag.js");
-
+/* harmony import */ var _DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DOMInitializeBoard */ "./src/DOMInitializeBoard.js");
+/* harmony import */ var _DOMSetupBoard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DOMSetupBoard */ "./src/DOMSetupBoard.js");
+/* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
 
 
 
@@ -22,29 +20,124 @@ __webpack_require__.r(__webpack_exports__);
 
 const ROWS = 10;
 
-const board1 = document.getElementById('board1');
-createGrid(ROWS * ROWS, board1);
+const board1 = (0,_DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_1__.initializeBoard)('board1', ROWS);
+(0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_2__.setupBoard)(board1);
 
-function createGrid(numberOfCells, board) {
+function listenForAttack(board) {
+  board.addEventListener('click', handleAttack);
+}
+
+function unListenForAttack(board) {
+  board.removeEventListener('click', handleAttack);
+}
+
+function handleAttack(e) {
+  const { index } = e.target.dataset;
+  if (!index) return;
+  console.log((0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.indexToCoordinates)(index));
+}
+
+listenForAttack(board1);
+
+
+/***/ }),
+
+/***/ "./src/DOMInitializeBoard.js":
+/*!***********************************!*\
+  !*** ./src/DOMInitializeBoard.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "initializeBoard": () => (/* binding */ initializeBoard)
+/* harmony export */ });
+function createGrid(rows, board) {
   board.cells = [];
-  for (let i = 0; i < numberOfCells; i++) {
+  for (let i = 0; i < rows * rows; i++) {
     board.cells[i] = document.createElement('div');
     board.cells[i].classList.add('cell');
-    board.cells[i].style.gridArea = `${Math.floor(i / ROWS) + 1} / ${
-      (i % ROWS) + 1
+    board.cells[i].style.gridArea = `${Math.floor(i / rows) + 1} / ${
+      (i % rows) + 1
     } / span 1 / span 1`;
     board.cells[i].dataset.index = i;
     board.appendChild(board.cells[i]);
   }
 }
 
-(0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEvent', highlightHoveredCells);
-(0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEnd', handleRelease);
+function initializeBoard(id, rows) {
+  const board = document.getElementById(id)
+  board.numRows = rows;
+  createGrid(rows, board);
+  return board;
+}
+
+
+
+/***/ }),
+
+/***/ "./src/DOMSetupBoard.js":
+/*!******************************!*\
+  !*** ./src/DOMSetupBoard.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "setupBoard": () => (/* binding */ setupBoard)
+/* harmony export */ });
+/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* harmony import */ var _draggable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./draggable */ "./src/draggable.js");
+/* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
+
+
+
+
+
+// const setupContainer = document.querySelector('.board-setup-container');
+const stagingArea = document.querySelector('.staging-area');
+const previews = document.querySelectorAll('.img-preview');
+const clearButton = document.querySelector('.clear');
+
+previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
+clearButton.addEventListener('click', clearPlacedImages);
+
+let currentBoard;
+function setupBoard(board) {
+  // show setupContainer, configure container
+  currentBoard = board;
+}
+
+function showStagedImage() {
+  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
+  image.classList.add('staging-img');
+  image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
+  if (stagingArea.firstChild) {
+    stagingArea.removeChild(stagingArea.firstChild);
+  }
+  stagingArea.appendChild(image);
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.setStagedImage)(image);
+}
+
+function clearPlacedImages() {
+  const children = Array.from(currentBoard.children);
+  for (const node of children) {
+    if (node.classList.contains('placed-img-wrapper')) {
+      node.remove();
+    } else {
+      node.classList.remove('highlight-placed');
+    }
+  }
+}
+
+(0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEvent', highlightHoveredCells);
+(0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEnd', handleRelease);
 
 function highlightHoveredCells(positionData) {
   const { startX, endX, startY, endY } = positionData;
 
-  board1.cells.forEach((cell) => {
+  currentBoard.cells.forEach((cell) => {
     const bound = cell.getBoundingClientRect();
     const half = bound.width / 2;
 
@@ -62,13 +155,10 @@ function highlightHoveredCells(positionData) {
 }
 
 function handleRelease(element) {
-  const validArea = board1.cells.reduce(
-    (sum, cell) =>
+  const validArea = currentBoard.cells.filter(
+    (cell) =>
       cell.classList.contains('highlight-hovered') && !cell.classList.contains('highlight-placed')
-        ? sum + 1
-        : sum,
-    0
-  );
+  ).length;
   if (validArea === element.area) {
     placeImage(element);
     element.remove();
@@ -87,47 +177,31 @@ function resetDraggedImage(element) {
 function placeImage(element) {
   const imageWrapper = document.createElement('div');
   imageWrapper.classList.add('placed-img-wrapper');
-  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_3__[element.type]();
+  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[element.type]();
   image.classList.add('placed-img');
 
-  const startingCell = board1.cells.findIndex((cell) =>
+  const startingCell = currentBoard.cells.findIndex((cell) =>
     cell.classList.contains('highlight-hovered')
   );
 
-  rotationAdjust(element, image, imageWrapper);
-
-  imageWrapper.style.gridRow = `${Math.floor(startingCell / ROWS) + 1} / span ${element.spanY}`;
-  imageWrapper.style.gridColumn = `${(startingCell % ROWS) + 1} / span ${element.spanX}`;
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.adjustForRotation)(element, image, imageWrapper);
+  imageWrapper.style.gridRow = `${Math.floor(startingCell / currentBoard.numRows) + 1} / span ${
+    element.spanY
+  }`;
+  imageWrapper.style.gridColumn = `${(startingCell % currentBoard.numRows) + 1} / span ${
+    element.spanX
+  }`;
 
   imageWrapper.appendChild(image);
-  board1.appendChild(imageWrapper);
-}
-
-function rotationAdjust(draggedImage, newImage, wrapper) {
-  const rotation = Number(draggedImage.style.transform.match(/\d+(?=deg)/)) % 360;
-  if (!rotation) return;
-  switch (rotation) {
-    case 90:
-      newImage.style.transform = `translateX(${newImage.style.height}) rotate(${rotation}deg)`;
-      break;
-    case 180:
-      newImage.style.transform = `translateY(100%) translateX(100%) rotate(${rotation}deg)`;
-      break;
-    case 270:
-      newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
-  }
-  if (rotation !== 180) {
-    wrapper.style.height = newImage.style.width;
-    [draggedImage.spanY, draggedImage.spanX] = [draggedImage.spanX, draggedImage.spanY];
-  }
+  currentBoard.appendChild(imageWrapper);
 }
 
 function removeDraggedHighlights() {
-  board1.cells.forEach((cell) => cell.classList.remove('highlight-hovered'));
+  currentBoard.cells.forEach((cell) => cell.classList.remove('highlight-hovered'));
 }
 
 function updateHighlights() {
-  board1.cells.forEach((cell) => {
+  currentBoard.cells.forEach((cell) => {
     if (cell.classList.contains('highlight-hovered')) {
       cell.classList.remove('highlight-hovered');
       cell.classList.add('highlight-placed');
@@ -135,21 +209,7 @@ function updateHighlights() {
   });
 }
 
-function listenForAttack(board) {
-  board.addEventListener('click', handleAttack);
-}
 
-function unListenForAttack(board) {
-  board.removeEventListener('click', handleAttack);
-}
-
-function handleAttack(e) {
-  const { index } = e.target.dataset;
-  if (!index) return;
-  console.log((0,_coordinates__WEBPACK_IMPORTED_MODULE_1__.indexToCoordinates)(index));
-}
-
-listenForAttack(board1);
 
 
 /***/ }),
@@ -180,59 +240,21 @@ function coordinatesToIndex(coords) {
 
 /***/ }),
 
-/***/ "./src/drag.js":
-/*!*********************!*\
-  !*** ./src/drag.js ***!
-  \*********************/
+/***/ "./src/draggable.js":
+/*!**************************!*\
+  !*** ./src/draggable.js ***!
+  \**************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
-/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "dragStart": () => (/* binding */ dragStart)
+/* harmony export */ });
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 
-
-
-const stagingArea = document.querySelector('.staging-area');
-const previews = document.querySelectorAll('.img-preview');
-
-const rotateButton = document.querySelector('.rotate');
-const clearButton = document.querySelector('.clear');
-
-previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
-rotateButton.addEventListener('click', rotate);
-clearButton.addEventListener('click', clearPlacedImages);
 
 let cursorOffsetX;
 let cursurOffsetY;
-let staged;
-
-function showStagedImage() {
-  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
-  image.classList.add('staging-img');
-  image.addEventListener('mousedown', dragStart);
-  if (stagingArea.firstChild) {
-    stagingArea.removeChild(stagingArea.firstChild);
-  }
-  stagingArea.appendChild(image);
-  staged = image;
-}
-
-function rotate() {
-  if (!staged) return;
-  const rotation = Number(staged.style.transform.match(/\d+(?=deg)/)) % 360;
-  staged.style.transform = `rotate(${rotation + 90}deg)`;
-}
-
-function clearPlacedImages() {
-  const children = Array.from(board1.children);
-  for (const node of children) {
-    if (node.classList.contains('placed-img-wrapper')) {
-      node.remove();
-    } else {
-      node.classList.remove('highlight-placed');
-    }
-  }
-}
 
 function dragStart(e) {
   e.preventDefault();
@@ -246,7 +268,7 @@ function dragStart(e) {
     'mouseup',
     () => {
       document.removeEventListener('mousemove', boundDragMove);
-      (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('dragEnd', this);
+      (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEnd', this);
     },
     { once: true }
   );
@@ -263,8 +285,9 @@ function dragMove(e) {
     endY: bound.bottom,
   };
 
-  (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('dragEvent', positionData);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEvent', positionData);
 }
+
 
 
 /***/ }),
@@ -467,6 +490,57 @@ function computerPlayerFactory(homeBoard, opponentBoard) {
   }
 
   return { attack, placeAllShips, isComputer }
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/rotatable.js":
+/*!**************************!*\
+  !*** ./src/rotatable.js ***!
+  \**************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "adjustForRotation": () => (/* binding */ adjustForRotation),
+/* harmony export */   "rotate": () => (/* binding */ rotate),
+/* harmony export */   "setStagedImage": () => (/* binding */ setStagedImage)
+/* harmony export */ });
+const rotateButton = document.querySelector('.rotate');
+rotateButton.addEventListener('click', rotate);
+
+let currentStagedImage;
+
+function rotate() {
+  if (!currentStagedImage) return;
+  const rotation = Number(currentStagedImage.style.transform.match(/\d+(?=deg)/)) % 360;
+  currentStagedImage.style.transform = `rotate(${rotation + 90}deg)`;
+}
+
+function setStagedImage(current) {
+  currentStagedImage = current;
+}
+
+function adjustForRotation(draggedImage, newImage, wrapper) {
+  const rotation = Number(draggedImage.style.transform.match(/\d+(?=deg)/)) % 360;
+  if (!rotation) return;
+  switch (rotation) {
+    case 90:
+      newImage.style.transform = `translateX(${newImage.style.height}) rotate(${rotation}deg)`;
+      break;
+    case 180:
+      newImage.style.transform = `translateY(100%) translateX(100%) rotate(${rotation}deg)`;
+      break;
+    case 270:
+      newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
+  }
+  if (rotation !== 180) {
+    wrapper.style.height = newImage.style.width;
+    [draggedImage.spanY, draggedImage.spanX] = [draggedImage.spanX, draggedImage.spanY];
+  }
 }
 
 
