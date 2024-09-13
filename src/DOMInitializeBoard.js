@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
   board.cells = [];
   for (let i = 0; i < rows * rows; i++) {
