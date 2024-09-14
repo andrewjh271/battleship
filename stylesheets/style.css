@@ -15,9 +15,10 @@ html {
 }
 
 .container {
+  height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 110px 420px;
+  grid-template-rows: 100px 1fr;
 }
 
 .board {
@@ -28,7 +29,7 @@ html {
   display: inline-grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  grid-row: span 2;
+  grid-row-start: 2;
 }
 .board .cell {
   background-color: white;
@@ -43,6 +44,10 @@ html {
   opacity: 0.3;
 }
 
+.board-setup-container {
+  grid-row-start: 2;
+}
+
 .preview-container {
   height: 150px;
   margin-top: 30px;
@@ -50,10 +55,25 @@ html {
 
 .img-preview {
   max-height: 100%;
-  max-width: 100%;
+  margin-right: 5px;
 }
 .img-preview:hover {
   cursor: pointer;
+}
+.img-preview#trumpet, .img-preview#violin, .img-preview#clarinet, .img-preview#flute {
+  max-height: 60%;
+}
+.img-preview#bassoon {
+  max-height: 80%;
+}
+.img-preview#piccolo {
+  max-height: 35%;
+}
+.img-preview#horn {
+  max-height: 45%;
+}
+.img-preview#trombone {
+  max-height: 96%;
 }
 
 .staging-area {
@@ -74,6 +94,10 @@ html {
   cursor: grab;
 }
 
+.grabbing {
+  cursor: grabbing !important;
+}
+
 .placed-img {
   object-fit: contain;
   padding: 5px;
@@ -84,10 +108,6 @@ html {
   border: 0.5px solid black;
   background-color: white;
   overflow: hidden;
-}
-
-.grabbing {
-  cursor: grabbing !important;
 }
 
 .stretch {
