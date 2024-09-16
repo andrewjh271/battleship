@@ -1,4 +1,6 @@
 import shipFactory from './ship';
+import { find1DSets } from './1DSetFinder';
+import { find2DSets } from './2DSetFinder';
 
 export default function gameBoardFactory() {
   let totalShips = 0;
@@ -12,6 +14,9 @@ export default function gameBoardFactory() {
   }
 
   const isOccupied = (coords) => {
+    if (typeof coords[0] === 'number') {
+      return !!squares[coords[0]][coords[1]].ship;
+    }
     for (let i = 0; i < coords.length; i++) {
       const coord = coords[i];
       if (squares[coord[0]][coord[1]].ship) return true;
@@ -21,25 +26,9 @@ export default function gameBoardFactory() {
 
   const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > 9);
 
-  const inLine = (coords) => {
-    if (coords.every((coord) => coord[0] === coords[0][0])) {
-      // horizontal
-      coords.sort((a, b) => a[1] - b[1]);
-      return coords.every((coord, index) => index === 0 || coord[1] - coords[index - 1][1] === 1);
-    }
-    if (coords.every((coord) => coord[1] === coords[0][1])) {
-      // vertical
-      coords.sort((a, b) => a[0] - b[0]);
-      return coords.every((coord, index) => index === 0 || coord[0] - coords[index - 1][0] === 1);
-    }
-    return false;
-  };
-
   const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
     if (isOccupied(coords)) throw new Error('Ships cannot be on top of ships');
-    if (!inLine(coords))
-      throw new Error('Ships must be placed vertically or horizontally in an unbroken line');
 
     const newShip = shipFactory(coords.length, name);
     coords.forEach((coord) => {
@@ -62,50 +51,13 @@ export default function gameBoardFactory() {
     return totalShips === shipsSunk;
   }
 
-  function findSets(length) {
-    if (length === 1) return emptySquares();
-    let sets = [];
-    for (let i = 0; i < squares.length; i++) {
-      const horizontal = [];
-      const vertical = [];
-      for (let j = 0; j < squares.length; j++) {
-        horizontal.push([j, i]);
-        vertical.push([i, j]);
-      }
-      sets = [
-        ...sets,
-        ...findSetsFromRow(horizontal, length),
-        ...findSetsFromRow(vertical, length),
-      ];
+  // find1DSets is a faster algorithm for finding sets with width or length equal to 1
+  function findSets(x, y = 1) {
+    if (x === 1 || y === 1) {
+      const length = x === 1 ? y : x;
+      return find1DSets(this, length);
     }
-    return sets;
-  }
-
-  function findSetsFromRow(row, length) {
-    let lft = 0;
-    let rt = 1;
-    const sets = [];
-
-    while (rt < row.length) {
-      if (squares[row[lft][0]][row[lft][1]].ship) {
-        lft = rt;
-        rt += 1;
-      } else if (squares[row[rt][0]][row[rt][1]].ship) {
-        lft = rt + 1;
-        rt += 2;
-      } else if (rt - lft + 1 === length) {
-        const set = [];
-        for (let j = lft; j <= rt; j++) {
-          set.push(row[j]);
-        }
-        sets.push(set);
-        lft++;
-        rt++;
-      } else {
-        rt++;
-      }
-    }
-    return sets;
+    return find2DSets(this, x, y);
   }
 
   function emptySquares() {
@@ -120,5 +72,16 @@ export default function gameBoardFactory() {
     return set;
   }
 
-  return { squares, placeShip, receiveAttack, gameOver, findSets };
+  return {
+    squares,
+    findSets,
+    get size() {
+      return squares.length;
+    },
+    isOccupied,
+    placeShip,
+    receiveAttack,
+    gameOver,
+    emptySquares,
+  };
 }
