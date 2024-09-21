@@ -11,8 +11,8 @@ function initialize(p1, p2) {
 
 function start(p1, p2) {
   const [player1, player2, gameBoard1, gameBoard2] = initialize(p1, p2);
-  player1.placeAllShips();
-  player2.placeAllShips();
+  player1.setup();
+  player2.setup();
   const result = play(player1, player2, gameBoard1, gameBoard2);
   return result;
 }

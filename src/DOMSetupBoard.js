@@ -1,5 +1,5 @@
 import * as imageGenerator from './imageGenerator';
-import { on } from './observer';
+import { on, emit } from './observer';
 import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
 
@@ -14,8 +14,13 @@ clearButton.addEventListener('click', clearPlacedImages);
 let currentBoard;
 function setupBoard(board) {
   // show setupContainer, configure container
+  console.log(board);
   currentBoard = board;
 }
+
+const setBoardButton = document.querySelector('.set-board');
+setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
+// not sure this should be set to once — not set again for player 2
 
 function showStagedImage() {
   const image = imageGenerator[this.id]();

@@ -29,16 +29,19 @@ describe('placing ships', () => {
 
   test('computers place all ships at once', () => {
     const homeBoard = gameBoardFactory();
-    const computer = computerPlayerFactory(homeBoard);
-    computer.placeAllShips();
-    let totalShipLength = 0;
+    const DOMBoard = { 
+      placeSetImages() {}
+    }
+    const computer = computerPlayerFactory(homeBoard, null, DOMBoard );
+    computer.setup();
+    let totalShipArea = 0;
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
         if (homeBoard.squares[i][j].ship) {
-          totalShipLength++;
+          totalShipArea++;
         }
       }
     }
-    expect(totalShipLength).toBe(17);
+    expect(totalShipArea).toBe(37);
   })
 })

@@ -1,5 +1,6 @@
-export default function shipFactory(length, name) {
+export default function shipFactory(length, name, coordinateSet) {
   let hits = 0;
+  const coords = coordinateSet;
   const hit = () => {
     if (hits < length) {
       hits++;
@@ -8,5 +9,5 @@ export default function shipFactory(length, name) {
     }
   };
   const isSunk = () => hits === length;
-  return { hit, isSunk, name };
+  return { hit, isSunk, name, coords };
 }

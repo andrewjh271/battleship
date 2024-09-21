@@ -1,16 +1,35 @@
 import shipFactory from './ship';
 import { find1DSets } from './1DSetFinder';
 import { find2DSets } from './2DSetFinder';
+import { getShipData } from './DOMAdapter';
+import { on, off, emit } from './observer';
 
 export default function gameBoardFactory() {
   let totalShips = 0;
   let shipsSunk = 0;
+  const placedShips = [];
   const squares = [];
   for (let i = 0; i < 10; i++) {
     squares[i] = [];
     for (let j = 0; j < 10; j++) {
       squares[i][j] = {};
     }
+  }
+
+  function setPosition(DOMBoard) {
+    const ships = getShipData(DOMBoard);
+    // console.log(ships);
+    Object.entries(ships).forEach(ship => {
+      this.placeShip(ship[1], ship[0]);
+    })
+    // console.log(this.squares);
+    off('setPosition', setPosition);
+  }
+
+  function listenForPosition() {
+    console.log(this);
+    console.log('listenForPosition called');
+    on('setPosition', setPosition.bind(this));
   }
 
   const isOccupied = (coords) => {
@@ -30,11 +49,12 @@ export default function gameBoardFactory() {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
     if (isOccupied(coords)) throw new Error('Ships cannot be on top of ships');
 
-    const newShip = shipFactory(coords.length, name);
+    const newShip = shipFactory(coords.length, name, coords);
     coords.forEach((coord) => {
       squares[coord[0]][coord[1]].ship = newShip;
     });
     totalShips++;
+    placedShips.push(newShip);
   };
 
   function receiveAttack(coords) {
@@ -83,5 +103,7 @@ export default function gameBoardFactory() {
     receiveAttack,
     gameOver,
     emptySquares,
+    listenForPosition,
+    placedShips
   };
 }

@@ -1,4 +1,5 @@
-function humanPlayerFactory(homeBoard, opponentBoard) {
+function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
+
   function attack(coords) {
     const coordinates = coords || getCoords();
     opponentBoard.receiveAttack(coordinates);
@@ -12,26 +13,29 @@ function humanPlayerFactory(homeBoard, opponentBoard) {
     homeBoard.placeShip(coords);
   }
 
-  // function placeAllShips() {
-  //   while (remainingShips)
-  //     get name and coordinates of ship from User/DOM
-  //     placeShip
-  // }
+  function setup() {
+    DOMBoard.setupBoard();
+    homeBoard.listenForPosition();
+  }
 
   function isComputer() {
     return false;
   }
 
-  return { attack, placeShip, isComputer };
+  return { attack, placeShip, isComputer, setup };
 }
 
-function computerPlayerFactory(homeBoard, opponentBoard) {
+function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   const ships = {
-    'Carrier': 5,
-    'Battleship': 4,
-    'Destroyer': 3,
-    'Submarine': 3,
-    'Patrol Boat': 2
+    'flute': [1, 3],
+    'trombone': [1, 5],
+    'clarinet': [1, 3],
+    'violin': [1, 3],
+    'bassoon': [1, 4],
+    'cello': [2, 5],
+    'horn': [2, 2],
+    'piccolo': [1, 2],
+    'trumpet': [1, 3]
   }
 
   const size = 10;
@@ -55,17 +59,19 @@ function computerPlayerFactory(homeBoard, opponentBoard) {
     opponentBoard.receiveAttack(move);
   }
 
-  function placeAllShips() {
+  function setup() {
     Object.entries(ships).forEach(ship => {
       const name = ship[0];
-      const length = ship[1];
-      const set = homeBoard.findSets(length);
+      const dimensions = ship[1];
+      const set = homeBoard.findSets(...dimensions);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     })
+    DOMBoard.placeSetImages(homeBoard);
   }
 
-  return { attack, placeAllShips, isComputer }
+
+  return { attack, setup, isComputer }
 }
 
 export { humanPlayerFactory, computerPlayerFactory };
