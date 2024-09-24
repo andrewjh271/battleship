@@ -60,6 +60,7 @@ function findSetsFromRow(row, length, board) {
 
 
 
+
 /***/ }),
 
 /***/ "./src/2DSetFinder.js":
@@ -130,7 +131,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getShipData": () => (/* binding */ getShipData)
 /* harmony export */ });
 function getShipData(DOMboard) {
-  const result = Array.from(DOMboard.children)
+  return Array.from(DOMboard.children)
     .filter((element) => element.classList.contains('placed-img-wrapper'))
     .map((element) => {
       const [rowStart, colStart, rowSpan, colSpan] = element.style.gridArea
@@ -146,9 +147,6 @@ function getShipData(DOMboard) {
       return object;
     })
     .reduce((object, entry) => ({ ...object, ...entry }), {});
-
-  // console.log(result);
-  return result;
 }
 
 function getCoordinates(xStart, xEnd, yStart, yEnd) {
@@ -179,10 +177,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DOMInitializeBoard */ "./src/DOMInitializeBoard.js");
 /* harmony import */ var _DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DOMSetupBoard */ "./src/DOMSetupBoard.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
-/* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
+/* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
 /* eslint-disable no-param-reassign */
-
 
 
 
@@ -212,12 +208,12 @@ function boardFactory(id, ROWS) {
   }
 
   function updateBoard(gameboard) {
-    gameboard.squares.forEach(square => {
+    gameboard.squares.forEach((square) => {
       console.log(square);
       // if square.ship add .occupied
       // if square.ship.isSunk() add .sunk
       // if square.attacked add .attacked
-    })
+    });
   }
 
   function setupBoard() {
@@ -226,46 +222,38 @@ function boardFactory(id, ROWS) {
 
   function placeSetImages(objectBoard) {
     // places on DOMBoard(this) all images from board object
-    // duplication from DOMSetupBoard#placeImage
-    objectBoard.placedShips.forEach(ship => {
-      console.log(ship);
-      const imageWrapper = document.createElement('div');
-      imageWrapper.classList.add('placed-img-wrapper');
-      const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_3__[ship.name]();
-      image.classList.add('placed-img');
+    objectBoard.placedShips.forEach((ship) => {
+      const image = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateImage)(ship.name);
+      const imageWrapper = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateWrapper)();
       setPosition(image, imageWrapper, ship.coords);
       addPlacedClass(ship.coords);
       imageWrapper.appendChild(image);
       board.appendChild(imageWrapper);
-    })
+    });
   }
 
   function setPosition(image, wrapper, set) {
-    const rowStart = set.reduce((min, coord) => coord[1] < min ? coord[1] : min, 100) + 1;
-    const rowSpan = set.reduce((max, coord) => coord[1] > max ? coord [1] : max, -100) + 2 - rowStart;
-  
-    const colStart = set.reduce((min, coord) => coord[0] < min ? coord[0] : min, 100) + 1;
-    const colSpan = set.reduce((max, coord) => coord[0] > max ? coord [0] : max, -100) + 2 - colStart;
-    
-    console.log(rowStart, rowSpan, colStart, colSpan);
+    const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
+    const rowSpan =
+      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
+    const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
+    const colSpan =
+      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
+
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
-    // const gridArea =  `grid-area: ${rowStart} / ${colStart} / span ${rowSpan} / span ${colSpan}`
-    // console.log(gridArea);
-    // wrapper.style.gridArea = gridArea;
-
     wrapper.style.gridRow = `${rowStart} / span ${rowSpan}`;
     wrapper.style.gridColumn = `${colStart} / span ${colSpan}`;
   }
 
   function addPlacedClass(set) {
-    set.forEach(coords => {
-      board.cells[(0,_coordinates__WEBPACK_IMPORTED_MODULE_4__.coordinatesToIndex)(coords)].classList.add('highlight-placed');
-    })
+    set.forEach((coords) => {
+      board.cells[(0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.coordinatesToIndex)(coords)].classList.add('highlight-placed');
+    });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages }
+  return { setOffense, setDefense, setupBoard, placeSetImages };
 }
 
 
@@ -281,60 +269,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "showBoards": () => (/* binding */ showBoards)
 /* harmony export */ });
-/* harmony import */ var _DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DOMInitializeBoard */ "./src/DOMInitializeBoard.js");
-/* harmony import */ var _DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DOMSetupBoard */ "./src/DOMSetupBoard.js");
-/* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
-/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./game */ "./src/game.js");
-/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-// import { humanPlayerFactory, computerPlayerFactory } from './player';
-
-
-
-
-
-
-const ROWS = 10;
-
 // const startButton = document.querySelector('start-game');
 // startButton.addEventListener('click', setupBoard1)
 
 function showBoards() {
-  const board1 = document.querySelector('#board1')
-  const board2 = document.querySelector('#board2')
+  const board1 = document.querySelector('#board1');
+  const board2 = document.querySelector('#board2');
   const setupContainer = document.querySelector('.board-setup-container');
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
   setupContainer.classList.add('hidden');
 }
 
-function setupBoard1() {
+// function handleAttack(e) {
+//   const { index } = e.target.dataset;
+//   if (!index) return;
+//   console.log(indexToCoordinates(index));
+// }
 
-}
-
-// const board1 = initializeBoard('board1', ROWS);
-// setupBoard(board1);
-
-function recordBoardPositions() {
-  (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('positionSet', board1)
-}
-
-
-
-function handleAttack(e) {
-  const { index } = e.target.dataset;
-  if (!index) return;
-  console.log((0,_coordinates__WEBPACK_IMPORTED_MODULE_2__.indexToCoordinates)(index));
-}
-
-function listenForAttack(board) {
-  board.addEventListener('click', handleAttack);
-}
+// function listenForAttack(board) {
+//   board.addEventListener('click', handleAttack);
+// }
 
 // function unListenForAttack(board) {
 //   board.removeEventListener('click', handleAttack);
 // }
-
-listenForAttack(board1);
 
 
 
@@ -366,11 +325,12 @@ function createGrid(rows, board) {
 }
 
 function initializeBoard(id, rows) {
-  const board = document.getElementById(id)
+  const board = document.getElementById(id);
   board.numRows = rows;
   createGrid(rows, board);
   return board;
 }
+
 
 
 
@@ -384,6 +344,8 @@ function initializeBoard(id, rows) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "newTemplateImage": () => (/* binding */ newTemplateImage),
+/* harmony export */   "newTemplateWrapper": () => (/* binding */ newTemplateWrapper),
 /* harmony export */   "setupBoard": () => (/* binding */ setupBoard)
 /* harmony export */ });
 /* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
@@ -394,10 +356,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// import function showSetup() from DOMController that shows/hides correct elements
 
-// const setupContainer = document.querySelector('.board-setup-container');
 const stagingArea = document.querySelector('.staging-area');
 const previews = document.querySelectorAll('.img-preview');
+const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
@@ -405,14 +368,10 @@ clearButton.addEventListener('click', clearPlacedImages);
 
 let currentBoard;
 function setupBoard(board) {
-  // show setupContainer, configure container
-  console.log(board);
+  // call showSetup(board)
   currentBoard = board;
+  setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('setPosition', currentBoard), { once: true });
 }
-
-const setBoardButton = document.querySelector('.set-board');
-setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('setPosition', currentBoard), { once: true });
-// not sure this should be set to once — not set again for player 2
 
 function showStagedImage() {
   const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
@@ -422,18 +381,18 @@ function showStagedImage() {
     stagingArea.removeChild(stagingArea.firstChild);
   }
   stagingArea.appendChild(image);
-  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.setStagedImage)(image);
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.setStagedImage)(image); // for rotation
 }
 
 function clearPlacedImages() {
   const children = Array.from(currentBoard.children);
-  children.forEach(element => {
+  children.forEach((element) => {
     if (element.classList.contains('placed-img-wrapper')) {
       element.remove();
     } else {
       element.classList.remove('highlight-placed');
     }
-  })
+  });
 }
 
 (0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEvent', highlightHoveredCells);
@@ -475,16 +434,13 @@ function handleRelease(element) {
 }
 
 function placeImage(element) {
-  const imageWrapper = document.createElement('div');
-  imageWrapper.classList.add('placed-img-wrapper');
-  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[element.type]();
-  image.classList.add('placed-img');
-
+  const image = newTemplateImage(element.type);
+  const imageWrapper = newTemplateWrapper();
   const startingCell = currentBoard.cells.findIndex((cell) =>
     cell.classList.contains('highlight-hovered')
   );
 
-  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.adjustForRotation)(element, image, imageWrapper);
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.adjustForRotation)(element, image);
   imageWrapper.style.gridRow = `${Math.floor(startingCell / currentBoard.numRows) + 1} / span ${
     element.spanY
   }`;
@@ -494,6 +450,18 @@ function placeImage(element) {
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
+}
+
+function newTemplateImage(type) {
+  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[type]();
+  image.classList.add('placed-img');
+  return image;
+}
+
+function newTemplateWrapper() {
+  const imageWrapper = document.createElement('div');
+  imageWrapper.classList.add('placed-img-wrapper');
+  return imageWrapper;
 }
 
 function removeDraggedHighlights() {
@@ -597,55 +565,6 @@ function resetDraggedImage(element) {
 
 
 
-/***/ }),
-
-/***/ "./src/game.js":
-/*!*********************!*\
-  !*** ./src/game.js ***!
-  \*********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "initialize": () => (/* binding */ initialize),
-/* harmony export */   "start": () => (/* binding */ start)
-/* harmony export */ });
-/* harmony import */ var _gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameboard */ "./src/gameboard.js");
-/* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./player */ "./src/player.js");
-
-
-
-function initialize(p1, p2) {
-  const board1 = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  const board2 = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  const player1 = p1 === 'human' ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)() : (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board1, board2);
-  const player2 = p2 === 'human' ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)() : (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1);
-  return [player1, player2, board1, board2];
-}
-
-function start(p1, p2) {
-  const [player1, player2, gameBoard1, gameBoard2] = initialize(p1, p2);
-  player1.setup();
-  player2.setup();
-  const result = play(player1, player2, gameBoard1, gameBoard2);
-  return result;
-}
-
-function play(player1, player2, gameBoard1, gameBoard2) {
-  while (true) {
-    player1.attack();
-    if (gameBoard2.gameOver()) {
-      return 'Player 1 Wins';
-    }
-    player2.attack();
-    if (gameBoard1.gameOver()) {
-      return 'Player 2 Wins';
-    }
-  }
-}
-
-
-
 
 /***/ }),
 
@@ -682,20 +601,18 @@ function gameBoardFactory() {
     }
   }
 
-  function setPosition(DOMBoard) {
-    const ships = (0,_DOMAdapter__WEBPACK_IMPORTED_MODULE_3__.getShipData)(DOMBoard);
-    // console.log(ships);
-    Object.entries(ships).forEach(ship => {
-      this.placeShip(ship[1], ship[0]);
-    })
-    // console.log(this.squares);
-    ;(0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', setPosition);
+  let boundSetPosition;
+  function listenForPosition() {
+    boundSetPosition = setPosition.bind(this);
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('setPosition', boundSetPosition);
   }
 
-  function listenForPosition() {
-    console.log(this);
-    console.log('listenForPosition called');
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('setPosition', setPosition.bind(this));
+  function setPosition(DOMBoard) {
+    const ships = (0,_DOMAdapter__WEBPACK_IMPORTED_MODULE_3__.getShipData)(DOMBoard);
+    Object.entries(ships).forEach((ship) => {
+      this.placeShip(ship[1], ship[0]);
+    });
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', boundSetPosition);
   }
 
   const isOccupied = (coords) => {
@@ -759,18 +676,18 @@ function gameBoardFactory() {
   }
 
   return {
-    squares,
     findSets,
-    get size() {
-      return squares.length;
-    },
     isOccupied,
     placeShip,
     receiveAttack,
     gameOver,
     emptySquares,
     listenForPosition,
-    placedShips
+    placedShips,
+    squares,
+    get size() {
+      return squares.length;
+    },
   };
 }
 
@@ -788,6 +705,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./player */ "./src/player.js");
 /* harmony import */ var _DOMBoard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DOMBoard */ "./src/DOMBoard.js");
 /* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+
 
 
 
@@ -795,7 +714,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const startButton = document.querySelector('.start-game');
-startButton.addEventListener('click', beginSetup)
+startButton.addEventListener('click', beginSetup);
 const setBoardButton = document.querySelector('.set-board');
 // mouse events need to be disabled if not valid
 
@@ -806,7 +725,7 @@ let board1; // eventually declare inside beginSetup?
 let board2; // eventually declare inside beginSetup?
 
 function beginSetup() {
-  console.log('setup begins...')
+  console.log('setup begins...');
   board1 = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
   board2 = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
   const DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.boardFactory)('board1', 10);
@@ -815,16 +734,15 @@ function beginSetup() {
   player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
 
   player1.setup();
-  setBoardButton.addEventListener('click', player2.setup, {once: true});
-  setBoardButton.addEventListener('click', finishSetup, {once: true});
-  
+  setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
 
 function finishSetup() {
+  player2.setup();
   if (player2.isComputer()) {
     startGame();
   } else {
-    setBoardButton.addEventListener('click', startGame, {once: true});
+    setBoardButton.addEventListener('click', startGame, { once: true });
   }
 }
 
@@ -835,6 +753,8 @@ function startGame() {
   console.log('board2...');
   console.log(board2);
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
+
+  (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('setPosition', 34); // testing that this has been unsubscribed
 }
 
 
@@ -970,7 +890,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "humanPlayerFactory": () => (/* binding */ humanPlayerFactory)
 /* harmony export */ });
 function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
-
   function attack(coords) {
     const coordinates = coords || getCoords();
     opponentBoard.receiveAttack(coordinates);
@@ -998,16 +917,16 @@ function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
 
 function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   const ships = {
-    'flute': [1, 3],
-    'trombone': [1, 5],
-    'clarinet': [1, 3],
-    'violin': [1, 3],
-    'bassoon': [1, 4],
-    'cello': [2, 5],
-    'horn': [2, 2],
-    'piccolo': [1, 2],
-    'trumpet': [1, 3]
-  }
+    flute: [1, 3],
+    trombone: [1, 5],
+    clarinet: [1, 3],
+    violin: [1, 3],
+    bassoon: [1, 4],
+    cello: [2, 5],
+    horn: [2, 2],
+    piccolo: [1, 2],
+    trumpet: [1, 3],
+  };
 
   const size = 10;
   const possibleMoves = [];
@@ -1031,18 +950,17 @@ function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   }
 
   function setup() {
-    Object.entries(ships).forEach(ship => {
+    Object.entries(ships).forEach((ship) => {
       const name = ship[0];
       const dimensions = ship[1];
       const set = homeBoard.findSets(...dimensions);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
-    })
+    });
     DOMBoard.placeSetImages(homeBoard);
   }
 
-
-  return { attack, setup, isComputer }
+  return { attack, setup, isComputer };
 }
 
 
@@ -1078,7 +996,7 @@ function setStagedImage(current) {
   currentStagedImage = current;
 }
 
-function adjustForRotation(draggedImage, newImage, wrapper) {
+function adjustForRotation(draggedImage, newImage) {
   const rotation = Number(draggedImage.style.transform.match(/\d+(?=deg)/)) % 360;
   if (!rotation) return;
   switch (rotation) {
@@ -1092,7 +1010,6 @@ function adjustForRotation(draggedImage, newImage, wrapper) {
       newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
   }
   if (rotation !== 180) {
-    wrapper.style.height = newImage.style.width;
     [draggedImage.spanY, draggedImage.spanX] = [draggedImage.spanX, draggedImage.spanY];
   }
 }
