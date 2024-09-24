@@ -2,10 +2,11 @@ import * as imageGenerator from './imageGenerator';
 import { on, emit } from './observer';
 import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
+// import function showSetup() from DOMController that shows/hides correct elements
 
-// const setupContainer = document.querySelector('.board-setup-container');
 const stagingArea = document.querySelector('.staging-area');
 const previews = document.querySelectorAll('.img-preview');
+const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
@@ -13,14 +14,10 @@ clearButton.addEventListener('click', clearPlacedImages);
 
 let currentBoard;
 function setupBoard(board) {
-  // show setupContainer, configure container
-  console.log(board);
+  // call showSetup(board)
   currentBoard = board;
+  setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
 }
-
-const setBoardButton = document.querySelector('.set-board');
-setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
-// not sure this should be set to once — not set again for player 2
 
 function showStagedImage() {
   const image = imageGenerator[this.id]();
@@ -30,18 +27,18 @@ function showStagedImage() {
     stagingArea.removeChild(stagingArea.firstChild);
   }
   stagingArea.appendChild(image);
-  setStagedImage(image);
+  setStagedImage(image); // for rotation
 }
 
 function clearPlacedImages() {
   const children = Array.from(currentBoard.children);
-  children.forEach(element => {
+  children.forEach((element) => {
     if (element.classList.contains('placed-img-wrapper')) {
       element.remove();
     } else {
       element.classList.remove('highlight-placed');
     }
-  })
+  });
 }
 
 on('dragEvent', highlightHoveredCells);
@@ -83,16 +80,13 @@ function handleRelease(element) {
 }
 
 function placeImage(element) {
-  const imageWrapper = document.createElement('div');
-  imageWrapper.classList.add('placed-img-wrapper');
-  const image = imageGenerator[element.type]();
-  image.classList.add('placed-img');
-
+  const image = newTemplateImage(element.type);
+  const imageWrapper = newTemplateWrapper();
   const startingCell = currentBoard.cells.findIndex((cell) =>
     cell.classList.contains('highlight-hovered')
   );
 
-  adjustForRotation(element, image, imageWrapper);
+  adjustForRotation(element, image);
   imageWrapper.style.gridRow = `${Math.floor(startingCell / currentBoard.numRows) + 1} / span ${
     element.spanY
   }`;
@@ -102,6 +96,18 @@ function placeImage(element) {
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
+}
+
+function newTemplateImage(type) {
+  const image = imageGenerator[type]();
+  image.classList.add('placed-img');
+  return image;
+}
+
+function newTemplateWrapper() {
+  const imageWrapper = document.createElement('div');
+  imageWrapper.classList.add('placed-img-wrapper');
+  return imageWrapper;
 }
 
 function removeDraggedHighlights() {
@@ -117,4 +123,4 @@ function updateHighlights() {
   });
 }
 
-export { setupBoard };
+export { setupBoard, newTemplateImage, newTemplateWrapper };

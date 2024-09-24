@@ -1,5 +1,5 @@
 function getShipData(DOMboard) {
-  const result = Array.from(DOMboard.children)
+  return Array.from(DOMboard.children)
     .filter((element) => element.classList.contains('placed-img-wrapper'))
     .map((element) => {
       const [rowStart, colStart, rowSpan, colSpan] = element.style.gridArea
@@ -15,9 +15,6 @@ function getShipData(DOMboard) {
       return object;
     })
     .reduce((object, entry) => ({ ...object, ...entry }), {});
-
-  // console.log(result);
-  return result;
 }
 
 function getCoordinates(xStart, xEnd, yStart, yEnd) {

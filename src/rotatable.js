@@ -14,7 +14,7 @@ function setStagedImage(current) {
   currentStagedImage = current;
 }
 
-function adjustForRotation(draggedImage, newImage, wrapper) {
+function adjustForRotation(draggedImage, newImage) {
   const rotation = Number(draggedImage.style.transform.match(/\d+(?=deg)/)) % 360;
   if (!rotation) return;
   switch (rotation) {
@@ -28,7 +28,6 @@ function adjustForRotation(draggedImage, newImage, wrapper) {
       newImage.style.transform = `translateY(${newImage.style.width}) rotate(${rotation}deg)`;
   }
   if (rotation !== 180) {
-    wrapper.style.height = newImage.style.width;
     [draggedImage.spanY, draggedImage.spanX] = [draggedImage.spanX, draggedImage.spanY];
   }
 }

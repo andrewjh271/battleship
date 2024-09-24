@@ -41,4 +41,4 @@ function resetDraggedImage(element) {
   element.style.left = '';
 }
 
-export { dragStart, resetDraggedImage }
+export { dragStart, resetDraggedImage };

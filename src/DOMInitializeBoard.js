@@ -13,10 +13,10 @@ function createGrid(rows, board) {
 }
 
 function initializeBoard(id, rows) {
-  const board = document.getElementById(id)
+  const board = document.getElementById(id);
   board.numRows = rows;
   createGrid(rows, board);
   return board;
 }
 
-export { initializeBoard }
+export { initializeBoard };

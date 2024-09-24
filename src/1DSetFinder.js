@@ -44,4 +44,4 @@ function findSetsFromRow(row, length, board) {
   return sets;
 }
 
-export { find1DSets }
+export { find1DSets };

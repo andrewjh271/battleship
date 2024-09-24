@@ -2,7 +2,7 @@ import shipFactory from './ship';
 import { find1DSets } from './1DSetFinder';
 import { find2DSets } from './2DSetFinder';
 import { getShipData } from './DOMAdapter';
-import { on, off, emit } from './observer';
+import { on, off } from './observer';
 
 export default function gameBoardFactory() {
   let totalShips = 0;
@@ -16,20 +16,18 @@ export default function gameBoardFactory() {
     }
   }
 
-  function setPosition(DOMBoard) {
-    const ships = getShipData(DOMBoard);
-    // console.log(ships);
-    Object.entries(ships).forEach(ship => {
-      this.placeShip(ship[1], ship[0]);
-    })
-    // console.log(this.squares);
-    off('setPosition', setPosition);
+  let boundSetPosition;
+  function listenForPosition() {
+    boundSetPosition = setPosition.bind(this);
+    on('setPosition', boundSetPosition);
   }
 
-  function listenForPosition() {
-    console.log(this);
-    console.log('listenForPosition called');
-    on('setPosition', setPosition.bind(this));
+  function setPosition(DOMBoard) {
+    const ships = getShipData(DOMBoard);
+    Object.entries(ships).forEach((ship) => {
+      this.placeShip(ship[1], ship[0]);
+    });
+    off('setPosition', boundSetPosition);
   }
 
   const isOccupied = (coords) => {
@@ -93,17 +91,17 @@ export default function gameBoardFactory() {
   }
 
   return {
-    squares,
     findSets,
-    get size() {
-      return squares.length;
-    },
     isOccupied,
     placeShip,
     receiveAttack,
     gameOver,
     emptySquares,
     listenForPosition,
-    placedShips
+    placedShips,
+    squares,
+    get size() {
+      return squares.length;
+    },
   };
 }
