@@ -13,7 +13,7 @@ previews.forEach((preview) => preview.addEventListener('click', showStagedImage)
 clearButton.addEventListener('click', clearPlacedImages);
 
 let currentBoard;
-function setupBoard(board) {
+function setupDOMBoard(board) {
   // call showSetup(board)
   currentBoard = board;
   setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
@@ -123,4 +123,4 @@ function updateHighlights() {
   });
 }
 
-export { setupBoard, newTemplateImage, newTemplateWrapper };
+export { setupDOMBoard, newTemplateImage, newTemplateWrapper };

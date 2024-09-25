@@ -1,94 +1,94 @@
 import { find2DSets } from '../src/2DSetFinder';
-import gameBoardFactory from '../src/gameboard';
+import boardFactory from '../src/board';
 
 describe('finds the correct number of sets on empty boards', () => {
-  let gameBoard;
+  let board;
   beforeAll(() => {
-    gameBoard = gameBoardFactory();
+    board = boardFactory();
   });
 
   test('2x2 object', () => {
-    expect(find2DSets(gameBoard, 2, 2).length).toBe(81);
+    expect(find2DSets(board, 2, 2).length).toBe(81);
   });
 
   test('4x4 object', () => {
-    expect(find2DSets(gameBoard, 4, 4).length).toBe(49);
+    expect(find2DSets(board, 4, 4).length).toBe(49);
   });
 
   test('5x2 object', () => {
-    expect(find2DSets(gameBoard, 5, 2).length).toBe(108);
+    expect(find2DSets(board, 5, 2).length).toBe(108);
   });
 
   test('5x4 object', () => {
-    expect(find2DSets(gameBoard, 5, 4).length).toBe(84);
+    expect(find2DSets(board, 5, 4).length).toBe(84);
   });
 
   test('5x3 object', () => {
-    expect(find2DSets(gameBoard, 5, 3).length).toBe(96);
+    expect(find2DSets(board, 5, 3).length).toBe(96);
   });
 
   test('5x1 object', () => {
-    expect(find2DSets(gameBoard, 5, 1).length).toBe(120);
+    expect(find2DSets(board, 5, 1).length).toBe(120);
   });
 
   test('1x2 object', () => {
-    expect(find2DSets(gameBoard, 1, 2).length).toBe(180);
+    expect(find2DSets(board, 1, 2).length).toBe(180);
   });
 });
 
 describe('returns an array of all valid sets of coordinates for ship of x and y dimensions', () => {
-  let gameBoard;
+  let board;
   beforeEach(() => {
-    gameBoard = gameBoardFactory();
+    board = boardFactory();
   });
 
   test('5x2 object', () => {
-    gameBoard.placeShip([
+    board.placeShip([
       [0, 5],
       [1, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [2, 3],
       [2, 4],
       [2, 5],
       [2, 6],
       [2, 7],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [3, 0],
       [3, 1],
       [3, 2],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 7],
       [4, 8],
       [4, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 2],
       [5, 2],
       [6, 2],
       [7, 2],
       [8, 2],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [6, 0],
       [7, 0],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 4],
       [5, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 6],
       [6, 6],
       [7, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [6, 8],
       [6, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [9, 3],
       [9, 4],
     ]);
@@ -120,7 +120,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
       ],
     ];
 
-    const result = find2DSets(gameBoard, 5, 2);
+    const result = find2DSets(board, 5, 2);
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
 
     expect(result.length).toBe(expectedContents.length);
@@ -128,37 +128,37 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
   });
 
   test('2x2 object', () => {
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 1],
       [2, 1],
       [3, 1],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 2],
       [1, 3],
       [1, 4],
       [1, 5],
       [1, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [2, 4],
       [3, 4],
       [2, 5],
       [3, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 4],
       [4, 5],
       [4, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 8],
       [2, 8],
       [3, 8],
       [4, 8],
       [5, 8],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 1],
       [5, 2],
       [5, 3],
@@ -168,18 +168,18 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
       [6, 3],
       [6, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [7, 6],
       [7, 7],
       [7, 8],
       [7, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 2],
       [8, 3],
       [8, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 7],
       [8, 8],
       [9, 7],
@@ -236,7 +236,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
         [9, 6],
       ],
     ];
-    const result = find2DSets(gameBoard, 2, 2);
+    const result = find2DSets(board, 2, 2);
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
 
     expect(result.length).toBe(expectedContents.length);
@@ -244,37 +244,37 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
   });
 
   test('2x3 object', () => {
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 1],
       [2, 1],
       [3, 1],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 2],
       [1, 3],
       [1, 4],
       [1, 5],
       [1, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [2, 4],
       [3, 4],
       [2, 5],
       [3, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 4],
       [4, 5],
       [4, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 8],
       [2, 8],
       [3, 8],
       [4, 8],
       [5, 8],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 1],
       [5, 2],
       [5, 3],
@@ -284,18 +284,18 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
       [6, 3],
       [6, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [7, 6],
       [7, 7],
       [7, 8],
       [7, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 2],
       [8, 3],
       [8, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 7],
       [8, 8],
       [9, 7],
@@ -328,7 +328,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
         [9, 1],
       ],
     ];
-    const result = find2DSets(gameBoard, 2, 3);
+    const result = find2DSets(board, 2, 3);
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
 
     expect(result.length).toBe(expectedContents.length);
@@ -336,36 +336,36 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
   });
 
   test('2x5 object', () => {
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 1],
       [2, 1],
       [3, 1],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 2],
       [1, 3],
       [1, 4],
       [1, 5],
       [1, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [2, 4],
       [3, 4],
       [2, 5],
       [3, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 4],
       [4, 5],
       [4, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 8],
       [2, 8],
       [3, 8],
       [4, 8],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 1],
       [5, 2],
       [5, 3],
@@ -375,18 +375,18 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
       [6, 3],
       [6, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [7, 6],
       [7, 7],
       [7, 8],
       [7, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 2],
       [8, 3],
       [8, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 7],
       [8, 8],
       [9, 7],
@@ -407,7 +407,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
         [6, 9],
       ],
     ];
-    const result = find2DSets(gameBoard, 2, 5);
+    const result = find2DSets(board, 2, 5);
     expect(result.length).toBe(expectedSet.length);
     expect(result).toEqual(expect.arrayContaining(expectedSet));
   });

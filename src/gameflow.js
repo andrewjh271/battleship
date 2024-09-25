@@ -1,6 +1,6 @@
-import gameBoardFactory from './gameboard';
+import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
-import { boardFactory } from './DOMBoard';
+import { DOMBoardFactory } from './DOMBoard';
 import { showBoards } from './DOMController';
 
 import { emit } from './observer';
@@ -18,10 +18,10 @@ let board2; // eventually declare inside beginSetup?
 
 function beginSetup() {
   console.log('setup begins...');
-  board1 = gameBoardFactory();
-  board2 = gameBoardFactory();
-  const DOMBoard1 = boardFactory('board1', 10);
-  const DOMBoard2 = boardFactory('board2', 10);
+  board1 = boardFactory();
+  board2 = boardFactory();
+  const DOMBoard1 = DOMBoardFactory('board1', 10);
+  const DOMBoard2 = DOMBoardFactory('board2', 10);
   player1 = humanPlayerFactory(board1, board2, DOMBoard1);
   player2 = computerPlayerFactory(board2, board1, DOMBoard2);
 

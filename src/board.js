@@ -4,7 +4,7 @@ import { find2DSets } from './2DSetFinder';
 import { getShipData } from './DOMAdapter';
 import { on, off } from './observer';
 
-export default function gameBoardFactory() {
+export default function boardFactory() {
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];

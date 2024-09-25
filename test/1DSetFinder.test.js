@@ -1,58 +1,58 @@
-import gameBoardFactory from '../src/gameboard';
+import boardFactory from '../src/board';
 import { find1DSets } from '../src/1DSetFinder';
 
 describe('randomly placing  ships', () => {
-  let gameBoard;
+  let board;
   beforeEach(() => {
-    gameBoard = gameBoardFactory();
+    board = boardFactory();
   });
   test('findSets returns an array of all valid coordinates for ship of length n', () => {
-    gameBoard.placeShip([
+    board.placeShip([
       [0, 5],
       [1, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [2, 3],
       [2, 4],
       [2, 5],
       [2, 6],
       [2, 7],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [3, 0],
       [3, 1],
       [3, 2],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 7],
       [4, 8],
       [4, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 2],
       [5, 2],
       [6, 2],
       [7, 2],
       [8, 2],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [6, 0],
       [7, 0],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 4],
       [5, 5],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [5, 6],
       [6, 6],
       [7, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [6, 8],
       [6, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [9, 3],
       [9, 4],
     ]);
@@ -159,79 +159,79 @@ describe('randomly placing  ships', () => {
     ];
 
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
-    const result = find1DSets(gameBoard, 5);
+    const result = find1DSets(board, 5);
 
     expect(result.length).toBe(expectedSet.length);
     expect(result).toEqual(expect.arrayContaining(expectedContents));
   });
 
   test('findSets returns an array of all valid coordinates for ship of length n', () => {
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 9],
       [5, 9],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 6],
       [5, 6],
       [6, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [6, 4],
       [7, 4],
       [8, 4],
       [9, 4],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [3, 3],
       [4, 3],
       [5, 3],
       [6, 3],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [3, 1],
       [4, 1],
       [5, 1],
       [6, 1],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [4, 0],
       [5, 0],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [0, 3],
       [0, 4],
       [0, 5],
       [0, 6],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 2],
       [1, 3],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [1, 7],
       [1, 8],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [2, 2],
       [2, 3],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [3, 5],
       [3, 6],
       [3, 7],
       [3, 8],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [7, 5],
       [7, 6],
       [7, 7],
       [7, 8],
     ]);
-    gameBoard.placeShip([
+    board.placeShip([
       [8, 2],
       [8, 3],
     ]);
-    gameBoard.placeShip([[9, 6]]);
+    board.placeShip([[9, 6]]);
 
     const expectedSet = [
       [
@@ -272,15 +272,15 @@ describe('randomly placing  ships', () => {
     ];
 
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
-    const result = find1DSets(gameBoard, 5);
+    const result = find1DSets(board, 5);
 
     expect(result.length).toBe(expectedSet.length);
     expect(result).toEqual(expect.arrayContaining(expectedContents));
   });
 
   test('findSets returns an array of all valid coordinates for ship of length n', () => {
-    gameBoard.placeShip([[0, 9]]);
-    expect(find1DSets(gameBoard, 2).length).toBe(178);
-    expect(find1DSets(gameBoard, 1).length).toBe(99);
+    board.placeShip([[0, 9]]);
+    expect(find1DSets(board, 2).length).toBe(178);
+    expect(find1DSets(board, 1).length).toBe(99);
   });
 });

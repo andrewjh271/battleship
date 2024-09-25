@@ -1,16 +1,16 @@
-import gameBoardFactory from '../src/gameboard';
+import boardFactory from '../src/board';
 import { humanPlayerFactory, computerPlayerFactory } from '../src/player';
 
 describe('attacking', () => {
   test('players can attack', () => {
-    const opponentBoard = gameBoardFactory();
+    const opponentBoard = boardFactory();
     const player = humanPlayerFactory(null, opponentBoard);
     player.attack([4, 4]);
     expect(opponentBoard.squares[4][4].attacked).toBe(true);
   });
 
   test('computers can randomly attack unoccupied squares', () => {
-    const opponentBoard = gameBoardFactory();
+    const opponentBoard = boardFactory();
     const computer = computerPlayerFactory(null, opponentBoard);
     for (let i = 0; i < 100; i++) {
       computer.attack();
@@ -21,7 +21,7 @@ describe('attacking', () => {
 
 describe('placing ships', () => {
   test('players can place ships', () => {
-    const homeBoard = gameBoardFactory();
+    const homeBoard = boardFactory();
     const player = humanPlayerFactory(homeBoard);
     player.placeShip([
       [3, 4],
@@ -33,7 +33,7 @@ describe('placing ships', () => {
   });
 
   test('computers place all ships at once', () => {
-    const homeBoard = gameBoardFactory();
+    const homeBoard = boardFactory();
     const DOMBoard = {
       placeSetImages() {},
     };

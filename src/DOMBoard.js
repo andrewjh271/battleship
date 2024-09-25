@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign */
-import { initializeBoard } from './DOMInitializeBoard';
-import { setupBoard as DOMSetup, newTemplateImage, newTemplateWrapper } from './DOMSetupBoard';
-import { on, off, emit } from './observer';
+import { initializeDOMBoard } from './DOMInitializeBoard';
+import { setupDOMBoard, newTemplateImage, newTemplateWrapper } from './DOMSetupBoard';
+import { on, off, emit } from './observer'
 import { coordinatesToIndex } from './coordinates';
 
-export function boardFactory(id, ROWS) {
-  const board = initializeBoard(id, ROWS);
+export function DOMBoardFactory(id, ROWS) {
+  const board = initializeDOMBoard(id, ROWS);
 
   function setOffense() {
     board.classList.remove('defense');
@@ -27,39 +27,37 @@ export function boardFactory(id, ROWS) {
     emit('attack', index);
   }
 
-  function updateBoard(gameboard) {
-    gameboard.squares.forEach((square) => {
+  function updateBoard(dataBoard) {
+    dataBoard.squares.forEach(square => {
       console.log(square);
       // if square.ship add .occupied
       // if square.ship.isSunk() add .sunk
       // if square.attacked add .attacked
-    });
+    })
   }
 
   function setupBoard() {
-    DOMSetup(board);
+    setupDOMBoard(board);
   }
 
-  function placeSetImages(objectBoard) {
-    // places on DOMBoard(this) all images from board object
-    objectBoard.placedShips.forEach((ship) => {
+  function placeSetImages(dataBoard) {
+    // places on DOMboard(board variable) all images from board object argument
+    dataBoard.placedShips.forEach(ship => {
       const image = newTemplateImage(ship.name);
       const imageWrapper = newTemplateWrapper();
       setPosition(image, imageWrapper, ship.coords);
       addPlacedClass(ship.coords);
       imageWrapper.appendChild(image);
       board.appendChild(imageWrapper);
-    });
+    })
   }
 
   function setPosition(image, wrapper, set) {
-    const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
-    const rowSpan =
-      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
-    const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
-    const colSpan =
-      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
-
+    const rowStart = set.reduce((min, coord) => coord[1] < min ? coord[1] : min, 100) + 1;
+    const rowSpan = set.reduce((max, coord) => coord[1] > max ? coord [1] : max, -100) + 2 - rowStart;
+    const colStart = set.reduce((min, coord) => coord[0] < min ? coord[0] : min, 100) + 1;
+    const colSpan = set.reduce((max, coord) => coord[0] > max ? coord [0] : max, -100) + 2 - colStart;
+    
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
@@ -68,10 +66,10 @@ export function boardFactory(id, ROWS) {
   }
 
   function addPlacedClass(set) {
-    set.forEach((coords) => {
+    set.forEach(coords => {
       board.cells[coordinatesToIndex(coords)].classList.add('highlight-placed');
-    });
+    })
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages };
+  return { setOffense, setDefense, setupBoard, placeSetImages }
 }
