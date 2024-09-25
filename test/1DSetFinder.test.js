@@ -158,7 +158,7 @@ describe('randomly placing  ships', () => {
       ],
     ];
 
-    const expectedContents = expectedSet.map(expected => expect.arrayContaining(expected));
+    const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
     const result = find1DSets(gameBoard, 5);
 
     expect(result.length).toBe(expectedSet.length);
@@ -271,7 +271,7 @@ describe('randomly placing  ships', () => {
       ],
     ];
 
-    const expectedContents = expectedSet.map(expected => expect.arrayContaining(expected));
+    const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
     const result = find1DSets(gameBoard, 5);
 
     expect(result.length).toBe(expectedSet.length);

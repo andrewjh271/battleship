@@ -11,5 +11,5 @@ test('initialize creates players and boards', () => {
 describe.skip('gameplay', () => {
   test('plays through a game', () => {
     expect(start()).toMatch(/Player [12] Wins/);
-  })
+  });
 });

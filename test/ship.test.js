@@ -25,4 +25,19 @@ test('determines whether a ship is sunk', () => {
 test('can have a name', () => {
   const ship = shipFactory(3, 'Submarine');
   expect(ship.name).toBe('Submarine');
-})
+});
+
+test('ships know their coordinates', () => {
+  const ship = shipFactory(4, 'A Great Ship', [
+    [3, 1],
+    [4, 1],
+    [5, 1],
+    [6, 1],
+  ]);
+  expect(ship.coords).toEqual([
+    [3, 1],
+    [4, 1],
+    [5, 1],
+    [6, 1],
+  ]);
+});

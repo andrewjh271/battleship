@@ -57,65 +57,6 @@ describe('placeShip', () => {
       ])
     ).toThrow('Ships cannot be placed off the board');
   });
-
-  describe.skip('ships must be placed vertically or horizontally in an unbroken line', () => {
-    const msg = 'Ships must be placed vertically or horizontally in an unbroken line';
-    test('ships must be placed vertically or horizontally', () => {
-      expect(() =>
-        gameBoard.placeShip([
-          [2, 1],
-          [3, 2],
-        ])
-      ).toThrow(msg);
-    });
-
-    test('horizontal ships cannot have gaps', () => {
-      expect(() =>
-        gameBoard.placeShip([
-          [4, 3],
-          [5, 3],
-          [7, 3],
-          [8, 3],
-        ])
-      ).toThrow(msg);
-    });
-
-    test('vertical ships also cannot have gaps', () => {
-      expect(() =>
-        gameBoard
-          .placeShip([
-            [6, 3],
-            [6, 4],
-            [6, 6],
-          ])
-          .toThrow(msg)
-      );
-    });
-
-    test('out of order horizontal coordinates are ok', () => {
-      gameBoard.placeShip([
-        [2, 2],
-        [2, 5],
-        [2, 4],
-        [2, 3],
-      ]);
-      const { ship } = gameBoard.squares[2][5];
-      expect(gameBoard.squares[2][3].ship).toBe(ship);
-    });
-
-    test('out of order vertical coordinates are ok', () => {
-      gameBoard.placeShip([
-        [9, 8],
-        [9, 3],
-        [9, 7],
-        [9, 4],
-        [9, 5],
-        [9, 6],
-      ]);
-      const { ship } = gameBoard.squares[9][3];
-      expect(gameBoard.squares[9][5].ship).toBe(ship);
-    });
-  });
 });
 
 describe('receive attack', () => {
