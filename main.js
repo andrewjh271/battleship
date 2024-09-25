@@ -172,7 +172,7 @@ function getCoordinates(xStart, xEnd, yStart, yEnd) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "boardFactory": () => (/* binding */ boardFactory)
+/* harmony export */   "DOMBoardFactory": () => (/* binding */ DOMBoardFactory)
 /* harmony export */ });
 /* harmony import */ var _DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DOMInitializeBoard */ "./src/DOMInitializeBoard.js");
 /* harmony import */ var _DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DOMSetupBoard */ "./src/DOMSetupBoard.js");
@@ -184,8 +184,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function boardFactory(id, ROWS) {
-  const board = (0,_DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_0__.initializeBoard)(id, ROWS);
+function DOMBoardFactory(id, ROWS) {
+  const board = (0,_DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_0__.initializeDOMBoard)(id, ROWS);
 
   function setOffense() {
     board.classList.remove('defense');
@@ -207,39 +207,37 @@ function boardFactory(id, ROWS) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('attack', index);
   }
 
-  function updateBoard(gameboard) {
-    gameboard.squares.forEach((square) => {
+  function updateBoard(dataBoard) {
+    dataBoard.squares.forEach(square => {
       console.log(square);
       // if square.ship add .occupied
       // if square.ship.isSunk() add .sunk
       // if square.attacked add .attacked
-    });
+    })
   }
 
   function setupBoard() {
-    (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.setupBoard)(board);
+    (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.setupDOMBoard)(board);
   }
 
-  function placeSetImages(objectBoard) {
-    // places on DOMBoard(this) all images from board object
-    objectBoard.placedShips.forEach((ship) => {
+  function placeSetImages(dataBoard) {
+    // places on DOMboard(board variable) all images from board object argument
+    dataBoard.placedShips.forEach(ship => {
       const image = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateImage)(ship.name);
       const imageWrapper = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateWrapper)();
       setPosition(image, imageWrapper, ship.coords);
       addPlacedClass(ship.coords);
       imageWrapper.appendChild(image);
       board.appendChild(imageWrapper);
-    });
+    })
   }
 
   function setPosition(image, wrapper, set) {
-    const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
-    const rowSpan =
-      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
-    const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
-    const colSpan =
-      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
-
+    const rowStart = set.reduce((min, coord) => coord[1] < min ? coord[1] : min, 100) + 1;
+    const rowSpan = set.reduce((max, coord) => coord[1] > max ? coord [1] : max, -100) + 2 - rowStart;
+    const colStart = set.reduce((min, coord) => coord[0] < min ? coord[0] : min, 100) + 1;
+    const colSpan = set.reduce((max, coord) => coord[0] > max ? coord [0] : max, -100) + 2 - colStart;
+    
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
@@ -248,12 +246,12 @@ function boardFactory(id, ROWS) {
   }
 
   function addPlacedClass(set) {
-    set.forEach((coords) => {
+    set.forEach(coords => {
       board.cells[(0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.coordinatesToIndex)(coords)].classList.add('highlight-placed');
-    });
+    })
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages };
+  return { setOffense, setDefense, setupBoard, placeSetImages }
 }
 
 
@@ -308,7 +306,7 @@ function showBoards() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "initializeBoard": () => (/* binding */ initializeBoard)
+/* harmony export */   "initializeDOMBoard": () => (/* binding */ initializeDOMBoard)
 /* harmony export */ });
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
@@ -324,7 +322,7 @@ function createGrid(rows, board) {
   }
 }
 
-function initializeBoard(id, rows) {
+function initializeDOMBoard(id, rows) {
   const board = document.getElementById(id);
   board.numRows = rows;
   createGrid(rows, board);
@@ -346,7 +344,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "newTemplateImage": () => (/* binding */ newTemplateImage),
 /* harmony export */   "newTemplateWrapper": () => (/* binding */ newTemplateWrapper),
-/* harmony export */   "setupBoard": () => (/* binding */ setupBoard)
+/* harmony export */   "setupDOMBoard": () => (/* binding */ setupDOMBoard)
 /* harmony export */ });
 /* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
@@ -367,7 +365,7 @@ previews.forEach((preview) => preview.addEventListener('click', showStagedImage)
 clearButton.addEventListener('click', clearPlacedImages);
 
 let currentBoard;
-function setupBoard(board) {
+function setupDOMBoard(board) {
   // call showSetup(board)
   currentBoard = board;
   setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('setPosition', currentBoard), { once: true });
@@ -482,101 +480,15 @@ function updateHighlights() {
 
 /***/ }),
 
-/***/ "./src/coordinates.js":
-/*!****************************!*\
-  !*** ./src/coordinates.js ***!
-  \****************************/
+/***/ "./src/board.js":
+/*!**********************!*\
+  !*** ./src/board.js ***!
+  \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "coordinatesToIndex": () => (/* binding */ coordinatesToIndex),
-/* harmony export */   "indexToCoordinates": () => (/* binding */ indexToCoordinates)
-/* harmony export */ });
-function indexToCoordinates(index) {
-  const x = index % 10;
-  const y = Math.floor(index / 10);
-  return [x, y];
-}
-
-function coordinatesToIndex(coords) {
-  return coords[1] * 10 + coords[0];
-}
-
-
-
-
-/***/ }),
-
-/***/ "./src/draggable.js":
-/*!**************************!*\
-  !*** ./src/draggable.js ***!
-  \**************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "dragStart": () => (/* binding */ dragStart),
-/* harmony export */   "resetDraggedImage": () => (/* binding */ resetDraggedImage)
-/* harmony export */ });
-/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-/* eslint-disable no-param-reassign */
-
-
-let cursorOffsetX;
-let cursurOffsetY;
-
-function dragStart(e) {
-  e.preventDefault();
-  cursorOffsetX = e.clientX - this.offsetLeft;
-  cursurOffsetY = e.clientY - this.offsetTop;
-  this.classList.add('grabbing');
-
-  const boundDragMove = dragMove.bind(this);
-  document.addEventListener('mousemove', boundDragMove);
-  document.addEventListener(
-    'mouseup',
-    () => {
-      document.removeEventListener('mousemove', boundDragMove);
-      (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEnd', this);
-    },
-    { once: true }
-  );
-}
-
-function dragMove(e) {
-  this.style.top = (e.clientY - cursurOffsetY).toString() + 'px';
-  this.style.left = (e.clientX - cursorOffsetX).toString() + 'px';
-  const bound = this.getBoundingClientRect();
-  const positionData = {
-    startX: bound.left,
-    endX: bound.right,
-    startY: bound.top,
-    endY: bound.bottom,
-  };
-
-  (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEvent', positionData);
-}
-
-function resetDraggedImage(element) {
-  element.style.top = '';
-  element.style.left = '';
-}
-
-
-
-
-/***/ }),
-
-/***/ "./src/gameboard.js":
-/*!**************************!*\
-  !*** ./src/gameboard.js ***!
-  \**************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ gameBoardFactory)
+/* harmony export */   "default": () => (/* binding */ boardFactory)
 /* harmony export */ });
 /* harmony import */ var _ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ship */ "./src/ship.js");
 /* harmony import */ var _1DSetFinder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./1DSetFinder */ "./src/1DSetFinder.js");
@@ -589,7 +501,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function gameBoardFactory() {
+function boardFactory() {
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];
@@ -694,6 +606,92 @@ function gameBoardFactory() {
 
 /***/ }),
 
+/***/ "./src/coordinates.js":
+/*!****************************!*\
+  !*** ./src/coordinates.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "coordinatesToIndex": () => (/* binding */ coordinatesToIndex),
+/* harmony export */   "indexToCoordinates": () => (/* binding */ indexToCoordinates)
+/* harmony export */ });
+function indexToCoordinates(index) {
+  const x = index % 10;
+  const y = Math.floor(index / 10);
+  return [x, y];
+}
+
+function coordinatesToIndex(coords) {
+  return coords[1] * 10 + coords[0];
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/draggable.js":
+/*!**************************!*\
+  !*** ./src/draggable.js ***!
+  \**************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "dragStart": () => (/* binding */ dragStart),
+/* harmony export */   "resetDraggedImage": () => (/* binding */ resetDraggedImage)
+/* harmony export */ });
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* eslint-disable no-param-reassign */
+
+
+let cursorOffsetX;
+let cursurOffsetY;
+
+function dragStart(e) {
+  e.preventDefault();
+  cursorOffsetX = e.clientX - this.offsetLeft;
+  cursurOffsetY = e.clientY - this.offsetTop;
+  this.classList.add('grabbing');
+
+  const boundDragMove = dragMove.bind(this);
+  document.addEventListener('mousemove', boundDragMove);
+  document.addEventListener(
+    'mouseup',
+    () => {
+      document.removeEventListener('mousemove', boundDragMove);
+      (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEnd', this);
+    },
+    { once: true }
+  );
+}
+
+function dragMove(e) {
+  this.style.top = (e.clientY - cursurOffsetY).toString() + 'px';
+  this.style.left = (e.clientX - cursorOffsetX).toString() + 'px';
+  const bound = this.getBoundingClientRect();
+  const positionData = {
+    startX: bound.left,
+    endX: bound.right,
+    startY: bound.top,
+    endY: bound.bottom,
+  };
+
+  (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEvent', positionData);
+}
+
+function resetDraggedImage(element) {
+  element.style.top = '';
+  element.style.left = '';
+}
+
+
+
+
+/***/ }),
+
 /***/ "./src/gameflow.js":
 /*!*************************!*\
   !*** ./src/gameflow.js ***!
@@ -701,7 +699,7 @@ function gameBoardFactory() {
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameboard */ "./src/gameboard.js");
+/* harmony import */ var _board__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./board */ "./src/board.js");
 /* harmony import */ var _player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./player */ "./src/player.js");
 /* harmony import */ var _DOMBoard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DOMBoard */ "./src/DOMBoard.js");
 /* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
@@ -726,10 +724,10 @@ let board2; // eventually declare inside beginSetup?
 
 function beginSetup() {
   console.log('setup begins...');
-  board1 = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  board2 = (0,_gameboard__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  const DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.boardFactory)('board1', 10);
-  const DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.boardFactory)('board2', 10);
+  board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
+  board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
+  const DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', 10);
+  const DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', 10);
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1);
   player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
 
@@ -1109,12 +1107,7 @@ var __webpack_exports__ = {};
   !*** ./src/index.js ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
-/* harmony import */ var _DOMAdapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DOMAdapter */ "./src/DOMAdapter.js");
-/* harmony import */ var _gameflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gameflow */ "./src/gameflow.js");
-// import './setup';
-
-
+/* harmony import */ var _gameflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameflow */ "./src/gameflow.js");
 
 
 })();
