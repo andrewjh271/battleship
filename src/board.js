@@ -3,15 +3,16 @@ import { find1DSets } from './1DSetFinder';
 import { find2DSets } from './2DSetFinder';
 import { getShipData } from './DOMAdapter';
 import { on, off } from './observer';
+import { rowLength } from './boardSize';
 
 export default function boardFactory() {
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];
   const squares = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < rowLength(); i++) {
     squares[i] = [];
-    for (let j = 0; j < 10; j++) {
+    for (let j = 0; j < rowLength(); j++) {
       squares[i][j] = {};
     }
   }
@@ -41,7 +42,7 @@ export default function boardFactory() {
     return false;
   };
 
-  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > 9);
+  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
 
   const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');

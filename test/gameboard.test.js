@@ -1,14 +1,20 @@
 import boardFactory from '../src/board';
+import { rowLength } from '../src/boardSize';
 
+// adjusts for board size, but will fail for board sizes < 7x7
 let board;
+let validIndex;
+let invalidIndex
 beforeEach(() => {
   board = boardFactory();
+  validIndex = rowLength() - 1;
+  invalidIndex = rowLength();
 });
 
 describe('initialization', () => {
   test('initializes with 100 objects', () => {
-    expect(board.squares[8][9]).toBeInstanceOf(Object);
-    expect(board.squares[1][10]).toBeUndefined();
+    expect(board.squares[3][validIndex]).toBeInstanceOf(Object);
+    expect(board.squares[1][invalidIndex]).toBeUndefined();
   });
 });
 
@@ -52,8 +58,8 @@ describe('placeShip', () => {
   test('will not place a ship off the board', () => {
     expect(() =>
       board.placeShip([
-        [8, 9],
-        [8, 10],
+        [8, validIndex],
+        [8, invalidIndex],
       ])
     ).toThrow('Ships cannot be placed off the board');
   });
@@ -63,7 +69,7 @@ describe('receive attack', () => {
   test('cannot attack the same square twice', () => {
     board.receiveAttack([2, 3]);
     board.receiveAttack([3, 4]);
-    board.receiveAttack([8, 9]);
+    board.receiveAttack([5, 6]);
     expect(() => board.receiveAttack([2, 3])).toThrow('this square has already been attacked');
   });
 
@@ -91,18 +97,18 @@ describe('gameOver', () => {
     ]);
     board.placeShip([
       [6, 6],
-      [6, 9],
-      [6, 8],
-      [6, 7],
+      [6, 3],
+      [6, 4],
+      [6, 5],
     ]);
     board.receiveAttack([1, 2]);
     board.receiveAttack([2, 2]);
     board.receiveAttack([3, 2]);
     expect(board.gameOver()).toBe(false);
     board.receiveAttack([6, 6]);
-    board.receiveAttack([6, 9]);
-    board.receiveAttack([6, 8]);
-    board.receiveAttack([6, 7]);
+    board.receiveAttack([6, 3]);
+    board.receiveAttack([6, 4]);
+    board.receiveAttack([6, 5]);
     expect(board.gameOver()).toBe(true);
   });
 });

@@ -1,6 +1,7 @@
 import boardFactory from '../src/board';
 import { find1DSets } from '../src/1DSetFinder';
 
+// expected test results based on 10x10 board
 describe('randomly placing  ships', () => {
   let board;
   beforeEach(() => {

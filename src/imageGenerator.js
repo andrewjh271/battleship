@@ -1,6 +1,8 @@
+import { rowLength } from "./boardSize";
+
 const board = document.querySelector('.board');
 const boardWidth = board.offsetWidth;
-const squareWidth = boardWidth / 10; // number of cells in row
+const squareWidth = boardWidth / rowLength(); // number of cells in row
 
 function flute() {
   return newImage('flute', 1, 3);

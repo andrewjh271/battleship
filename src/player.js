@@ -1,3 +1,5 @@
+import { rowLength } from "./boardSize";
+
 function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
@@ -37,7 +39,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
     trumpet: [1, 3],
   };
 
-  const size = 10;
+  const size = rowLength();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {

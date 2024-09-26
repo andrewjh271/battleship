@@ -1,6 +1,7 @@
 import { find2DSets } from '../src/2DSetFinder';
 import boardFactory from '../src/board';
 
+// expected test results based on 10x10 board
 describe('finds the correct number of sets on empty boards', () => {
   let board;
   beforeAll(() => {

@@ -1,8 +1,8 @@
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
-import { showBoards } from './DOMController';
-
+import { showBoards, setBoardSizes } from './DOMController';
+import { rowLength } from './boardSize';
 import { emit } from './observer';
 
 const startButton = document.querySelector('.start-game');
@@ -18,10 +18,11 @@ let board2; // eventually declare inside beginSetup?
 
 function beginSetup() {
   console.log('setup begins...');
+  setBoardSizes();
   board1 = boardFactory();
   board2 = boardFactory();
-  const DOMBoard1 = DOMBoardFactory('board1', 10);
-  const DOMBoard2 = DOMBoardFactory('board2', 10);
+  const DOMBoard1 = DOMBoardFactory('board1', rowLength());
+  const DOMBoard2 = DOMBoardFactory('board2', rowLength());
   player1 = humanPlayerFactory(board1, board2, DOMBoard1);
   player2 = computerPlayerFactory(board2, board1, DOMBoard2);
 
