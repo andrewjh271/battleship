@@ -1,4 +1,7 @@
 import { rowLength } from "./boardSize";
+import { getEnsemble } from "./ensemble";
+
+const ships = getEnsemble();
 
 function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   function attack(coords) {
@@ -27,18 +30,6 @@ function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
-  const ships = {
-    flute: [1, 3],
-    trombone: [1, 5],
-    clarinet: [1, 3],
-    violin: [1, 3],
-    bassoon: [1, 4],
-    cello: [2, 5],
-    horn: [2, 2],
-    piccolo: [1, 2],
-    trumpet: [1, 3],
-  };
-
   const size = rowLength();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {

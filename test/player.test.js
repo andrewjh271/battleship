@@ -1,6 +1,7 @@
 import boardFactory from '../src/board';
 import { humanPlayerFactory, computerPlayerFactory } from '../src/player';
 import { rowLength } from '../src/boardSize';
+import { getEnsemble } from '../src/ensemble';
 
 describe('attacking', () => {
   test('players can attack', () => {
@@ -40,6 +41,10 @@ describe('placing ships', () => {
     };
     const computer = computerPlayerFactory(homeBoard, null, DOMBoard);
     computer.setup();
+    const expectedArea = Object.values(getEnsemble()).reduce(
+      (area, coords) => area + coords[0] * coords[1],
+      0
+    );
     let totalShipArea = 0;
     for (let i = 0; i < rowLength(); i++) {
       for (let j = 0; j < rowLength(); j++) {
@@ -48,6 +53,6 @@ describe('placing ships', () => {
         }
       }
     }
-    expect(totalShipArea).toBe(37);
+    expect(totalShipArea).toBe(expectedArea);
   });
 });

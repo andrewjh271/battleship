@@ -4,6 +4,7 @@ import { DOMBoardFactory } from './DOMBoard';
 import { showBoards, setBoardSizes } from './DOMController';
 import { rowLength } from './boardSize';
 import { emit } from './observer';
+import { setEnsemble } from './ensemble';
 
 const startButton = document.querySelector('.start-game');
 startButton.addEventListener('click', beginSetup);
@@ -19,6 +20,7 @@ let board2; // eventually declare inside beginSetup?
 function beginSetup() {
   console.log('setup begins...');
   setBoardSizes();
+  setEnsemble();
   board1 = boardFactory();
   board2 = boardFactory();
   const DOMBoard1 = DOMBoardFactory('board1', rowLength());

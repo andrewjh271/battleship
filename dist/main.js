@@ -266,9 +266,12 @@ function DOMBoardFactory(id, ROWS) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   setBoardSizes: () => (/* binding */ setBoardSizes),
-/* harmony export */   showBoards: () => (/* binding */ showBoards)
+/* harmony export */   showBoards: () => (/* binding */ showBoards),
+/* harmony export */   showSetup: () => (/* binding */ showSetup)
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+
 
 
 // const startButton = document.querySelector('start-game');
@@ -276,6 +279,22 @@ __webpack_require__.r(__webpack_exports__);
 
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
+
+function showSetup(board) {
+  board.classList.remove('hidden');
+  if (board1 === board) {
+    board2.classList.add('hidden');
+  } else {
+    board1.classList.add('hidden');
+  }
+  const previews = document.querySelectorAll('.img-preview');
+  const whiteList = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)());
+  previews.forEach(preview => {
+    if (!whiteList.includes(preview.id)) {
+      preview.classList.add('hidden');
+    }
+  })
+}
 
 function showBoards() {
   const setupContainer = document.querySelector('.board-setup-container');
@@ -365,11 +384,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 /* harmony import */ var _draggable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./draggable */ "./src/draggable.js");
 /* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
 
 
 
 
-// import function showSetup() from DOMController that shows/hides correct elements
+
+
 
 const stagingArea = document.querySelector('.staging-area');
 const previews = document.querySelectorAll('.img-preview');
@@ -379,10 +401,13 @@ const clearButton = document.querySelector('.clear');
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 clearButton.addEventListener('click', clearPlacedImages);
 
+let remainingInstruments;
 let currentBoard;
 function setupDOMBoard(board) {
-  // call showSetup(board)
+  setBoardButton.disabled = true;
+  remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_4__.getEnsemble)());
   currentBoard = board;
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_5__.showSetup)(currentBoard);
   setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('setPosition', currentBoard), { once: true });
 }
 
@@ -406,6 +431,7 @@ function clearPlacedImages() {
       element.classList.remove('highlight-placed');
     }
   });
+  previews.forEach((preview) => preview.classList.remove('disabled'));
 }
 
 (0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEvent', highlightHoveredCells);
@@ -463,6 +489,18 @@ function placeImage(element) {
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
+  updatePreviewImages(element.type);
+}
+
+function updatePreviewImages(instrument) {
+  const index = remainingInstruments.indexOf(instrument);
+  if (index > -1) {
+    remainingInstruments.splice(index, 1);
+  }
+  if (remainingInstruments.length === 0) {
+    setBoardButton.disabled = false;
+  }
+  document.getElementById(instrument).classList.add('disabled');
 }
 
 function newTemplateImage(type) {
@@ -735,6 +773,42 @@ function resetDraggedImage(element) {
 
 /***/ }),
 
+/***/ "./src/ensemble.js":
+/*!*************************!*\
+  !*** ./src/ensemble.js ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getEnsemble: () => (/* binding */ getEnsemble),
+/* harmony export */   setEnsemble: () => (/* binding */ setEnsemble)
+/* harmony export */ });
+const ensemble = {
+  flute: [1, 3],
+  trombone: [1, 5],
+  clarinet: [1, 3],
+  violin: [1, 3],
+  bassoon: [1, 4],
+  cello: [2, 5],
+  horn: [2, 2],
+  // piccolo: [1, 2],
+  // trumpet: [1, 3],
+};
+
+function setEnsemble() {
+  // get user's choice of ensemble
+}
+
+function getEnsemble() {
+  return ensemble;
+}
+
+
+
+
+/***/ }),
+
 /***/ "./src/gameflow.js":
 /*!*************************!*\
   !*** ./src/gameflow.js ***!
@@ -748,6 +822,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+
 
 
 
@@ -769,6 +845,7 @@ let board2; // eventually declare inside beginSetup?
 function beginSetup() {
   console.log('setup begins...');
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
+  (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
   board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
   board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
   const DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
@@ -936,7 +1013,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   humanPlayerFactory: () => (/* binding */ humanPlayerFactory)
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 
+
+
+const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
 
 function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   function attack(coords) {
@@ -965,18 +1046,6 @@ function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
-  const ships = {
-    flute: [1, 3],
-    trombone: [1, 5],
-    clarinet: [1, 3],
-    violin: [1, 3],
-    bassoon: [1, 4],
-    cello: [2, 5],
-    horn: [2, 2],
-    piccolo: [1, 2],
-    trumpet: [1, 3],
-  };
-
   const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {

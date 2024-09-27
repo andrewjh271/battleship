@@ -57,6 +57,10 @@ html {
   max-height: 100%;
   margin-right: 5px;
 }
+.img-preview.disabled {
+  filter: grayscale(0.8) opacity(0.4);
+  pointer-events: none;
+}
 .img-preview:hover {
   cursor: pointer;
 }

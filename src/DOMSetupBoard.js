@@ -2,7 +2,8 @@ import * as imageGenerator from './imageGenerator';
 import { on, emit } from './observer';
 import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
-// import function showSetup() from DOMController that shows/hides correct elements
+import { getEnsemble } from './ensemble';
+import { showSetup } from './DOMController';
 
 const stagingArea = document.querySelector('.staging-area');
 const previews = document.querySelectorAll('.img-preview');
@@ -12,10 +13,13 @@ const clearButton = document.querySelector('.clear');
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 clearButton.addEventListener('click', clearPlacedImages);
 
+let remainingInstruments;
 let currentBoard;
 function setupDOMBoard(board) {
-  // call showSetup(board)
+  setBoardButton.disabled = true;
+  remainingInstruments = Object.keys(getEnsemble());
   currentBoard = board;
+  showSetup(currentBoard);
   setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
 }
 
@@ -39,6 +43,7 @@ function clearPlacedImages() {
       element.classList.remove('highlight-placed');
     }
   });
+  previews.forEach((preview) => preview.classList.remove('disabled'));
 }
 
 on('dragEvent', highlightHoveredCells);
@@ -96,6 +101,18 @@ function placeImage(element) {
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
+  updatePreviewImages(element.type);
+}
+
+function updatePreviewImages(instrument) {
+  const index = remainingInstruments.indexOf(instrument);
+  if (index > -1) {
+    remainingInstruments.splice(index, 1);
+  }
+  if (remainingInstruments.length === 0) {
+    setBoardButton.disabled = false;
+  }
+  document.getElementById(instrument).classList.add('disabled');
 }
 
 function newTemplateImage(type) {
