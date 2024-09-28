@@ -1,7 +1,7 @@
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
-import { showBoards, setBoardSizes } from './DOMController';
+import { showBoards, setBoardSizes, setTurn } from './DOMController';
 import { rowLength } from './boardSize';
 import { emit } from './observer';
 import { setEnsemble } from './ensemble';
@@ -48,6 +48,7 @@ function startGame() {
   console.log('board2...');
   console.log(board2);
   showBoards();
+  setTurn('player1');
 
   emit('setPosition', 34); // testing that this has been unsubscribed
 }

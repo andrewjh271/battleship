@@ -6,8 +6,8 @@ const ensemble = {
   bassoon: [1, 4],
   cello: [2, 5],
   horn: [2, 2],
-  // piccolo: [1, 2],
-  // trumpet: [1, 3],
+  piccolo: [1, 2],
+  trumpet: [1, 3],
 };
 
 function setEnsemble() {

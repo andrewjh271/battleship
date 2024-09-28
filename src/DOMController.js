@@ -30,6 +30,13 @@ function showBoards() {
   setupContainer.classList.add('hidden');
 }
 
+function setTurn(player) {
+  if (player === 'player1') {
+    board1.classList.remove('defense');
+    board2.classList.add('defense');
+  }
+}
+
 function setBoardSizes() {
   // eventually based on window size
   const rowLength = 10;
@@ -54,4 +61,4 @@ function setBoardSizes() {
 //   board.removeEventListener('click', handleAttack);
 // }
 
-export { showBoards, setBoardSizes, showSetup };
+export { showBoards, setBoardSizes, showSetup, setTurn };
