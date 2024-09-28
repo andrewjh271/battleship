@@ -43,6 +43,17 @@ html {
   z-index: 2;
   opacity: 0.3;
 }
+.board.defense .highlight-placed {
+  background-color: inherit;
+  z-index: inherit;
+  opacity: inherit;
+}
+.board.defense .placed-img-wrapper {
+  opacity: 0;
+}
+.board.defense .sunk {
+  opacity: 1;
+}
 
 .board-setup-container {
   grid-row-start: 2;

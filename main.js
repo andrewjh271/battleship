@@ -266,6 +266,7 @@ function DOMBoardFactory(id, ROWS) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   setBoardSizes: () => (/* binding */ setBoardSizes),
+/* harmony export */   setTurn: () => (/* binding */ setTurn),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
 /* harmony export */   showSetup: () => (/* binding */ showSetup)
 /* harmony export */ });
@@ -301,6 +302,13 @@ function showBoards() {
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
   setupContainer.classList.add('hidden');
+}
+
+function setTurn(player) {
+  if (player === 'player1') {
+    board1.classList.remove('defense');
+    board2.classList.add('defense');
+  }
 }
 
 function setBoardSizes() {
@@ -792,8 +800,8 @@ const ensemble = {
   bassoon: [1, 4],
   cello: [2, 5],
   horn: [2, 2],
-  // piccolo: [1, 2],
-  // trumpet: [1, 3],
+  piccolo: [1, 2],
+  trumpet: [1, 3],
 };
 
 function setEnsemble() {
@@ -873,6 +881,7 @@ function startGame() {
   console.log('board2...');
   console.log(board2);
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setTurn)('player1');
 
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.emit)('setPosition', 34); // testing that this has been unsubscribed
 }
