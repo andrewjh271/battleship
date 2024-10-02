@@ -21,9 +21,9 @@ html {
   grid-template-rows: 100px 1fr;
 }
 
-.control-panel {
+// .control-panel {
 
-}
+// }
 
 .board {
   margin: 30px;
@@ -52,17 +52,30 @@ html {
 
   &.defense {
     .highlight-placed {
-      background-color: inherit;
-      z-index: inherit;
-      opacity: inherit;
-    }
-
-    .placed-img-wrapper {
-      opacity: 0;
-    }
-
-    .sunk {
+      background-color: white;
       opacity: 1;
+    }
+    
+    .cell {
+      &:hover {
+        cursor: pointer;
+        background-color: lightcoral;
+      }
+
+      &.attacked {
+        background: rgb(39, 162, 196);
+        pointer-events: none;
+
+        &.highlight-placed {
+          background-color: red;
+        }
+      }
+
+      &.sunk {
+        &.highlight-placed {
+          opacity: 0.3;
+        }
+      }
     }
   }
 }

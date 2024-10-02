@@ -189,7 +189,7 @@ function DOMBoardFactory(id, ROWS) {
 
   function setOffense() {
     board.classList.remove('defense');
-    board.classList.add('offense');
+    board.classList.add('offense'); // necessary?
     board.removeEventListener('click', receiveAttack);
     (0,_observer__WEBPACK_IMPORTED_MODULE_2__.off)('boardChange', updateBoard);
   }
@@ -201,19 +201,24 @@ function DOMBoardFactory(id, ROWS) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('boardChange', updateBoard);
   }
 
-  function receiveAttack() {
-    // get index
-    const index = 22;
-    (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('attack', index);
+  function receiveAttack(e) {
+    const { index } = e.target.dataset;
+    if (!index) return;
+    (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('attack', (0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.indexToCoordinates)(index));
   }
 
-  function updateBoard(dataBoard) {
-    dataBoard.squares.forEach(square => {
-      console.log(square);
-      // if square.ship add .occupied
-      // if square.ship.isSunk() add .sunk
-      // if square.attacked add .attacked
-    })
+  function updateBoard(squares) {
+    squares.forEach((row, i) => {
+      row.forEach((square, j) => {
+        const index = i + j * 10;
+        if (square.ship?.isSunk()) {
+          board.cells[index].classList.add('sunk');
+        }
+        if (square.attacked) {
+          board.cells[index].classList.add('attacked');
+        }
+      })
+    });
   }
 
   function setupBoard() {
@@ -222,22 +227,24 @@ function DOMBoardFactory(id, ROWS) {
 
   function placeSetImages(dataBoard) {
     // places on DOMboard(board variable) all images from board object argument
-    dataBoard.placedShips.forEach(ship => {
+    dataBoard.placedShips.forEach((ship) => {
       const image = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateImage)(ship.name);
       const imageWrapper = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateWrapper)();
       setPosition(image, imageWrapper, ship.coords);
       addPlacedClass(ship.coords);
       imageWrapper.appendChild(image);
       board.appendChild(imageWrapper);
-    })
+    });
   }
 
   function setPosition(image, wrapper, set) {
-    const rowStart = set.reduce((min, coord) => coord[1] < min ? coord[1] : min, 100) + 1;
-    const rowSpan = set.reduce((max, coord) => coord[1] > max ? coord [1] : max, -100) + 2 - rowStart;
-    const colStart = set.reduce((min, coord) => coord[0] < min ? coord[0] : min, 100) + 1;
-    const colSpan = set.reduce((max, coord) => coord[0] > max ? coord [0] : max, -100) + 2 - colStart;
-    
+    const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
+    const rowSpan =
+      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
+    const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
+    const colSpan =
+      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
+
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
@@ -246,12 +253,12 @@ function DOMBoardFactory(id, ROWS) {
   }
 
   function addPlacedClass(set) {
-    set.forEach(coords => {
+    set.forEach((coords) => {
       board.cells[(0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.coordinatesToIndex)(coords)].classList.add('highlight-placed');
-    })
+    });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages }
+  return { setOffense, setDefense, setupBoard, placeSetImages };
 }
 
 
@@ -266,7 +273,6 @@ function DOMBoardFactory(id, ROWS) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   setBoardSizes: () => (/* binding */ setBoardSizes),
-/* harmony export */   setTurn: () => (/* binding */ setTurn),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
 /* harmony export */   showSetup: () => (/* binding */ showSetup)
 /* harmony export */ });
@@ -304,13 +310,6 @@ function showBoards() {
   setupContainer.classList.add('hidden');
 }
 
-function setTurn(player) {
-  if (player === 'player1') {
-    board1.classList.remove('defense');
-    board2.classList.add('defense');
-  }
-}
-
 function setBoardSizes() {
   // eventually based on window size
   const rowLength = 10;
@@ -320,20 +319,6 @@ function setBoardSizes() {
   board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
   board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`
 }
-
-// function handleAttack(e) {
-//   const { index } = e.target.dataset;
-//   if (!index) return;
-//   console.log(indexToCoordinates(index));
-// }
-
-// function listenForAttack(board) {
-//   board.addEventListener('click', handleAttack);
-// }
-
-// function unListenForAttack(board) {
-//   board.removeEventListener('click', handleAttack);
-// }
 
 
 
@@ -590,6 +575,14 @@ function boardFactory() {
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', boundSetPosition);
   }
 
+  function subscribeAttack() {
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('attack', receiveAttack);
+  }
+
+  function unsubscribeAttack() {
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('attack', receiveAttack);
+  }
+
   const isOccupied = (coords) => {
     if (typeof coords[0] === 'number') {
       return !!squares[coords[0]][coords[1]].ship;
@@ -623,6 +616,7 @@ function boardFactory() {
       if (square.ship.isSunk()) shipsSunk++;
     }
     square.attacked = true;
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', squares);
   }
 
   function gameOver() {
@@ -658,6 +652,8 @@ function boardFactory() {
     gameOver,
     emptySquares,
     listenForPosition,
+    subscribeAttack,
+    unsubscribeAttack,
     placedShips,
     squares,
     get size() {
@@ -793,15 +789,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setEnsemble: () => (/* binding */ setEnsemble)
 /* harmony export */ });
 const ensemble = {
-  flute: [1, 3],
-  trombone: [1, 5],
-  clarinet: [1, 3],
-  violin: [1, 3],
-  bassoon: [1, 4],
+  // flute: [1, 3],
+  // trombone: [1, 5],
+  // clarinet: [1, 3],
+  // violin: [1, 3],
+  // bassoon: [1, 4],
   cello: [2, 5],
   horn: [2, 2],
-  piccolo: [1, 2],
-  trumpet: [1, 3],
+  // piccolo: [1, 2],
+  // trumpet: [1, 3],
 };
 
 function setEnsemble() {
@@ -850,14 +846,16 @@ let player2;
 let board1; // eventually declare inside beginSetup?
 let board2; // eventually declare inside beginSetup?
 
+let DOMBoard1;
+let DOMBoard2;
+
 function beginSetup() {
-  console.log('setup begins...');
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
   board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
   board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  const DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
-  const DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
+  DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
+  DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1);
   player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
 
@@ -875,13 +873,11 @@ function finishSetup() {
 }
 
 function startGame() {
-  console.log('game starts!');
-  console.log('board1...');
-  console.log(board1);
-  console.log('board2...');
-  console.log(board2);
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setTurn)('player1');
+  DOMBoard1.setOffense();
+  DOMBoard2.setDefense();
+  board1.unsubscribeAttack();
+  board2.subscribeAttack();
 
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.emit)('setPosition', 34); // testing that this has been unsubscribed
 }

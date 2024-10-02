@@ -1,15 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { initializeDOMBoard } from './DOMInitializeBoard';
 import { setupDOMBoard, newTemplateImage, newTemplateWrapper } from './DOMSetupBoard';
-import { on, off, emit } from './observer'
-import { coordinatesToIndex } from './coordinates';
+import { on, off, emit } from './observer';
+import { coordinatesToIndex, indexToCoordinates } from './coordinates';
 
 export function DOMBoardFactory(id, ROWS) {
   const board = initializeDOMBoard(id, ROWS);
 
   function setOffense() {
     board.classList.remove('defense');
-    board.classList.add('offense');
+    board.classList.add('offense'); // necessary?
     board.removeEventListener('click', receiveAttack);
     off('boardChange', updateBoard);
   }
@@ -21,19 +21,24 @@ export function DOMBoardFactory(id, ROWS) {
     on('boardChange', updateBoard);
   }
 
-  function receiveAttack() {
-    // get index
-    const index = 22;
-    emit('attack', index);
+  function receiveAttack(e) {
+    const { index } = e.target.dataset;
+    if (!index) return;
+    emit('attack', indexToCoordinates(index));
   }
 
-  function updateBoard(dataBoard) {
-    dataBoard.squares.forEach(square => {
-      console.log(square);
-      // if square.ship add .occupied
-      // if square.ship.isSunk() add .sunk
-      // if square.attacked add .attacked
-    })
+  function updateBoard(squares) {
+    squares.forEach((row, i) => {
+      row.forEach((square, j) => {
+        const index = i + j * 10;
+        if (square.ship?.isSunk()) {
+          board.cells[index].classList.add('sunk');
+        }
+        if (square.attacked) {
+          board.cells[index].classList.add('attacked');
+        }
+      })
+    });
   }
 
   function setupBoard() {
@@ -42,22 +47,24 @@ export function DOMBoardFactory(id, ROWS) {
 
   function placeSetImages(dataBoard) {
     // places on DOMboard(board variable) all images from board object argument
-    dataBoard.placedShips.forEach(ship => {
+    dataBoard.placedShips.forEach((ship) => {
       const image = newTemplateImage(ship.name);
       const imageWrapper = newTemplateWrapper();
       setPosition(image, imageWrapper, ship.coords);
       addPlacedClass(ship.coords);
       imageWrapper.appendChild(image);
       board.appendChild(imageWrapper);
-    })
+    });
   }
 
   function setPosition(image, wrapper, set) {
-    const rowStart = set.reduce((min, coord) => coord[1] < min ? coord[1] : min, 100) + 1;
-    const rowSpan = set.reduce((max, coord) => coord[1] > max ? coord [1] : max, -100) + 2 - rowStart;
-    const colStart = set.reduce((min, coord) => coord[0] < min ? coord[0] : min, 100) + 1;
-    const colSpan = set.reduce((max, coord) => coord[0] > max ? coord [0] : max, -100) + 2 - colStart;
-    
+    const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
+    const rowSpan =
+      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
+    const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
+    const colSpan =
+      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
+
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
@@ -66,10 +73,10 @@ export function DOMBoardFactory(id, ROWS) {
   }
 
   function addPlacedClass(set) {
-    set.forEach(coords => {
+    set.forEach((coords) => {
       board.cells[coordinatesToIndex(coords)].classList.add('highlight-placed');
-    })
+    });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages }
+  return { setOffense, setDefense, setupBoard, placeSetImages };
 }

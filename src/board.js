@@ -2,7 +2,7 @@ import shipFactory from './ship';
 import { find1DSets } from './1DSetFinder';
 import { find2DSets } from './2DSetFinder';
 import { getShipData } from './DOMAdapter';
-import { on, off } from './observer';
+import { on, off, emit } from './observer';
 import { rowLength } from './boardSize';
 
 export default function boardFactory() {
@@ -29,6 +29,14 @@ export default function boardFactory() {
       this.placeShip(ship[1], ship[0]);
     });
     off('setPosition', boundSetPosition);
+  }
+
+  function subscribeAttack() {
+    on('attack', receiveAttack);
+  }
+
+  function unsubscribeAttack() {
+    off('attack', receiveAttack);
   }
 
   const isOccupied = (coords) => {
@@ -64,6 +72,7 @@ export default function boardFactory() {
       if (square.ship.isSunk()) shipsSunk++;
     }
     square.attacked = true;
+    emit('boardChange', squares);
   }
 
   function gameOver() {
@@ -99,6 +108,8 @@ export default function boardFactory() {
     gameOver,
     emptySquares,
     listenForPosition,
+    subscribeAttack,
+    unsubscribeAttack,
     placedShips,
     squares,
     get size() {

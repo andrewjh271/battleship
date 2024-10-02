@@ -1,7 +1,7 @@
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
-import { showBoards, setBoardSizes, setTurn } from './DOMController';
+import { showBoards, setBoardSizes } from './DOMController';
 import { rowLength } from './boardSize';
 import { emit } from './observer';
 import { setEnsemble } from './ensemble';
@@ -17,14 +17,16 @@ let player2;
 let board1; // eventually declare inside beginSetup?
 let board2; // eventually declare inside beginSetup?
 
+let DOMBoard1;
+let DOMBoard2;
+
 function beginSetup() {
-  console.log('setup begins...');
   setBoardSizes();
   setEnsemble();
   board1 = boardFactory();
   board2 = boardFactory();
-  const DOMBoard1 = DOMBoardFactory('board1', rowLength());
-  const DOMBoard2 = DOMBoardFactory('board2', rowLength());
+  DOMBoard1 = DOMBoardFactory('board1', rowLength());
+  DOMBoard2 = DOMBoardFactory('board2', rowLength());
   player1 = humanPlayerFactory(board1, board2, DOMBoard1);
   player2 = computerPlayerFactory(board2, board1, DOMBoard2);
 
@@ -42,13 +44,11 @@ function finishSetup() {
 }
 
 function startGame() {
-  console.log('game starts!');
-  console.log('board1...');
-  console.log(board1);
-  console.log('board2...');
-  console.log(board2);
   showBoards();
-  setTurn('player1');
+  DOMBoard1.setOffense();
+  DOMBoard2.setDefense();
+  board1.unsubscribeAttack();
+  board2.subscribeAttack();
 
   emit('setPosition', 34); // testing that this has been unsubscribed
 }

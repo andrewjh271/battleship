@@ -30,13 +30,6 @@ function showBoards() {
   setupContainer.classList.add('hidden');
 }
 
-function setTurn(player) {
-  if (player === 'player1') {
-    board1.classList.remove('defense');
-    board2.classList.add('defense');
-  }
-}
-
 function setBoardSizes() {
   // eventually based on window size
   const rowLength = 10;
@@ -47,18 +40,4 @@ function setBoardSizes() {
   board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`
 }
 
-// function handleAttack(e) {
-//   const { index } = e.target.dataset;
-//   if (!index) return;
-//   console.log(indexToCoordinates(index));
-// }
-
-// function listenForAttack(board) {
-//   board.addEventListener('click', handleAttack);
-// }
-
-// function unListenForAttack(board) {
-//   board.removeEventListener('click', handleAttack);
-// }
-
-export { showBoards, setBoardSizes, showSetup, setTurn };
+export { showBoards, setBoardSizes, showSetup };
