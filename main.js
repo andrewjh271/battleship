@@ -187,18 +187,18 @@ __webpack_require__.r(__webpack_exports__);
 function DOMBoardFactory(id, ROWS) {
   const board = (0,_DOMInitializeBoard__WEBPACK_IMPORTED_MODULE_0__.initializeDOMBoard)(id, ROWS);
 
+  (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('boardChange', updateBoard);
+
   function setOffense() {
     board.classList.remove('defense');
     board.classList.add('offense'); // necessary?
     board.removeEventListener('click', receiveAttack);
-    (0,_observer__WEBPACK_IMPORTED_MODULE_2__.off)('boardChange', updateBoard);
   }
 
   function setDefense() {
     board.classList.remove('offense');
     board.classList.add('defense');
     board.addEventListener('click', receiveAttack);
-    (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('boardChange', updateBoard);
   }
 
   function receiveAttack(e) {
@@ -207,8 +207,11 @@ function DOMBoardFactory(id, ROWS) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('attack', (0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.indexToCoordinates)(index));
   }
 
-  function updateBoard(squares) {
-    squares.forEach((row, i) => {
+  function updateBoard(boardData) {
+    if (boardData.id !== id) return;
+
+    console.log(`updating ${id}....`)
+    boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
         const index = i + j * 10;
         if (square.ship?.isSunk()) {
@@ -549,7 +552,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function boardFactory() {
+function boardFactory(id) {
+  const boardID = id;
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];
@@ -616,7 +620,7 @@ function boardFactory() {
       if (square.ship.isSunk()) shipsSunk++;
     }
     square.attacked = true;
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', squares);
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', {squares, id: boardID});
   }
 
   function gameOver() {
@@ -838,7 +842,6 @@ __webpack_require__.r(__webpack_exports__);
 const startButton = document.querySelector('.start-game');
 startButton.addEventListener('click', beginSetup);
 const setBoardButton = document.querySelector('.set-board');
-// mouse events need to be disabled if not valid
 
 let player1;
 let player2;
@@ -849,11 +852,23 @@ let board2; // eventually declare inside beginSetup?
 let DOMBoard1;
 let DOMBoard2;
 
+let playerOneToMove = true;
+let attackCount = 0;
+const attackMax = 3;
+(0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', () => {
+  attackCount++;
+  if (attackCount >= attackMax) {
+    attackCount = 0;
+    playerOneToMove = !playerOneToMove
+    setTimeout(() => playRound(playerOneToMove), 2000);
+  }
+});
+
 function beginSetup() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
-  board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])();
+  board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
+  board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1);
@@ -874,12 +889,41 @@ function finishSetup() {
 
 function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
-  DOMBoard1.setOffense();
-  DOMBoard2.setDefense();
-  board1.unsubscribeAttack();
-  board2.subscribeAttack();
+  playRound(playerOneToMove);
+}
 
-  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.emit)('setPosition', 34); // testing that this has been unsubscribed
+function playRound(firstPlayer) {
+  console.log('play round');
+  if (firstPlayer) {
+    DOMBoard1.setOffense();
+    DOMBoard2.setDefense();
+    board1.unsubscribeAttack();
+    board2.subscribeAttack();
+  } else if (player2.isComputer()) {
+    DOMBoard1.setDefense();
+    DOMBoard2.setOffense();
+    board2.unsubscribeAttack();
+    board1.subscribeAttack();
+    computerAttacks();
+  } else {
+    DOMBoard2.setOffense();
+    DOMBoard1.setDefense();
+    board2.unsubscribeAttack();
+    board1.subscribeAttack();
+  }
+}
+
+function computerAttacks(i = 0) {
+  if (i >= attackMax) {
+    playerOneToMove = !playerOneToMove;
+    playRound(playerOneToMove);
+    return;
+  }
+
+  setTimeout(() => {
+    player2.attack();
+    computerAttacks(i + 1);
+  }, 2000)
 }
 
 

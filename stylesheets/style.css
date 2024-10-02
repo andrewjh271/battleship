@@ -52,7 +52,7 @@ html {
   background-color: lightcoral;
 }
 .board.defense .cell.attacked {
-  background: rgb(39, 162, 196);
+  background-color: rgb(39, 162, 196);
   pointer-events: none;
 }
 .board.defense .cell.attacked.highlight-placed {
@@ -60,6 +60,16 @@ html {
 }
 .board.defense .cell.sunk.highlight-placed {
   opacity: 0.3;
+}
+.board.offense .cell {
+  pointer-events: none;
+}
+.board.offense .cell.attacked {
+  background-color: rgb(39, 162, 196);
+  pointer-events: none;
+}
+.board.offense .cell.attacked.highlight-placed {
+  background-color: red;
 }
 
 .board-setup-container {
