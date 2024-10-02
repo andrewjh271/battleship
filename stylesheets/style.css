@@ -44,15 +44,22 @@ html {
   opacity: 0.3;
 }
 .board.defense .highlight-placed {
-  background-color: inherit;
-  z-index: inherit;
-  opacity: inherit;
-}
-.board.defense .placed-img-wrapper {
-  opacity: 0;
-}
-.board.defense .sunk {
+  background-color: white;
   opacity: 1;
+}
+.board.defense .cell:hover {
+  cursor: pointer;
+  background-color: lightcoral;
+}
+.board.defense .cell.attacked {
+  background: rgb(39, 162, 196);
+  pointer-events: none;
+}
+.board.defense .cell.attacked.highlight-placed {
+  background-color: red;
+}
+.board.defense .cell.sunk.highlight-placed {
+  opacity: 0.3;
 }
 
 .board-setup-container {
