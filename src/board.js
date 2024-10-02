@@ -6,7 +6,6 @@ import { on, off, emit } from './observer';
 import { rowLength } from './boardSize';
 
 export default function boardFactory(id) {
-  const boardID = id;
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];
@@ -32,14 +31,6 @@ export default function boardFactory(id) {
     off('setPosition', boundSetPosition);
   }
 
-  function subscribeAttack() {
-    on('attack', receiveAttack);
-  }
-
-  function unsubscribeAttack() {
-    off('attack', receiveAttack);
-  }
-
   const isOccupied = (coords) => {
     if (typeof coords[0] === 'number') {
       return !!squares[coords[0]][coords[1]].ship;
@@ -51,7 +42,8 @@ export default function boardFactory(id) {
     return false;
   };
 
-  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
+  const outOfRange = (coords) =>
+    coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
 
   const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
@@ -65,7 +57,12 @@ export default function boardFactory(id) {
     placedShips.push(newShip);
   };
 
-  function receiveAttack(coords) {
+  on('attack', receiveAttack);
+
+  function receiveAttack(attackData) {
+    if (attackData.id !== id) return;
+
+    const { coords } = attackData;
     const square = squares[coords[0]][coords[1]];
     if (square.attacked) throw new Error('this square has already been attacked');
     if (square.ship) {
@@ -73,7 +70,7 @@ export default function boardFactory(id) {
       if (square.ship.isSunk()) shipsSunk++;
     }
     square.attacked = true;
-    emit('boardChange', {squares, id: boardID});
+    emit('boardChange', { squares, id });
   }
 
   function gameOver() {
@@ -109,10 +106,9 @@ export default function boardFactory(id) {
     gameOver,
     emptySquares,
     listenForPosition,
-    subscribeAttack,
-    unsubscribeAttack,
     placedShips,
     squares,
+    id,
     get size() {
       return squares.length;
     },

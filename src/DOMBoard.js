@@ -24,13 +24,13 @@ export function DOMBoardFactory(id, ROWS) {
   function receiveAttack(e) {
     const { index } = e.target.dataset;
     if (!index) return;
-    emit('attack', indexToCoordinates(index));
+    emit('attack', { coords: indexToCoordinates(index), id });
   }
 
   function updateBoard(boardData) {
     if (boardData.id !== id) return;
 
-    console.log(`updating ${id}....`)
+    console.log(`updating ${id}....`);
     boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
         const index = i + j * 10;
@@ -40,7 +40,7 @@ export function DOMBoardFactory(id, ROWS) {
         if (square.attacked) {
           board.cells[index].classList.add('attacked');
         }
-      })
+      });
     });
   }
 

@@ -64,19 +64,13 @@ function playRound(firstPlayer) {
   if (firstPlayer) {
     DOMBoard1.setOffense();
     DOMBoard2.setDefense();
-    board1.unsubscribeAttack();
-    board2.subscribeAttack();
   } else if (player2.isComputer()) {
     DOMBoard1.setDefense();
     DOMBoard2.setOffense();
-    board2.unsubscribeAttack();
-    board1.subscribeAttack();
     computerAttacks();
   } else {
     DOMBoard2.setOffense();
     DOMBoard1.setDefense();
-    board2.unsubscribeAttack();
-    board1.subscribeAttack();
   }
 }
 

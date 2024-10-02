@@ -1,12 +1,12 @@
-import { rowLength } from "./boardSize";
-import { getEnsemble } from "./ensemble";
+import { rowLength } from './boardSize';
+import { getEnsemble } from './ensemble';
 
 const ships = getEnsemble();
 
 function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
-    opponentBoard.receiveAttack(coordinates);
+    opponentBoard.receiveAttack({ id: opponentBoard.id, coords: coordinates });
   }
 
   function getCoords() {
@@ -48,7 +48,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
     const move = possibleMoves[index];
     possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
     possibleMoves.pop();
-    opponentBoard.receiveAttack(move);
+    opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
   }
 
   function setup() {

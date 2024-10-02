@@ -4,9 +4,10 @@ import { rowLength } from '../src/boardSize';
 // adjusts for board size, but will fail for board sizes < 7x7
 let board;
 let validIndex;
-let invalidIndex
+let invalidIndex;
+const id = 'board1';
 beforeEach(() => {
-  board = boardFactory();
+  board = boardFactory(id);
   validIndex = rowLength() - 1;
   invalidIndex = rowLength();
 });
@@ -67,10 +68,12 @@ describe('placeShip', () => {
 
 describe('receive attack', () => {
   test('cannot attack the same square twice', () => {
-    board.receiveAttack([2, 3]);
-    board.receiveAttack([3, 4]);
-    board.receiveAttack([5, 6]);
-    expect(() => board.receiveAttack([2, 3])).toThrow('this square has already been attacked');
+    board.receiveAttack({ id, coords: [2, 3] });
+    board.receiveAttack({ id, coords: [3, 4] });
+    board.receiveAttack({ id, coords: [5, 6] });
+    expect(() => board.receiveAttack({ id, coords: [2, 3] })).toThrow(
+      'this square has already been attacked'
+    );
   });
 
   test('can sink a ship', () => {
@@ -80,10 +83,10 @@ describe('receive attack', () => {
       [3, 2],
     ]);
     const { ship } = board.squares[2][2];
-    board.receiveAttack([1, 2]);
-    board.receiveAttack([2, 2]);
+    board.receiveAttack({ id, coords: [1, 2] });
+    board.receiveAttack({ id, coords: [2, 2] });
     expect(ship.isSunk()).toBe(false);
-    board.receiveAttack([3, 2]);
+    board.receiveAttack({ id, coords: [3, 2] });
     expect(ship.isSunk()).toBe(true);
   });
 });
@@ -101,14 +104,14 @@ describe('gameOver', () => {
       [6, 4],
       [6, 5],
     ]);
-    board.receiveAttack([1, 2]);
-    board.receiveAttack([2, 2]);
-    board.receiveAttack([3, 2]);
+    board.receiveAttack({ id, coords: [1, 2] });
+    board.receiveAttack({ id, coords: [2, 2] });
+    board.receiveAttack({ id, coords: [3, 2] });
     expect(board.gameOver()).toBe(false);
-    board.receiveAttack([6, 6]);
-    board.receiveAttack([6, 3]);
-    board.receiveAttack([6, 4]);
-    board.receiveAttack([6, 5]);
+    board.receiveAttack({ id, coords: [6, 6] });
+    board.receiveAttack({ id, coords: [6, 3] });
+    board.receiveAttack({ id, coords: [6, 4] });
+    board.receiveAttack({ id, coords: [6, 5] });
     expect(board.gameOver()).toBe(true);
   });
 });
