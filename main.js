@@ -204,13 +204,13 @@ function DOMBoardFactory(id, ROWS) {
   function receiveAttack(e) {
     const { index } = e.target.dataset;
     if (!index) return;
-    (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('attack', (0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.indexToCoordinates)(index));
+    (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('attack', { coords: (0,_coordinates__WEBPACK_IMPORTED_MODULE_3__.indexToCoordinates)(index), id });
   }
 
   function updateBoard(boardData) {
     if (boardData.id !== id) return;
 
-    console.log(`updating ${id}....`)
+    console.log(`updating ${id}....`);
     boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
         const index = i + j * 10;
@@ -220,7 +220,7 @@ function DOMBoardFactory(id, ROWS) {
         if (square.attacked) {
           board.cells[index].classList.add('attacked');
         }
-      })
+      });
     });
   }
 
@@ -553,7 +553,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function boardFactory(id) {
-  const boardID = id;
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];
@@ -579,14 +578,6 @@ function boardFactory(id) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', boundSetPosition);
   }
 
-  function subscribeAttack() {
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('attack', receiveAttack);
-  }
-
-  function unsubscribeAttack() {
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('attack', receiveAttack);
-  }
-
   const isOccupied = (coords) => {
     if (typeof coords[0] === 'number') {
       return !!squares[coords[0]][coords[1]].ship;
@@ -598,7 +589,8 @@ function boardFactory(id) {
     return false;
   };
 
-  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1);
+  const outOfRange = (coords) =>
+    coords.flat().some((coord) => coord < 0 || coord > (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1);
 
   const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
@@ -612,7 +604,12 @@ function boardFactory(id) {
     placedShips.push(newShip);
   };
 
-  function receiveAttack(coords) {
+  (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('attack', receiveAttack);
+
+  function receiveAttack(attackData) {
+    if (attackData.id !== id) return;
+
+    const { coords } = attackData;
     const square = squares[coords[0]][coords[1]];
     if (square.attacked) throw new Error('this square has already been attacked');
     if (square.ship) {
@@ -620,7 +617,7 @@ function boardFactory(id) {
       if (square.ship.isSunk()) shipsSunk++;
     }
     square.attacked = true;
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', {squares, id: boardID});
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', { squares, id });
   }
 
   function gameOver() {
@@ -656,10 +653,9 @@ function boardFactory(id) {
     gameOver,
     emptySquares,
     listenForPosition,
-    subscribeAttack,
-    unsubscribeAttack,
     placedShips,
     squares,
+    id,
     get size() {
       return squares.length;
     },
@@ -897,19 +893,13 @@ function playRound(firstPlayer) {
   if (firstPlayer) {
     DOMBoard1.setOffense();
     DOMBoard2.setDefense();
-    board1.unsubscribeAttack();
-    board2.subscribeAttack();
   } else if (player2.isComputer()) {
     DOMBoard1.setDefense();
     DOMBoard2.setOffense();
-    board2.unsubscribeAttack();
-    board1.subscribeAttack();
     computerAttacks();
   } else {
     DOMBoard2.setOffense();
     DOMBoard1.setDefense();
-    board2.unsubscribeAttack();
-    board1.subscribeAttack();
   }
 }
 
@@ -1071,7 +1061,7 @@ const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
 function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
-    opponentBoard.receiveAttack(coordinates);
+    opponentBoard.receiveAttack({ id: opponentBoard.id, coords: coordinates });
   }
 
   function getCoords() {
@@ -1113,7 +1103,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
     const move = possibleMoves[index];
     possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
     possibleMoves.pop();
-    opponentBoard.receiveAttack(move);
+    opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
   }
 
   function setup() {
