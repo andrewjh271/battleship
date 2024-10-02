@@ -55,7 +55,7 @@ html {
       background-color: white;
       opacity: 1;
     }
-    
+
     .cell {
       &:hover {
         cursor: pointer;
@@ -63,7 +63,7 @@ html {
       }
 
       &.attacked {
-        background: rgb(39, 162, 196);
+        background-color: rgb(39, 162, 196);
         pointer-events: none;
 
         &.highlight-placed {
@@ -74,6 +74,21 @@ html {
       &.sunk {
         &.highlight-placed {
           opacity: 0.3;
+        }
+      }
+    }
+  }
+
+  &.offense {
+    .cell {
+      pointer-events: none;
+
+      &.attacked {
+        background-color: rgb(39, 162, 196);
+        pointer-events: none;
+  
+        &.highlight-placed {
+          background-color: red;
         }
       }
     }

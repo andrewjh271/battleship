@@ -5,7 +5,8 @@ import { getShipData } from './DOMAdapter';
 import { on, off, emit } from './observer';
 import { rowLength } from './boardSize';
 
-export default function boardFactory() {
+export default function boardFactory(id) {
+  const boardID = id;
   let totalShips = 0;
   let shipsSunk = 0;
   const placedShips = [];
@@ -72,7 +73,7 @@ export default function boardFactory() {
       if (square.ship.isSunk()) shipsSunk++;
     }
     square.attacked = true;
-    emit('boardChange', squares);
+    emit('boardChange', {squares, id: boardID});
   }
 
   function gameOver() {

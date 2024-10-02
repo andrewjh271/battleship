@@ -1,24 +1,24 @@
 /* eslint-disable no-param-reassign */
 import { initializeDOMBoard } from './DOMInitializeBoard';
 import { setupDOMBoard, newTemplateImage, newTemplateWrapper } from './DOMSetupBoard';
-import { on, off, emit } from './observer';
+import { on, emit } from './observer';
 import { coordinatesToIndex, indexToCoordinates } from './coordinates';
 
 export function DOMBoardFactory(id, ROWS) {
   const board = initializeDOMBoard(id, ROWS);
 
+  on('boardChange', updateBoard);
+
   function setOffense() {
     board.classList.remove('defense');
     board.classList.add('offense'); // necessary?
     board.removeEventListener('click', receiveAttack);
-    off('boardChange', updateBoard);
   }
 
   function setDefense() {
     board.classList.remove('offense');
     board.classList.add('defense');
     board.addEventListener('click', receiveAttack);
-    on('boardChange', updateBoard);
   }
 
   function receiveAttack(e) {
@@ -27,8 +27,11 @@ export function DOMBoardFactory(id, ROWS) {
     emit('attack', indexToCoordinates(index));
   }
 
-  function updateBoard(squares) {
-    squares.forEach((row, i) => {
+  function updateBoard(boardData) {
+    if (boardData.id !== id) return;
+
+    console.log(`updating ${id}....`)
+    boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
         const index = i + j * 10;
         if (square.ship?.isSunk()) {
