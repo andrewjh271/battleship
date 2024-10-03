@@ -211,6 +211,11 @@ function DOMBoardFactory(id, ROWS) {
     board.classList.remove('disabled');
   }
 
+  function setGameOver() {
+    board.classList.add('disabled');
+    board.classList.add('game-over');
+  }
+
   function receiveAttack(e) {
     const { index } = e.target.dataset;
     if (!index) return;
@@ -220,7 +225,6 @@ function DOMBoardFactory(id, ROWS) {
   function updateBoard(boardData) {
     if (boardData.id !== id) return;
 
-    console.log(`updating ${id}....`);
     boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
         const index = i + j * 10;
@@ -271,7 +275,16 @@ function DOMBoardFactory(id, ROWS) {
     });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages, listenForAttack, disable, enable };
+  return {
+    setOffense,
+    setDefense,
+    setupBoard,
+    placeSetImages,
+    listenForAttack,
+    disable,
+    enable,
+    setGameOver,
+  };
 }
 
 
@@ -861,14 +874,19 @@ let DOMBoard2;
 
 let attackCount = 0;
 const attackMax = 3;
-(0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', () => {
+
+function playerAttackProgression() {
+  if (currentPlayer.sunkAllShips()) {
+    gameOver();
+    return;
+  }
   attackCount++;
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
     playRound();
   }
-});
+}
 
 function beginSetup() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
@@ -895,6 +913,7 @@ function finishSetup() {
 
 function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -911,12 +930,16 @@ function playRound() {
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
     switchTurns();
-    setTimeout(() => playRound(), 1000);
+    setTimeout(() => playRound(), 500);
     return;
   }
 
   setTimeout(() => {
     currentPlayer.attack();
+    if (currentPlayer.sunkAllShips()) {
+      gameOver();
+      return;
+    }
     computerAttacks(i + 1);
   }, 500);
 }
@@ -925,6 +948,13 @@ function switchTurns() {
   currentPlayer = currentPlayer === player1 ? player2 : player1;
 }
 
+function gameOver() {
+  const name = currentPlayer === player1 ? 'Player 1' : 'Player 2';
+  console.log(name, 'is the winner');
+
+  DOMBoard1.setGameOver();
+  DOMBoard2.setGameOver();
+}
 
 /***/ }),
 
@@ -1096,7 +1126,11 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     return false;
   }
 
-  return { attack, placeShip, isComputer, setup, setTurn };
+  function sunkAllShips() {
+    return  opponentBoard.gameOver();
+  }
+
+  return { attack, placeShip, isComputer, setup, setTurn, sunkAllShips };
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
@@ -1136,7 +1170,11 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
     homeDOMBoard.disable();
   }
 
-  return { attack, setup, isComputer, setTurn };
+  function sunkAllShips() {
+    return  opponentBoard.gameOver();
+  }
+
+  return { attack, setup, isComputer, setTurn, sunkAllShips };
 }
 
 

@@ -22,14 +22,19 @@ let DOMBoard2;
 
 let attackCount = 0;
 const attackMax = 3;
-on('attack', () => {
+
+function playerAttackProgression() {
+  if (currentPlayer.sunkAllShips()) {
+    gameOver();
+    return;
+  }
   attackCount++;
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
     playRound();
   }
-});
+}
 
 function beginSetup() {
   setBoardSizes();
@@ -56,6 +61,7 @@ function finishSetup() {
 
 function startGame() {
   showBoards();
+  on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -72,16 +78,28 @@ function playRound() {
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
     switchTurns();
-    setTimeout(() => playRound(), 1000);
+    setTimeout(() => playRound(), 500);
     return;
   }
 
   setTimeout(() => {
     currentPlayer.attack();
+    if (currentPlayer.sunkAllShips()) {
+      gameOver();
+      return;
+    }
     computerAttacks(i + 1);
   }, 500);
 }
 
 function switchTurns() {
   currentPlayer = currentPlayer === player1 ? player2 : player1;
+}
+
+function gameOver() {
+  const name = currentPlayer === player1 ? 'Player 1' : 'Player 2';
+  console.log(name, 'is the winner');
+
+  DOMBoard1.setGameOver();
+  DOMBoard2.setGameOver();
 }

@@ -31,6 +31,11 @@ export function DOMBoardFactory(id, ROWS) {
     board.classList.remove('disabled');
   }
 
+  function setGameOver() {
+    board.classList.add('disabled');
+    board.classList.add('game-over');
+  }
+
   function receiveAttack(e) {
     const { index } = e.target.dataset;
     if (!index) return;
@@ -40,7 +45,6 @@ export function DOMBoardFactory(id, ROWS) {
   function updateBoard(boardData) {
     if (boardData.id !== id) return;
 
-    console.log(`updating ${id}....`);
     boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
         const index = i + j * 10;
@@ -91,5 +95,14 @@ export function DOMBoardFactory(id, ROWS) {
     });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages, listenForAttack, disable, enable };
+  return {
+    setOffense,
+    setDefense,
+    setupBoard,
+    placeSetImages,
+    listenForAttack,
+    disable,
+    enable,
+    setGameOver,
+  };
 }

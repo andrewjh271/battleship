@@ -32,7 +32,11 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     return false;
   }
 
-  return { attack, placeShip, isComputer, setup, setTurn };
+  function sunkAllShips() {
+    return  opponentBoard.gameOver();
+  }
+
+  return { attack, placeShip, isComputer, setup, setTurn, sunkAllShips };
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
@@ -72,7 +76,11 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
     homeDOMBoard.disable();
   }
 
-  return { attack, setup, isComputer, setTurn };
+  function sunkAllShips() {
+    return  opponentBoard.gameOver();
+  }
+
+  return { attack, setup, isComputer, setTurn, sunkAllShips };
 }
 
 export { humanPlayerFactory, computerPlayerFactory };

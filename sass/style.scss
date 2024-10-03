@@ -40,11 +40,11 @@ html {
     border: 0.5px solid black;
 
     &.attacked {
-      background-color: #27a2c4;
+      background-color: #90c1ff;
       pointer-events: none;
 
       &.highlight-placed {
-        background-color: #a20000;
+        background-color: #a10000;
       }
     }
   }
@@ -56,7 +56,7 @@ html {
   .highlight-placed {
     background-color: lightslategrey;
     z-index: 2;
-    opacity: 0.3;
+    opacity: 0.4;
   }
 
   &.defense {
@@ -70,12 +70,12 @@ html {
     .cell {
       &:hover {
         cursor: pointer;
-        background-color: lightcoral;
+        background-color: #ff0000;
       }
 
       &.sunk {
         &.highlight-placed {
-          opacity: 0.3;
+          opacity: 0.4;
         }
       }
     }
@@ -83,14 +83,18 @@ html {
 
   &.offense {
     // position
-
-    .cell {
-      pointer-events: none;
-    }
+    pointer-events: none;
   }
 
   &.disabled {
     pointer-events: none;
+  }
+
+  &.game-over {
+    .highlight-placed {
+      background-color: lightslategrey;
+      opacity: 0.3;
+    }
   }
 }
 
