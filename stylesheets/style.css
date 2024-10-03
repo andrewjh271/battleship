@@ -35,6 +35,13 @@ html {
   background-color: white;
   border: 0.5px solid black;
 }
+.board .cell.attacked {
+  background-color: #27a2c4;
+  pointer-events: none;
+}
+.board .cell.attacked.highlight-placed {
+  background-color: #a20000;
+}
 .board .highlight-hovered {
   background-color: aquamarine;
 }
@@ -51,25 +58,14 @@ html {
   cursor: pointer;
   background-color: lightcoral;
 }
-.board.defense .cell.attacked {
-  background-color: rgb(39, 162, 196);
-  pointer-events: none;
-}
-.board.defense .cell.attacked.highlight-placed {
-  background-color: red;
-}
 .board.defense .cell.sunk.highlight-placed {
   opacity: 0.3;
 }
 .board.offense .cell {
   pointer-events: none;
 }
-.board.offense .cell.attacked {
-  background-color: rgb(39, 162, 196);
+.board.disabled {
   pointer-events: none;
-}
-.board.offense .cell.attacked.highlight-placed {
-  background-color: red;
 }
 
 .board-setup-container {

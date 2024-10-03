@@ -189,16 +189,26 @@ function DOMBoardFactory(id, ROWS) {
 
   (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('boardChange', updateBoard);
 
+  function listenForAttack() {
+    board.addEventListener('click', receiveAttack);
+  }
+
   function setOffense() {
     board.classList.remove('defense');
-    board.classList.add('offense'); // necessary?
-    board.removeEventListener('click', receiveAttack);
+    board.classList.add('offense');
   }
 
   function setDefense() {
     board.classList.remove('offense');
     board.classList.add('defense');
-    board.addEventListener('click', receiveAttack);
+  }
+
+  function disable() {
+    board.classList.add('disabled');
+  }
+
+  function enable() {
+    board.classList.remove('disabled');
   }
 
   function receiveAttack(e) {
@@ -261,7 +271,7 @@ function DOMBoardFactory(id, ROWS) {
     });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages };
+  return { setOffense, setDefense, setupBoard, placeSetImages, listenForAttack, disable, enable };
 }
 
 
@@ -856,7 +866,7 @@ const attackMax = 3;
   if (attackCount >= attackMax) {
     attackCount = 0;
     playerOneToMove = !playerOneToMove
-    setTimeout(() => playRound(playerOneToMove), 2000);
+    playRound(playerOneToMove);
   }
 });
 
@@ -867,7 +877,7 @@ function beginSetup() {
   board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
-  player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1);
+  player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2);
   player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
 
   player1.setup();
@@ -885,35 +895,33 @@ function finishSetup() {
 
 function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
+  DOMBoard1.listenForAttack();
+  DOMBoard2.listenForAttack();
   playRound(playerOneToMove);
 }
 
 function playRound(firstPlayer) {
-  console.log('play round');
   if (firstPlayer) {
-    DOMBoard1.setOffense();
-    DOMBoard2.setDefense();
-  } else if (player2.isComputer()) {
-    DOMBoard1.setDefense();
-    DOMBoard2.setOffense();
-    computerAttacks();
+    player1.setTurn();
   } else {
-    DOMBoard2.setOffense();
-    DOMBoard1.setDefense();
+    player2.setTurn();
+    if (player2.isComputer()) {
+      computerAttacks();
+    }
   }
 }
 
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
     playerOneToMove = !playerOneToMove;
-    playRound(playerOneToMove);
+    setTimeout(() => playRound(playerOneToMove), 1000);
     return;
   }
 
   setTimeout(() => {
     player2.attack();
     computerAttacks(i + 1);
-  }, 2000)
+  }, 500)
 }
 
 
@@ -1058,7 +1066,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
 
-function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
+function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: coordinates });
@@ -1073,18 +1081,24 @@ function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   }
 
   function setup() {
-    DOMBoard.setupBoard();
+    homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
+  }
+
+  function setTurn() {
+    opponentDOMBoard.setDefense();
+    opponentDOMBoard.enable();
+    homeDOMBoard.setOffense();
   }
 
   function isComputer() {
     return false;
   }
 
-  return { attack, placeShip, isComputer, setup };
+  return { attack, placeShip, isComputer, setup, setTurn };
 }
 
-function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
+function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
   const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {
@@ -1114,10 +1128,14 @@ function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     });
-    DOMBoard.placeSetImages(homeBoard);
+    homeDOMBoard.placeSetImages(homeBoard);
   }
 
-  return { attack, setup, isComputer };
+  function setTurn() {
+    homeDOMBoard.disable();
+  }
+
+  return { attack, setup, isComputer, setTurn };
 }
 
 
