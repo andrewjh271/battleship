@@ -811,20 +811,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getEnsemble: () => (/* binding */ getEnsemble),
 /* harmony export */   setEnsemble: () => (/* binding */ setEnsemble)
 /* harmony export */ });
-const ensemble = {
-  // flute: [1, 3],
-  // trombone: [1, 5],
-  // clarinet: [1, 3],
-  // violin: [1, 3],
-  // bassoon: [1, 4],
+let ensemble = {
+  flute: [1, 3],
+  trombone: [1, 5],
+  clarinet: [1, 3],
+  violin: [1, 3],
+  bassoon: [1, 4],
   cello: [2, 5],
   horn: [2, 2],
-  // piccolo: [1, 2],
-  // trumpet: [1, 3],
+  piccolo: [1, 2],
+  trumpet: [1, 3],
 };
 
 function setEnsemble() {
-  // get user's choice of ensemble
+  const ensembleInput = document.querySelector('.ensemble-select');
+  const selection = ensembleInput.value;
+
+  switch (selection) {
+    case 'chamber':
+      ensemble = {
+        violin: [1, 3],
+        clarinet: [1, 3],
+        cello: [2, 5],
+        horn: [2, 2],
+        flute: [1, 3],
+      };
+      break;
+    case 'brass':
+      ensemble = {
+        trombone: [1, 5],
+        horn: [2, 2],
+        trumpet: [1, 3],
+      };
+      break;
+    case 'woodwinds':
+      ensemble = {
+        flute: [1, 3],
+        clarinet: [1, 3],
+        bassoon: [1, 4],
+        piccolo: [1, 2],
+      };
+      break;
+    default:
+      // keep as is
+  }
 }
 
 function getEnsemble() {
@@ -1095,8 +1125,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
-
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
@@ -1134,6 +1162,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
+  const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
   const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {

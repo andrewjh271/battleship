@@ -1,8 +1,6 @@
 import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 
-const ships = getEnsemble();
-
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
@@ -40,6 +38,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
+  const ships = getEnsemble();
   const size = rowLength();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {
