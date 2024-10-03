@@ -3,7 +3,7 @@ import { getEnsemble } from './ensemble';
 
 const ships = getEnsemble();
 
-function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
+function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
   function attack(coords) {
     const coordinates = coords || getCoords();
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: coordinates });
@@ -18,18 +18,24 @@ function humanPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
   }
 
   function setup() {
-    DOMBoard.setupBoard();
+    homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
+  }
+
+  function setTurn() {
+    opponentDOMBoard.setDefense();
+    opponentDOMBoard.enable();
+    homeDOMBoard.setOffense();
   }
 
   function isComputer() {
     return false;
   }
 
-  return { attack, placeShip, isComputer, setup };
+  return { attack, placeShip, isComputer, setup, setTurn };
 }
 
-function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
+function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
   const size = rowLength();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {
@@ -59,10 +65,14 @@ function computerPlayerFactory(homeBoard, opponentBoard, DOMBoard) {
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     });
-    DOMBoard.placeSetImages(homeBoard);
+    homeDOMBoard.placeSetImages(homeBoard);
   }
 
-  return { attack, setup, isComputer };
+  function setTurn() {
+    homeDOMBoard.disable();
+  }
+
+  return { attack, setup, isComputer, setTurn };
 }
 
 export { humanPlayerFactory, computerPlayerFactory };

@@ -9,16 +9,26 @@ export function DOMBoardFactory(id, ROWS) {
 
   on('boardChange', updateBoard);
 
+  function listenForAttack() {
+    board.addEventListener('click', receiveAttack);
+  }
+
   function setOffense() {
     board.classList.remove('defense');
-    board.classList.add('offense'); // necessary?
-    board.removeEventListener('click', receiveAttack);
+    board.classList.add('offense');
   }
 
   function setDefense() {
     board.classList.remove('offense');
     board.classList.add('defense');
-    board.addEventListener('click', receiveAttack);
+  }
+
+  function disable() {
+    board.classList.add('disabled');
+  }
+
+  function enable() {
+    board.classList.remove('disabled');
   }
 
   function receiveAttack(e) {
@@ -81,5 +91,5 @@ export function DOMBoardFactory(id, ROWS) {
     });
   }
 
-  return { setOffense, setDefense, setupBoard, placeSetImages };
+  return { setOffense, setDefense, setupBoard, placeSetImages, listenForAttack, disable, enable };
 }

@@ -27,7 +27,7 @@ on('attack', () => {
   if (attackCount >= attackMax) {
     attackCount = 0;
     playerOneToMove = !playerOneToMove
-    setTimeout(() => playRound(playerOneToMove), 2000);
+    playRound(playerOneToMove);
   }
 });
 
@@ -38,7 +38,7 @@ function beginSetup() {
   board2 = boardFactory('board2');
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
   DOMBoard2 = DOMBoardFactory('board2', rowLength());
-  player1 = humanPlayerFactory(board1, board2, DOMBoard1);
+  player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2);
   player2 = computerPlayerFactory(board2, board1, DOMBoard2);
 
   player1.setup();
@@ -56,33 +56,31 @@ function finishSetup() {
 
 function startGame() {
   showBoards();
+  DOMBoard1.listenForAttack();
+  DOMBoard2.listenForAttack();
   playRound(playerOneToMove);
 }
 
 function playRound(firstPlayer) {
-  console.log('play round');
   if (firstPlayer) {
-    DOMBoard1.setOffense();
-    DOMBoard2.setDefense();
-  } else if (player2.isComputer()) {
-    DOMBoard1.setDefense();
-    DOMBoard2.setOffense();
-    computerAttacks();
+    player1.setTurn();
   } else {
-    DOMBoard2.setOffense();
-    DOMBoard1.setDefense();
+    player2.setTurn();
+    if (player2.isComputer()) {
+      computerAttacks();
+    }
   }
 }
 
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
     playerOneToMove = !playerOneToMove;
-    playRound(playerOneToMove);
+    setTimeout(() => playRound(playerOneToMove), 1000);
     return;
   }
 
   setTimeout(() => {
     player2.attack();
     computerAttacks(i + 1);
-  }, 2000)
+  }, 500)
 }
