@@ -12,6 +12,7 @@ const setBoardButton = document.querySelector('.set-board');
 
 let player1;
 let player2;
+let currentPlayer;
 
 let board1; // eventually declare inside beginSetup?
 let board2; // eventually declare inside beginSetup?
@@ -19,15 +20,14 @@ let board2; // eventually declare inside beginSetup?
 let DOMBoard1;
 let DOMBoard2;
 
-let playerOneToMove = true;
 let attackCount = 0;
 const attackMax = 3;
 on('attack', () => {
   attackCount++;
   if (attackCount >= attackMax) {
     attackCount = 0;
-    playerOneToMove = !playerOneToMove
-    playRound(playerOneToMove);
+    switchTurns();
+    playRound();
   }
 });
 
@@ -58,29 +58,30 @@ function startGame() {
   showBoards();
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
-  playRound(playerOneToMove);
+  currentPlayer = player1;
+  playRound();
 }
 
-function playRound(firstPlayer) {
-  if (firstPlayer) {
-    player1.setTurn();
-  } else {
-    player2.setTurn();
-    if (player2.isComputer()) {
-      computerAttacks();
-    }
+function playRound() {
+  currentPlayer.setTurn();
+  if (currentPlayer.isComputer()) {
+    computerAttacks();
   }
 }
 
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
-    playerOneToMove = !playerOneToMove;
-    setTimeout(() => playRound(playerOneToMove), 1000);
+    switchTurns();
+    setTimeout(() => playRound(), 1000);
     return;
   }
 
   setTimeout(() => {
-    player2.attack();
+    currentPlayer.attack();
     computerAttacks(i + 1);
-  }, 500)
+  }, 500);
+}
+
+function switchTurns() {
+  currentPlayer = currentPlayer === player1 ? player2 : player1;
 }
