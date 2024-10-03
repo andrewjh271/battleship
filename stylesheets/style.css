@@ -36,11 +36,11 @@ html {
   border: 0.5px solid black;
 }
 .board .cell.attacked {
-  background-color: #27a2c4;
+  background-color: #90c1ff;
   pointer-events: none;
 }
 .board .cell.attacked.highlight-placed {
-  background-color: #a20000;
+  background-color: #a10000;
 }
 .board .highlight-hovered {
   background-color: aquamarine;
@@ -48,7 +48,7 @@ html {
 .board .highlight-placed {
   background-color: lightslategrey;
   z-index: 2;
-  opacity: 0.3;
+  opacity: 0.4;
 }
 .board.defense .highlight-placed {
   background-color: white;
@@ -56,16 +56,20 @@ html {
 }
 .board.defense .cell:hover {
   cursor: pointer;
-  background-color: lightcoral;
+  background-color: #ff0000;
 }
 .board.defense .cell.sunk.highlight-placed {
-  opacity: 0.3;
+  opacity: 0.4;
 }
-.board.offense .cell {
+.board.offense {
   pointer-events: none;
 }
 .board.disabled {
   pointer-events: none;
+}
+.board.game-over .highlight-placed {
+  background-color: lightslategrey;
+  opacity: 0.3;
 }
 
 .board-setup-container {
