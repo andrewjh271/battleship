@@ -648,7 +648,7 @@ function boardFactory(id) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', { squares, id });
   }
 
-  function gameOver() {
+  function allShipsSunk() {
     return totalShips === shipsSunk;
   }
 
@@ -678,7 +678,7 @@ function boardFactory(id) {
     isOccupied,
     placeShip,
     receiveAttack,
-    gameOver,
+    allShipsSunk,
     emptySquares,
     listenForPosition,
     placedShips,
@@ -894,18 +894,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const startButton = document.querySelector('.start-game');
-startButton.addEventListener('click', beginSetup);
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
 const curtain = document.querySelector('.curtain');
 
+startButton.addEventListener('click', beginSetup);
+switchButton.addEventListener('click', coverBoards);
+
 let player1;
 let player2;
 let currentPlayer;
-
-let board1; // eventually declare inside beginSetup?
-let board2; // eventually declare inside beginSetup?
 
 let DOMBoard1;
 let DOMBoard2;
@@ -929,17 +928,14 @@ function playerAttackProgression() {
 function beginSetup() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
-  board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
-  board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
+  const board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
+  const board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2);
-  if (document.getElementById('computer').checked) {
-    player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
-  } else {
-    player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1)
-  }
-
+  player2 = document.getElementById('computer').checked
+    ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2)
+    : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1));
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
@@ -959,21 +955,24 @@ function startGame() {
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
-  playRound();
-}
-
-function finishRound() {
-  if (!player1.isComputer() && !player2.isComputer()) {
-    DOMBoard1.disable();
-    DOMBoard2.disable();
-    switchButton.disabled = false;
-    switchButton.addEventListener('click', hideBoards);
-  } else {
+  if (player2.isComputer()) {
     playRound();
+  } else {
+    coverBoards();
   }
 }
 
-function hideBoards() {
+function finishRound() {
+  if (player2.isComputer()) {
+    playRound();
+  } else {
+    DOMBoard1.disable();
+    DOMBoard2.disable();
+    switchButton.disabled = false;
+  }
+}
+
+function coverBoards() {
   curtain.classList.remove('hidden');
 }
 startRoundButton.addEventListener('click', playRound);
@@ -1015,6 +1014,7 @@ function gameOver() {
   DOMBoard1.setGameOver();
   DOMBoard2.setGameOver();
 }
+
 
 /***/ }),
 
@@ -1156,19 +1156,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
-  function attack(coords) {
-    const coordinates = coords || getCoords();
-    opponentBoard.receiveAttack({ id: opponentBoard.id, coords: coordinates });
-  }
-
-  function getCoords() {
-    // get coordinates from User/DOM
-  }
-
-  function placeShip(coords) {
-    homeBoard.placeShip(coords);
-  }
-
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -1185,10 +1172,10 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
   }
 
   function sunkAllShips() {
-    return  opponentBoard.gameOver();
+    return opponentBoard.allShipsSunk();
   }
 
-  return { attack, placeShip, isComputer, setup, setTurn, sunkAllShips };
+  return { isComputer, setup, setTurn, sunkAllShips };
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
@@ -1230,7 +1217,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
   }
 
   function sunkAllShips() {
-    return  opponentBoard.gameOver();
+    return opponentBoard.allShipsSunk();
   }
 
   return { attack, setup, isComputer, setTurn, sunkAllShips };
