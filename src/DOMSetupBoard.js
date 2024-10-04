@@ -18,6 +18,7 @@ let currentBoard;
 function setupDOMBoard(board) {
   setBoardButton.disabled = true;
   remainingInstruments = Object.keys(getEnsemble());
+  enablePreviewImages();
   currentBoard = board;
   showSetup(currentBoard);
   setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
@@ -101,10 +102,10 @@ function placeImage(element) {
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
-  updatePreviewImages(element.type);
+  disablePreviewImage(element.type);
 }
 
-function updatePreviewImages(instrument) {
+function disablePreviewImage(instrument) {
   const index = remainingInstruments.indexOf(instrument);
   if (index > -1) {
     remainingInstruments.splice(index, 1);
@@ -113,6 +114,10 @@ function updatePreviewImages(instrument) {
     setBoardButton.disabled = false;
   }
   document.getElementById(instrument).classList.add('disabled');
+}
+
+function enablePreviewImages() {
+  previews.forEach(preview => preview.classList.remove('disabled'));
 }
 
 function newTemplateImage(type) {

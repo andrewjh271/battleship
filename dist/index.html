@@ -18,6 +18,22 @@
           <option value="woodwinds">Woodwinds</option>
           <option value="orchestra">Full Orchestra</option>
         </select>
+        <fieldset class="opponent-input">
+          <legend>Choose your opponent:</legend>
+          <div>
+            <input type="radio" id="computer" name="player2" value="computer" checked />
+            <label for="computer">Computer</label>
+          </div>
+          <div>
+            <input type="radio" id="human" name="player2" value="human" />
+            <label for="human">Human</label>
+          </div>
+        </fieldset>
+        <button class="switch-turns" disabled>Switch Turn</button>
+      </div>
+
+      <div class="curtain hidden">
+        <button class="start-round">Start Next Round</button>
       </div>
 
       <div class="board" id="board1"></div>

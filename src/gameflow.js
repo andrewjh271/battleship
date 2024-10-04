@@ -9,6 +9,9 @@ import { setEnsemble } from './ensemble';
 const startButton = document.querySelector('.start-game');
 startButton.addEventListener('click', beginSetup);
 const setBoardButton = document.querySelector('.set-board');
+const switchButton = document.querySelector('.switch-turns');
+const startRoundButton = document.querySelector('.start-round');
+const curtain = document.querySelector('.curtain');
 
 let player1;
 let player2;
@@ -32,7 +35,7 @@ function playerAttackProgression() {
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
-    playRound();
+    finishRound();
   }
 }
 
@@ -44,7 +47,11 @@ function beginSetup() {
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
   DOMBoard2 = DOMBoardFactory('board2', rowLength());
   player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2);
-  player2 = computerPlayerFactory(board2, board1, DOMBoard2);
+  if (document.getElementById('computer').checked) {
+    player2 = computerPlayerFactory(board2, board1, DOMBoard2);
+  } else {
+    player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1)
+  }
 
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
@@ -68,7 +75,25 @@ function startGame() {
   playRound();
 }
 
+function finishRound() {
+  if (!player1.isComputer() && !player2.isComputer()) {
+    DOMBoard1.disable();
+    DOMBoard2.disable();
+    switchButton.disabled = false;
+    switchButton.addEventListener('click', hideBoards);
+  } else {
+    playRound();
+  }
+}
+
+function hideBoards() {
+  curtain.classList.remove('hidden');
+}
+startRoundButton.addEventListener('click', playRound);
+
 function playRound() {
+  curtain.classList.add('hidden');
+  switchButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
     computerAttacks();
