@@ -91,7 +91,7 @@ describe('receive attack', () => {
   });
 });
 
-describe('gameOver', () => {
+describe('allShipsSunk', () => {
   test('reports whether all ships have sunk', () => {
     board.placeShip([
       [1, 2],
@@ -107,11 +107,11 @@ describe('gameOver', () => {
     board.receiveAttack({ id, coords: [1, 2] });
     board.receiveAttack({ id, coords: [2, 2] });
     board.receiveAttack({ id, coords: [3, 2] });
-    expect(board.gameOver()).toBe(false);
+    expect(board.allShipsSunk()).toBe(false);
     board.receiveAttack({ id, coords: [6, 6] });
     board.receiveAttack({ id, coords: [6, 3] });
     board.receiveAttack({ id, coords: [6, 4] });
     board.receiveAttack({ id, coords: [6, 5] });
-    expect(board.gameOver()).toBe(true);
+    expect(board.allShipsSunk()).toBe(true);
   });
 });

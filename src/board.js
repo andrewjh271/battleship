@@ -73,7 +73,7 @@ export default function boardFactory(id) {
     emit('boardChange', { squares, id });
   }
 
-  function gameOver() {
+  function allShipsSunk() {
     return totalShips === shipsSunk;
   }
 
@@ -103,7 +103,7 @@ export default function boardFactory(id) {
     isOccupied,
     placeShip,
     receiveAttack,
-    gameOver,
+    allShipsSunk,
     emptySquares,
     listenForPosition,
     placedShips,

@@ -2,19 +2,6 @@ import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
-  function attack(coords) {
-    const coordinates = coords || getCoords();
-    opponentBoard.receiveAttack({ id: opponentBoard.id, coords: coordinates });
-  }
-
-  function getCoords() {
-    // get coordinates from User/DOM
-  }
-
-  function placeShip(coords) {
-    homeBoard.placeShip(coords);
-  }
-
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -31,10 +18,10 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
   }
 
   function sunkAllShips() {
-    return  opponentBoard.gameOver();
+    return opponentBoard.allShipsSunk();
   }
 
-  return { attack, placeShip, isComputer, setup, setTurn, sunkAllShips };
+  return { isComputer, setup, setTurn, sunkAllShips };
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
@@ -76,7 +63,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
   }
 
   function sunkAllShips() {
-    return  opponentBoard.gameOver();
+    return opponentBoard.allShipsSunk();
   }
 
   return { attack, setup, isComputer, setTurn, sunkAllShips };

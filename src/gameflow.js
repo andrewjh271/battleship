@@ -7,18 +7,17 @@ import { on } from './observer';
 import { setEnsemble } from './ensemble';
 
 const startButton = document.querySelector('.start-game');
-startButton.addEventListener('click', beginSetup);
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
 const curtain = document.querySelector('.curtain');
 
+startButton.addEventListener('click', beginSetup);
+switchButton.addEventListener('click', coverBoards);
+
 let player1;
 let player2;
 let currentPlayer;
-
-let board1; // eventually declare inside beginSetup?
-let board2; // eventually declare inside beginSetup?
 
 let DOMBoard1;
 let DOMBoard2;
@@ -42,17 +41,14 @@ function playerAttackProgression() {
 function beginSetup() {
   setBoardSizes();
   setEnsemble();
-  board1 = boardFactory('board1');
-  board2 = boardFactory('board2');
+  const board1 = boardFactory('board1');
+  const board2 = boardFactory('board2');
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
   DOMBoard2 = DOMBoardFactory('board2', rowLength());
   player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2);
-  if (document.getElementById('computer').checked) {
-    player2 = computerPlayerFactory(board2, board1, DOMBoard2);
-  } else {
-    player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1)
-  }
-
+  player2 = document.getElementById('computer').checked
+    ? computerPlayerFactory(board2, board1, DOMBoard2)
+    : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1));
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
@@ -72,21 +68,24 @@ function startGame() {
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
-  playRound();
-}
-
-function finishRound() {
-  if (!player1.isComputer() && !player2.isComputer()) {
-    DOMBoard1.disable();
-    DOMBoard2.disable();
-    switchButton.disabled = false;
-    switchButton.addEventListener('click', hideBoards);
-  } else {
+  if (player2.isComputer()) {
     playRound();
+  } else {
+    coverBoards();
   }
 }
 
-function hideBoards() {
+function finishRound() {
+  if (player2.isComputer()) {
+    playRound();
+  } else {
+    DOMBoard1.disable();
+    DOMBoard2.disable();
+    switchButton.disabled = false;
+  }
+}
+
+function coverBoards() {
   curtain.classList.remove('hidden');
 }
 startRoundButton.addEventListener('click', playRound);
