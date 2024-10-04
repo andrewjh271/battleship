@@ -50,8 +50,10 @@ function clearPlacedImages() {
 on('dragEvent', highlightHoveredCells);
 on('dragEnd', handleRelease);
 
+let cellsToHighlight = [];
+let cellsToUnhighlight = [];
 function highlightHoveredCells(positionData) {
-  const { startX, endX, startY, endY } = positionData;
+  const { startX, endX, startY, endY, area } = positionData;
 
   currentBoard.cells.forEach((cell) => {
     const bound = cell.getBoundingClientRect();
@@ -63,11 +65,23 @@ function highlightHoveredCells(positionData) {
     const minBottom = bound.bottom - half;
 
     if (startX < maxLeft && endX > minRight && startY < maxTop && endY > minBottom) {
-      cell.classList.add('highlight-hovered');
+      cellsToHighlight.push(cell);
     } else {
-      cell.classList.remove('highlight-hovered');
+      cellsToUnhighlight.push(cell);
     }
   });
+  commitValidHighlights(area);
+}
+
+function commitValidHighlights(targetArea) {
+  // fixes issue of too many cells being highlighted if image is centered exactly between them
+  // <= instead of === to allow change when image is dragged off board
+  if (cellsToHighlight.length <= targetArea) {
+    cellsToHighlight.forEach((cell) => cell.classList.add('highlight-hovered'));
+    cellsToUnhighlight.forEach((cell) => cell.classList.remove('highlight-hovered'));
+  }
+  cellsToHighlight = [];
+  cellsToUnhighlight = [];
 }
 
 function handleRelease(element) {
@@ -117,7 +131,7 @@ function disablePreviewImage(instrument) {
 }
 
 function enablePreviewImages() {
-  previews.forEach(preview => preview.classList.remove('disabled'));
+  previews.forEach((preview) => preview.classList.remove('disabled'));
 }
 
 function newTemplateImage(type) {
