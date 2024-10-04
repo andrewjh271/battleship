@@ -21,6 +21,31 @@ html {
   grid-template-rows: 100px 1fr;
 }
 
+.control-panel {
+  display: flex;
+  align-items: start;
+}
+
+.curtain {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: darkslategrey;
+  z-index: 3;
+}
+
+#board1::before {
+  content: "Player 1's Board";
+  position: absolute;
+  transform: translateY(-30px);
+}
+
+#board2::before {
+  content: "Player 2's Board";
+  position: absolute;
+  transform: translateY(-30px);
+}
+
 .board {
   margin: 30px;
   border: 0.5px solid rgb(0, 0, 0);
@@ -50,6 +75,9 @@ html {
   z-index: 2;
   opacity: 0.4;
 }
+.board.defense {
+  grid-column-start: 2;
+}
 .board.defense .highlight-placed {
   background-color: white;
   opacity: 1;
@@ -62,6 +90,7 @@ html {
   opacity: 0.4;
 }
 .board.offense {
+  grid-column-start: 1;
   pointer-events: none;
 }
 .board.disabled {

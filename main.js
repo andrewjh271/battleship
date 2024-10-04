@@ -425,6 +425,7 @@ let currentBoard;
 function setupDOMBoard(board) {
   setBoardButton.disabled = true;
   remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_4__.getEnsemble)());
+  enablePreviewImages();
   currentBoard = board;
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_5__.showSetup)(currentBoard);
   setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('setPosition', currentBoard), { once: true });
@@ -508,10 +509,10 @@ function placeImage(element) {
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
-  updatePreviewImages(element.type);
+  disablePreviewImage(element.type);
 }
 
-function updatePreviewImages(instrument) {
+function disablePreviewImage(instrument) {
   const index = remainingInstruments.indexOf(instrument);
   if (index > -1) {
     remainingInstruments.splice(index, 1);
@@ -520,6 +521,10 @@ function updatePreviewImages(instrument) {
     setBoardButton.disabled = false;
   }
   document.getElementById(instrument).classList.add('disabled');
+}
+
+function enablePreviewImages() {
+  previews.forEach(preview => preview.classList.remove('disabled'));
 }
 
 function newTemplateImage(type) {
@@ -891,6 +896,9 @@ __webpack_require__.r(__webpack_exports__);
 const startButton = document.querySelector('.start-game');
 startButton.addEventListener('click', beginSetup);
 const setBoardButton = document.querySelector('.set-board');
+const switchButton = document.querySelector('.switch-turns');
+const startRoundButton = document.querySelector('.start-round');
+const curtain = document.querySelector('.curtain');
 
 let player1;
 let player2;
@@ -914,7 +922,7 @@ function playerAttackProgression() {
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
-    playRound();
+    finishRound();
   }
 }
 
@@ -926,7 +934,11 @@ function beginSetup() {
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2);
-  player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
+  if (document.getElementById('computer').checked) {
+    player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2);
+  } else {
+    player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1)
+  }
 
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
@@ -950,7 +962,25 @@ function startGame() {
   playRound();
 }
 
+function finishRound() {
+  if (!player1.isComputer() && !player2.isComputer()) {
+    DOMBoard1.disable();
+    DOMBoard2.disable();
+    switchButton.disabled = false;
+    switchButton.addEventListener('click', hideBoards);
+  } else {
+    playRound();
+  }
+}
+
+function hideBoards() {
+  curtain.classList.remove('hidden');
+}
+startRoundButton.addEventListener('click', playRound);
+
 function playRound() {
+  curtain.classList.add('hidden');
+  switchButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
     computerAttacks();
