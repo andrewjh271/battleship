@@ -1,11 +1,15 @@
+import { rowLength } from "./boardSize";
+
 function indexToCoordinates(index) {
-  const x = index % 10;
-  const y = Math.floor(index / 10);
+  const size = rowLength();
+  const x = index % size;
+  const y = Math.floor(index / size);
   return [x, y];
 }
 
 function coordinatesToIndex(coords) {
-  return coords[1] * 10 + coords[0];
+  const size = rowLength();
+  return coords[1] * size + coords[0];
 }
 
 export { indexToCoordinates, coordinatesToIndex };

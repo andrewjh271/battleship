@@ -57,7 +57,8 @@ function highlightHoveredCells(positionData) {
 
   currentBoard.cells.forEach((cell) => {
     const bound = cell.getBoundingClientRect();
-    const half = bound.width / 2;
+    const half = bound.width / 2 + 1;
+    // + 1 to give some leeway to pass comparisons (rounding errors, etc.)
 
     const maxLeft = bound.left + half;
     const minRight = bound.right - half;

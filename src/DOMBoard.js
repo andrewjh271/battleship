@@ -3,6 +3,7 @@ import { initializeDOMBoard } from './DOMInitializeBoard';
 import { setupDOMBoard, newTemplateImage, newTemplateWrapper } from './DOMSetupBoard';
 import { on, emit } from './observer';
 import { coordinatesToIndex, indexToCoordinates } from './coordinates';
+import { rowLength } from './boardSize';
 
 export function DOMBoardFactory(id, ROWS) {
   const board = initializeDOMBoard(id, ROWS);
@@ -47,7 +48,7 @@ export function DOMBoardFactory(id, ROWS) {
 
     boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
-        const index = i + j * 10;
+        const index = i + j * rowLength();
         if (square.ship?.isSunk()) {
           board.cells[index].classList.add('sunk');
         }

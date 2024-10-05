@@ -24,6 +24,7 @@ html {
 .control-panel {
   display: flex;
   align-items: start;
+  grid-column: span 2;
 }
 
 .curtain {

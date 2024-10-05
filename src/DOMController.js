@@ -1,9 +1,6 @@
 import { setRowLength } from "./boardSize";
 import { getEnsemble } from "./ensemble";
 
-// const startButton = document.querySelector('start-game');
-// startButton.addEventListener('click', setupBoard1)
-
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
 
@@ -31,8 +28,7 @@ function showBoards() {
 }
 
 function setBoardSizes() {
-  // eventually based on window size
-  const rowLength = 10;
+  const rowLength = Number(document.querySelector('.size-select').value) || 10
   setRowLength(rowLength);
   board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
   board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`

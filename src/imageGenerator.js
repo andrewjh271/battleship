@@ -1,9 +1,3 @@
-import { rowLength } from "./boardSize";
-
-const board = document.querySelector('.board');
-const boardWidth = board.offsetWidth;
-const squareWidth = boardWidth / rowLength(); // number of cells in row
-
 function flute() {
   return newImage('flute', 1, 3);
 }
@@ -43,6 +37,8 @@ function trumpet() {
 }
 
 function newImage(type, width, height) {
+  const cell = document.querySelector(".board:not(.hidden) > .cell")
+  const squareWidth = cell.offsetWidth;
   const image = new Image();
   image.src = `./images/${type}.png`;
   image.style.width = `${squareWidth * width}px`;

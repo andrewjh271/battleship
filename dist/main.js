@@ -178,7 +178,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DOMSetupBoard */ "./src/DOMSetupBoard.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 /* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
+/* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* eslint-disable no-param-reassign */
+
 
 
 
@@ -227,7 +229,7 @@ function DOMBoardFactory(id, ROWS) {
 
     boardData.squares.forEach((row, i) => {
       row.forEach((square, j) => {
-        const index = i + j * 10;
+        const index = i + j * (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)();
         if (square.ship?.isSunk()) {
           board.cells[index].classList.add('sunk');
         }
@@ -307,9 +309,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// const startButton = document.querySelector('start-game');
-// startButton.addEventListener('click', setupBoard1)
-
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
 
@@ -337,9 +336,8 @@ function showBoards() {
 }
 
 function setBoardSizes() {
-  // eventually based on window size
-  const rowLength = 10;
-  (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.setRowLength)(rowLength);
+  const rowLength = Number(document.querySelector('.size-select').value) || 10
+  ;(0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.setRowLength)(rowLength);
   board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
   board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`
   board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
@@ -464,7 +462,8 @@ function highlightHoveredCells(positionData) {
 
   currentBoard.cells.forEach((cell) => {
     const bound = cell.getBoundingClientRect();
-    const half = bound.width / 2;
+    const half = bound.width / 2 + 1;
+    // + 1 to give some leeway to pass comparisons (rounding errors, etc.)
 
     const maxLeft = bound.left + half;
     const minRight = bound.right - half;
@@ -744,14 +743,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   coordinatesToIndex: () => (/* binding */ coordinatesToIndex),
 /* harmony export */   indexToCoordinates: () => (/* binding */ indexToCoordinates)
 /* harmony export */ });
+/* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
+
+
 function indexToCoordinates(index) {
-  const x = index % 10;
-  const y = Math.floor(index / 10);
+  const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
+  const x = index % size;
+  const y = Math.floor(index / size);
   return [x, y];
 }
 
 function coordinatesToIndex(coords) {
-  return coords[1] * 10 + coords[0];
+  const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
+  return coords[1] * size + coords[0];
 }
 
 
@@ -1051,13 +1055,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   trumpet: () => (/* binding */ trumpet),
 /* harmony export */   violin: () => (/* binding */ violin)
 /* harmony export */ });
-/* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
-
-
-const board = document.querySelector('.board');
-const boardWidth = board.offsetWidth;
-const squareWidth = boardWidth / (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)(); // number of cells in row
-
 function flute() {
   return newImage('flute', 1, 3);
 }
@@ -1097,6 +1094,8 @@ function trumpet() {
 }
 
 function newImage(type, width, height) {
+  const cell = document.querySelector(".board:not(.hidden) > .cell")
+  const squareWidth = cell.offsetWidth;
   const image = new Image();
   image.src = `./images/${type}.png`;
   image.style.width = `${squareWidth * width}px`;
