@@ -231,6 +231,8 @@ function DOMBoardFactory(id, ROWS) {
       row.forEach((square, j) => {
         const index = i + j * (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)();
         if (square.ship?.isSunk()) {
+          const img = board.querySelector(`img[src*=${square.ship.name}]`);
+          img.parentElement.classList.add('sunk');
           board.cells[index].classList.add('sunk');
         }
         if (square.attacked) {
@@ -311,8 +313,10 @@ __webpack_require__.r(__webpack_exports__);
 
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
+const setupContainer = document.querySelector('.board-setup-container');
 
 function showSetup(board) {
+  setupContainer.classList.remove('hidden');
   board.classList.remove('hidden');
   if (board1 === board) {
     board2.classList.add('hidden');
@@ -329,7 +333,6 @@ function showSetup(board) {
 }
 
 function showBoards() {
-  const setupContainer = document.querySelector('.board-setup-container');
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
   setupContainer.classList.add('hidden');
@@ -855,10 +858,10 @@ function setEnsemble() {
     case 'chamber':
       ensemble = {
         violin: [1, 3],
-        clarinet: [1, 3],
-        cello: [2, 5],
-        horn: [2, 2],
-        flute: [1, 3],
+        // clarinet: [1, 3],
+        // cello: [2, 5],
+        // horn: [2, 2],
+        // flute: [1, 3],
       };
       break;
     case 'brass':
@@ -916,7 +919,7 @@ const startButton = document.querySelector('.start-game');
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
-const curtain = document.querySelector('.curtain');
+const curtains = document.querySelectorAll('.curtain');
 
 startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
@@ -952,7 +955,7 @@ function beginSetup() {
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2);
-  player2 = document.getElementById('computer').checked
+  player2 = document.getElementById('opponent-select').value === 'computer'
     ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2)
     : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1));
   player1.setup();
@@ -969,15 +972,16 @@ function finishSetup() {
 }
 
 function startGame() {
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
   if (player2.isComputer()) {
     playRound();
+    (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
   } else {
     coverBoards();
+    setTimeout(_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards, 2000);
   }
 }
 
@@ -992,12 +996,12 @@ function finishRound() {
 }
 
 function coverBoards() {
-  curtain.classList.remove('hidden');
+  curtains.forEach(curtain => curtain.classList.remove('invisible'));
 }
 startRoundButton.addEventListener('click', playRound);
 
 function playRound() {
-  curtain.classList.add('hidden');
+  curtains.forEach(curtain => curtain.classList.add('invisible'));
   switchButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {

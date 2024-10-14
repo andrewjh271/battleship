@@ -4,69 +4,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
     <title>Battleship</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Tangerine:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="stylesheets/style.css" />
   </head>
 
   <body>
     <div class="container">
       <div class="control-panel">
-        <button class="start-game">Start Game</button>
-        <select name="ensemble" class="ensemble-select">
-          <option value="" disabled selected>--Select Ensemble--</option>
-          <option value="chamber">Chamber Orchestra</option>
-          <option value="brass">Brass Ensemble</option>
-          <option value="woodwinds">Woodwinds</option>
-          <option value="orchestra">Full Orchestra</option>
-        </select>
-        <fieldset class="opponent-input">
-          <legend>Choose your opponent:</legend>
-          <div>
-            <input type="radio" id="computer" name="player2" value="computer" checked />
-            <label for="computer">Computer</label>
-          </div>
-          <div>
-            <input type="radio" id="human" name="player2" value="human" />
-            <label for="human">Human</label>
-          </div>
-        </fieldset>
-        <button class="switch-turns" disabled>Switch Turn</button>
-        <select name="size" class="size-select">
-          <option value="" disabled selected>--Select Board Size--</option>
-          <option value="7">Small</option>
-          <option value="10">Standard</option>
-          <option value="13">Large</option>
-        </select>
-      </div>
+        <div>
+          <h3>Ensemble:</h3>
+          <select name="ensemble" class="ensemble-select">
+            <option value="chamber">Chamber Orchestra</option>
+            <option value="brass">Brass Ensemble</option>
+            <option value="woodwinds">Woodwinds</option>
+            <option value="orchestra">Full Orchestra</option>
+          </select>
+        </div>
+        <div>
+          <h3>Board Size:</h3>
+          <select name="size" class="size-select">
+            <option value="7">Small</option>
+            <option value="10" selected>Standard</option>
+            <option value="13">Large</option>
+          </select>
+        </div>
+        <div>
+          <h3>Opponent:</h3>
+          <select name="opponent" id="opponent-select">
+            <option value="computer">Computer</option>
+            <option value="human">Human</option>
+          </select>
+        </div>
 
-      <div class="curtain hidden">
+        <button class="start-game">Start Game</button>
+        <button class="switch-turns" disabled>Switch Turn</button>
         <button class="start-round">Start Next Round</button>
       </div>
 
-      <div class="board" id="board1"></div>
-      <div class="board hidden" id="board2"></div>
-  
-      <div class="board-setup-container">
-        <button class="set-board">Set Board</button>
+      <div class="board hidden" id="board1">
+        <div class="curtain invisible"></div>
+      </div>
+      <div class="board hidden" id="board2">
+        <div class="curtain invisible"></div>
+      </div>
+
+      <div class="board-setup-container hidden">
+        <div class="curtain invisible"></div>
         <div class="preview-container">
-          <img src="/images/cello.png" class="img-preview" id="cello" draggable=false>
-          <img src="/images/violin.png" class="img-preview" id="violin" draggable=false>
-          <img src="/images/bassoon.png" class="img-preview" id="bassoon" draggable=false>
-          <img src="/images/clarinet.png" class="img-preview" id="clarinet" draggable=false>
-          <img src="/images/flute.png" class="img-preview" id="flute" draggable=false>
-          <img src="/images/piccolo.png" class="img-preview" id="piccolo" draggable=false>
-          <img src="/images/trombone.png" class="img-preview" id="trombone" draggable=false>
-          <img src="/images/trumpet.png" class="img-preview" id="trumpet" draggable=false>
-          <img src="/images/horn.png" class="img-preview" id="horn" draggable=false>
-  
-          <button class="rotate">></button>
-          <button class="clear">X</button>
+          <img src="/images/cello.png" class="img-preview shimmer" id="cello" draggable="false" />
+          <img src="/images/violin.png" class="img-preview" id="violin" draggable="false" />
+          <img src="/images/bassoon.png" class="img-preview" id="bassoon" draggable="false" />
+          <img src="/images/clarinet.png" class="img-preview" id="clarinet" draggable="false" />
+          <img src="/images/flute.png" class="img-preview" id="flute" draggable="false" />
+          <img src="/images/piccolo.png" class="img-preview" id="piccolo" draggable="false" />
+          <img src="/images/trombone.png" class="img-preview" id="trombone" draggable="false" />
+          <img src="/images/trumpet.png" class="img-preview" id="trumpet" draggable="false" />
+          <img src="/images/horn.png" class="img-preview" id="horn" draggable="false" />
         </div>
-  
-        <div class="staging-area">
+
+        <div class="staging-area"></div>
+        <div class="staging-buttons">
+          <button class="set-board" title="Set Board">
+            <span class="material-icons">task_alt</span>
+          </button>
+          <div>
+            <button class="rotate" title="Rotate">
+              <span class="material-icons">autorenew</span>
+            </button>
+            <button class="clear" title="Clear Board">
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
         </div>
       </div>
-  
-
     </div>
 
     <script src="main.js"></script>
