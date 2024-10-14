@@ -18,10 +18,10 @@ function setEnsemble() {
     case 'chamber':
       ensemble = {
         violin: [1, 3],
-        clarinet: [1, 3],
-        cello: [2, 5],
-        horn: [2, 2],
-        flute: [1, 3],
+        // clarinet: [1, 3],
+        // cello: [2, 5],
+        // horn: [2, 2],
+        // flute: [1, 3],
       };
       break;
     case 'brass':

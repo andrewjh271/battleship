@@ -10,7 +10,7 @@ const startButton = document.querySelector('.start-game');
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
-const curtain = document.querySelector('.curtain');
+const curtains = document.querySelectorAll('.curtain');
 
 startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
@@ -46,7 +46,7 @@ function beginSetup() {
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
   DOMBoard2 = DOMBoardFactory('board2', rowLength());
   player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2);
-  player2 = document.getElementById('computer').checked
+  player2 = document.getElementById('opponent-select').value === 'computer'
     ? computerPlayerFactory(board2, board1, DOMBoard2)
     : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1));
   player1.setup();
@@ -63,15 +63,16 @@ function finishSetup() {
 }
 
 function startGame() {
-  showBoards();
   on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
   if (player2.isComputer()) {
     playRound();
+    showBoards();
   } else {
     coverBoards();
+    setTimeout(showBoards, 2000);
   }
 }
 
@@ -86,12 +87,12 @@ function finishRound() {
 }
 
 function coverBoards() {
-  curtain.classList.remove('hidden');
+  curtains.forEach(curtain => curtain.classList.remove('invisible'));
 }
 startRoundButton.addEventListener('click', playRound);
 
 function playRound() {
-  curtain.classList.add('hidden');
+  curtains.forEach(curtain => curtain.classList.add('invisible'));
   switchButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {

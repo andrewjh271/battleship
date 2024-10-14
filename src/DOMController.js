@@ -3,8 +3,10 @@ import { getEnsemble } from "./ensemble";
 
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
+const setupContainer = document.querySelector('.board-setup-container');
 
 function showSetup(board) {
+  setupContainer.classList.remove('hidden');
   board.classList.remove('hidden');
   if (board1 === board) {
     board2.classList.add('hidden');
@@ -21,7 +23,6 @@ function showSetup(board) {
 }
 
 function showBoards() {
-  const setupContainer = document.querySelector('.board-setup-container');
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
   setupContainer.classList.add('hidden');

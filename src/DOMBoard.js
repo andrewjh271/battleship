@@ -50,6 +50,8 @@ export function DOMBoardFactory(id, ROWS) {
       row.forEach((square, j) => {
         const index = i + j * rowLength();
         if (square.ship?.isSunk()) {
+          const img = board.querySelector(`img[src*=${square.ship.name}]`);
+          img.parentElement.classList.add('sunk');
           board.cells[index].classList.add('sunk');
         }
         if (square.attacked) {

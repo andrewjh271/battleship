@@ -1,3 +1,8 @@
+$placed: #b3aa92;
+$neutral: #fffbf1;
+$attacked: #a10000eb;
+$border: #a06f35d1;
+
 *,
 *:before,
 *:after {
@@ -8,65 +13,158 @@
 
 html {
   box-sizing: border-box;
+  background-image: linear-gradient(354deg, #ac7a00, #0f0c04);
+  font-family: "Poiret One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .hidden {
   display: none !important;
 }
 
+.material-icons {
+  font-size: 37px;
+  color: #223a14;
+}
+
+button,
+select {
+  border: none;
+  background-color: #b4c3ae;
+  opacity: 0.75;
+  transition: 0.3s;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 1;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+button:disabled {
+  pointer-events: none;
+}
+
 .container {
   height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  grid-template-columns: 50% 50%;
   grid-template-rows: 100px 1fr;
+  background-image: url('../images/hall2.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .control-panel {
+  width: 100%;
+  justify-self: center;
   display: flex;
-  align-items: start;
+  justify-content: center;
+  align-items: flex-end;
   grid-column: span 2;
+  background-color: #a0703598;
+  padding: 20px;
+
+  div,
+  button {
+    margin: 10px;
+  }
+
+  select {
+    width: 100%;
+  }
+
+  select,
+  button {
+    font-size: 16px;
+    padding: 5px;
+  }
+
+  h3 {
+    color: #2f0a05;
+    margin-bottom: 4px;
+    font-size: 36px;
+    font-family: "Tangerine", cursive;
+
+  }
 }
 
 .curtain {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: darkslategrey;
-  z-index: 3;
+  background-color: #4f5f2f;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 2s;
+  pointer-events: none;
+}
+
+.invisible {
+  opacity: 0;
+}
+
+.board::before,
+.board-setup-container::before {
+  content: "Intermission...";
+  position: absolute;
+  transform: translate(-14px, -70px);
+  color: #053778;
+  background-color: #e2e2e280;
+  padding: 7px;
+  width: calc(100% + 28px);
+  font-family: "Tangerine", cursive;
+  font-size: 31px;
 }
 
 #board1::before {
+  content: 'Intermission...';
+}
+#board1:has(.invisible)::before {
   content: "Player 1's Board";
-  position: absolute;
-  transform: translateY(-30px);
+}
+#board2::before {
+  content: 'Intermission...'
+}
+#board2:has(.invisible)::before {
+  content: "Player 2's Board";
+}
+.board-setup-container:has(.invisible)::before {
+  content: "Position Instruments"
 }
 
-#board2::before {
-  content: "Player 2's Board";
-  position: absolute;
-  transform: translateY(-30px);
+.defense::before {
+  color: #de130f;
+  background-color: #371e00ab;
 }
 
 .board {
+  position: relative;
   margin: 30px;
-  border: 0.5px solid rgb(0, 0, 0);
-  height: 500px;
-  width: 500px;
+  border: 14px solid #a06f35d1;
+  width: 80%;
+  justify-self: center;
+  aspect-ratio: 1;
   display: inline-grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   grid-row-start: 2;
 
   .cell {
-    background-color: white;
-    border: 0.5px solid black;
+    background-color: $neutral;
+    border: 0.5px solid #45280f;
 
     &.attacked {
-      background-color: #90c1ff;
+      background-color: #90c1fff5;
       pointer-events: none;
 
       &.highlight-placed {
-        background-color: #a10000;
+        background-color: $attacked;
       }
     }
   }
@@ -76,28 +174,26 @@ html {
   }
 
   .highlight-placed {
-    background-color: lightslategrey;
+    background-color: $placed;
     z-index: 2;
-    opacity: 0.4;
   }
 
   &.defense {
     grid-column-start: 2;
 
     .highlight-placed {
-      background-color: white;
-      opacity: 1;
+      background-color: $neutral;
     }
 
     .cell {
       &:hover {
         cursor: pointer;
-        background-color: #ff0000;
+        background-color: #d90000ed;
       }
 
       &.sunk {
         &.highlight-placed {
-          opacity: 0.4;
+          background-color: $attacked;
         }
       }
     }
@@ -111,27 +207,74 @@ html {
   &.disabled {
     pointer-events: none;
   }
+}
 
-  &.game-over {
-    .highlight-placed {
-      background-color: lightslategrey;
-      opacity: 0.3;
+.placed-img {
+  object-fit: contain;
+  padding: 5px;
+  transform-origin: 0 0;
+}
+
+.placed-img-wrapper {
+  border: 0.5px solid black;
+  overflow: hidden;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+.defense .placed-img-wrapper {
+  // hide and allow pointer events on cells
+  opacity: 0;
+  z-index: 1;
+}
+
+.offense .placed-img-wrapper,
+.sunk.placed-img-wrapper,
+.game-over .placed-img-wrapper {
+  z-index: 3;
+  opacity: 0.8;
+}
+
+.board-setup-container {
+  position: relative;
+  display: grid;
+  grid-template-rows: 100px 1fr 55px;
+  grid-row-start: 2;
+  margin: 30px;
+  border: 14px solid $border;
+  width: 80%;
+  justify-self: center;
+  aspect-ratio: 1;
+
+  button {
+    background: none;
+    padding: 0;
+
+    &:disabled {
+      opacity: 35%;
     }
   }
 }
 
-.board-setup-container {
-  grid-row-start: 2;
+.staging-buttons {
+  background-color: $neutral;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
 }
 
 .preview-container {
-  height: 150px;
-  margin-top: 30px;
+  display: flex;
+  align-items: end;
+  padding: 10px;
+  background-color: $neutral;
+  border-bottom: 1px dashed $border;
+  padding-bottom: 5px;
 }
 
 .img-preview {
   max-height: 100%;
-  margin-right: 5px;
+  margin-right: 8px;
 
   &.disabled {
     filter: grayscale(0.8) opacity(0.4);
@@ -165,7 +308,8 @@ html {
 .staging-area {
   display: flex;
   justify-content: center;
-  padding-top: 20px;
+  align-items: center;
+  background-color: $neutral;
 }
 
 .staging-img {
@@ -181,23 +325,16 @@ html {
   }
 }
 
+
 .grabbing {
   cursor: grabbing !important;
-}
-
-.placed-img {
-  object-fit: contain;
-  padding: 5px;
-  transform-origin: 0 0;
-}
-
-.placed-img-wrapper {
-  border: 0.5px solid black;
-  background-color: white;
-  overflow: hidden;
 }
 
 .stretch {
   object-fit: fill;
   padding: 20px 1px 20px 1px;
+}
+
+.board.covered {
+  background-color: purple;
 }
