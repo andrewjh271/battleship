@@ -335,6 +335,7 @@ function resetDOM() {
   setupContainer.classList.add('hidden');
   controlPanel.classList.remove('setup');
   controlPanel.classList.remove('in-game');
+  controlPanel.classList.remove('two-player')
   controlPanel.classList.add('preferences');
   curtains.forEach(curtain => curtain.classList.add('invisible'));
 
@@ -972,6 +973,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
@@ -994,6 +996,7 @@ let DOMBoard2;
 
 let attackCount = 0;
 const attackMax = 3;
+const computerMoveTime = 500;
 
 function playerAttackProgression() {
   if (currentPlayer.sunkAllShips()) {
@@ -1016,9 +1019,10 @@ function beginSetup() {
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2);
-  player2 = document.getElementById('opponent-select').value === 'computer'
-    ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2)
-    : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1));
+  player2 =
+    document.getElementById('opponent-select').value === 'computer'
+      ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2)
+      : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1));
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
@@ -1028,13 +1032,14 @@ function finishSetup() {
   if (player2.isComputer()) {
     startGame();
   } else {
+    controlPanel.classList.add('two-player');
     setBoardButton.addEventListener('click', startGame, { once: true });
   }
 }
 
 function startGame() {
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGameView)()
-  ;(0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGameView)();
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -1058,17 +1063,21 @@ function finishRound() {
 }
 
 function coverBoards() {
-  curtains.forEach(curtain => curtain.classList.remove('invisible'));
+  curtains.forEach((curtain) => curtain.classList.remove('invisible'));
   startRoundButton.disabled = false;
   switchButton.disabled = true;
 }
 
 function playRound() {
-  curtains.forEach(curtain => curtain.classList.add('invisible'));
+  curtains.forEach((curtain) => curtain.classList.add('invisible'));
   switchButton.disabled = true;
   startRoundButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
+    resetButton.disabled = true;
+    setTimeout(() => {
+      resetButton.disabled = false;
+    }, attackMax * computerMoveTime);
     computerAttacks();
   }
 }
@@ -1076,7 +1085,7 @@ function playRound() {
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
     switchTurns();
-    setTimeout(() => playRound(), 500);
+    setTimeout(() => playRound(), computerMoveTime);
     return;
   }
 
@@ -1087,7 +1096,7 @@ function computerAttacks(i = 0) {
       return;
     }
     computerAttacks(i + 1);
-  }, 500);
+  }, computerMoveTime);
 }
 
 function switchTurns() {
