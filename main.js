@@ -195,6 +195,10 @@ function DOMBoardFactory(id, ROWS) {
     board.addEventListener('click', receiveAttack);
   }
 
+  function unlistenForAttack() {
+    board.removeEventListener('click', receiveAttack);
+  }
+
   function setOffense() {
     board.classList.remove('defense');
     board.classList.add('offense');
@@ -285,6 +289,7 @@ function DOMBoardFactory(id, ROWS) {
     setupBoard,
     placeSetImages,
     listenForAttack,
+    unlistenForAttack,
     disable,
     enable,
     setGameOver,
@@ -302,7 +307,9 @@ function DOMBoardFactory(id, ROWS) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   setBoardSizes: () => (/* binding */ setBoardSizes),
+/* harmony export */   resetDOM: () => (/* binding */ resetDOM),
+/* harmony export */   setGameView: () => (/* binding */ setGameView),
+/* harmony export */   setSetupView: () => (/* binding */ setSetupView),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
 /* harmony export */   showSetup: () => (/* binding */ showSetup)
 /* harmony export */ });
@@ -314,6 +321,25 @@ __webpack_require__.r(__webpack_exports__);
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
 const setupContainer = document.querySelector('.board-setup-container');
+const controlPanel = document.querySelector('.control-panel');
+const curtains = document.querySelectorAll('.curtain');
+const stagingArea = document.querySelector('.staging-area');
+
+function resetDOM() {
+  board1.classList.add('hidden');
+  board2.classList.add('hidden');
+  board1.classList.remove('defense');
+  board2.classList.remove('defense');
+  board1.classList.remove('offense');
+  board2.classList.remove('offense');
+  setupContainer.classList.add('hidden');
+  controlPanel.classList.remove('setup');
+  controlPanel.classList.remove('in-game');
+  controlPanel.classList.add('preferences');
+  curtains.forEach(curtain => curtain.classList.add('invisible'));
+
+  stagingArea.innerHTML = '';
+}
 
 function showSetup(board) {
   setupContainer.classList.remove('hidden');
@@ -326,7 +352,9 @@ function showSetup(board) {
   const previews = document.querySelectorAll('.img-preview');
   const whiteList = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)());
   previews.forEach(preview => {
-    if (!whiteList.includes(preview.id)) {
+    if (whiteList.includes(preview.id)) {
+      preview.classList.remove('hidden');
+    } else {
       preview.classList.add('hidden');
     }
   })
@@ -347,6 +375,17 @@ function setBoardSizes() {
   board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`
 }
 
+function setSetupView() {
+  setBoardSizes();
+  controlPanel.classList.remove('preferences');
+  controlPanel.classList.add('setup');
+}
+
+function setGameView() {
+  controlPanel.classList.remove('setup');
+  controlPanel.classList.add('in-game');
+}
+
 
 
 
@@ -364,6 +403,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
+  const children = Array.from(board.children);
+  children.forEach(node => {
+    if(node.classList.contains('curtain')) {
+      return;
+    }
+    node.remove();
+  })
+  
+
   board.cells = [];
   for (let i = 0; i < rows * rows; i++) {
     board.cells[i] = document.createElement('div');
@@ -430,6 +478,8 @@ function setupDOMBoard(board) {
   currentBoard = board;
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_5__.showSetup)(currentBoard);
   setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('setPosition', currentBoard), { once: true });
+  (0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEvent', highlightHoveredCells);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEnd', handleRelease);
 }
 
 function showStagedImage() {
@@ -454,9 +504,6 @@ function clearPlacedImages() {
   });
   previews.forEach((preview) => preview.classList.remove('disabled'));
 }
-
-(0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEvent', highlightHoveredCells);
-(0,_observer__WEBPACK_IMPORTED_MODULE_1__.on)('dragEnd', handleRelease);
 
 let cellsToHighlight = [];
 let cellsToUnhighlight = [];
@@ -880,7 +927,17 @@ function setEnsemble() {
       };
       break;
     default:
-      // keep as is
+      ensemble = {
+        flute: [1, 3],
+        trombone: [1, 5],
+        clarinet: [1, 3],
+        violin: [1, 3],
+        bassoon: [1, 4],
+        cello: [2, 5],
+        horn: [2, 2],
+        piccolo: [1, 2],
+        trumpet: [1, 3],
+      };
   }
 }
 
@@ -921,8 +978,12 @@ const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
 const curtains = document.querySelectorAll('.curtain');
 
+const resetButton = document.querySelector('.reset');
+resetButton.addEventListener('click', reset);
+
 startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
+startRoundButton.addEventListener('click', playRound);
 
 let player1;
 let player2;
@@ -948,8 +1009,8 @@ function playerAttackProgression() {
 }
 
 function beginSetup() {
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupView)();
   const board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
   const board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
@@ -972,7 +1033,8 @@ function finishSetup() {
 }
 
 function startGame() {
-  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGameView)()
+  ;(0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -997,12 +1059,14 @@ function finishRound() {
 
 function coverBoards() {
   curtains.forEach(curtain => curtain.classList.remove('invisible'));
+  startRoundButton.disabled = false;
+  switchButton.disabled = true;
 }
-startRoundButton.addEventListener('click', playRound);
 
 function playRound() {
   curtains.forEach(curtain => curtain.classList.add('invisible'));
   switchButton.disabled = true;
+  startRoundButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
     computerAttacks();
@@ -1036,6 +1100,13 @@ function gameOver() {
 
   DOMBoard1.setGameOver();
   DOMBoard2.setGameOver();
+}
+
+function reset() {
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.resetDOM)();
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.removeAllEvents)();
+  DOMBoard1.unlistenForAttack();
+  DOMBoard2.unlistenForAttack();
 }
 
 
@@ -1126,9 +1197,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   emit: () => (/* binding */ emit),
 /* harmony export */   off: () => (/* binding */ off),
-/* harmony export */   on: () => (/* binding */ on)
+/* harmony export */   on: () => (/* binding */ on),
+/* harmony export */   removeAllEvents: () => (/* binding */ removeAllEvents)
 /* harmony export */ });
-const events = {};
+let events = {};
 
 function on(eventName, fn) {
   events[eventName] ||= [];
@@ -1150,6 +1222,10 @@ function emit(eventName, data) {
   if (!events[eventName]) return;
 
   events[eventName].forEach((fn) => fn(data));
+}
+
+function removeAllEvents() {
+  events = {};
 }
 
 

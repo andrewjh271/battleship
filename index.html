@@ -13,8 +13,8 @@
 
   <body>
     <div class="container">
-      <div class="control-panel">
-        <div>
+      <div class="control-panel preferences">
+        <div class="settings">
           <h3>Ensemble:</h3>
           <select name="ensemble" class="ensemble-select">
             <option value="chamber">Chamber Orchestra</option>
@@ -23,7 +23,7 @@
             <option value="orchestra">Full Orchestra</option>
           </select>
         </div>
-        <div>
+        <div class="settings">
           <h3>Board Size:</h3>
           <select name="size" class="size-select">
             <option value="7">Small</option>
@@ -31,17 +31,18 @@
             <option value="13">Large</option>
           </select>
         </div>
-        <div>
+        <div class="settings">
           <h3>Opponent:</h3>
           <select name="opponent" id="opponent-select">
             <option value="computer">Computer</option>
             <option value="human">Human</option>
           </select>
         </div>
+        <button class="start-game settings">Start Game</button>
 
-        <button class="start-game">Start Game</button>
-        <button class="switch-turns" disabled>Switch Turn</button>
-        <button class="start-round">Start Next Round</button>
+        <button class="reset">Reset</button>
+        <button class="switch-turns navigation" disabled>Switch Turn</button>
+        <button class="start-round navigation" disabled>Start Next Round</button>
       </div>
 
       <div class="board hidden" id="board1">
@@ -54,7 +55,7 @@
       <div class="board-setup-container hidden">
         <div class="curtain invisible"></div>
         <div class="preview-container">
-          <img src="/images/cello.png" class="img-preview shimmer" id="cello" draggable="false" />
+          <img src="/images/cello.png" class="img-preview" id="cello" draggable="false" />
           <img src="/images/violin.png" class="img-preview" id="violin" draggable="false" />
           <img src="/images/bassoon.png" class="img-preview" id="bassoon" draggable="false" />
           <img src="/images/clarinet.png" class="img-preview" id="clarinet" draggable="false" />
