@@ -1,5 +1,14 @@
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
+  const children = Array.from(board.children);
+  children.forEach(node => {
+    if(node.classList.contains('curtain')) {
+      return;
+    }
+    node.remove();
+  })
+  
+
   board.cells = [];
   for (let i = 0; i < rows * rows; i++) {
     board.cells[i] = document.createElement('div');

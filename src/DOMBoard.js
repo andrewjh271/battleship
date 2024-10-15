@@ -14,6 +14,10 @@ export function DOMBoardFactory(id, ROWS) {
     board.addEventListener('click', receiveAttack);
   }
 
+  function unlistenForAttack() {
+    board.removeEventListener('click', receiveAttack);
+  }
+
   function setOffense() {
     board.classList.remove('defense');
     board.classList.add('offense');
@@ -104,6 +108,7 @@ export function DOMBoardFactory(id, ROWS) {
     setupBoard,
     placeSetImages,
     listenForAttack,
+    unlistenForAttack,
     disable,
     enable,
     setGameOver,

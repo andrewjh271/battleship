@@ -1,9 +1,9 @@
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
-import { showBoards, setBoardSizes } from './DOMController';
+import { showBoards, setSetupView, setGameView, resetDOM } from './DOMController';
 import { rowLength } from './boardSize';
-import { on } from './observer';
+import { on, removeAllEvents } from './observer';
 import { setEnsemble } from './ensemble';
 
 const startButton = document.querySelector('.start-game');
@@ -12,8 +12,12 @@ const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
 const curtains = document.querySelectorAll('.curtain');
 
+const resetButton = document.querySelector('.reset');
+resetButton.addEventListener('click', reset);
+
 startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
+startRoundButton.addEventListener('click', playRound);
 
 let player1;
 let player2;
@@ -39,8 +43,8 @@ function playerAttackProgression() {
 }
 
 function beginSetup() {
-  setBoardSizes();
   setEnsemble();
+  setSetupView();
   const board1 = boardFactory('board1');
   const board2 = boardFactory('board2');
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
@@ -63,6 +67,7 @@ function finishSetup() {
 }
 
 function startGame() {
+  setGameView()
   on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
@@ -88,12 +93,14 @@ function finishRound() {
 
 function coverBoards() {
   curtains.forEach(curtain => curtain.classList.remove('invisible'));
+  startRoundButton.disabled = false;
+  switchButton.disabled = true;
 }
-startRoundButton.addEventListener('click', playRound);
 
 function playRound() {
   curtains.forEach(curtain => curtain.classList.add('invisible'));
   switchButton.disabled = true;
+  startRoundButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
     computerAttacks();
@@ -127,4 +134,11 @@ function gameOver() {
 
   DOMBoard1.setGameOver();
   DOMBoard2.setGameOver();
+}
+
+function reset() {
+  resetDOM();
+  removeAllEvents();
+  DOMBoard1.unlistenForAttack();
+  DOMBoard2.unlistenForAttack();
 }

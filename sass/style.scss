@@ -68,7 +68,8 @@ button:disabled {
   align-items: flex-end;
   grid-column: span 2;
   background-color: #a0703598;
-  padding: 20px;
+  // padding: 20px;
+  align-self: stretch;
 
   div,
   button {
@@ -92,6 +93,25 @@ button:disabled {
     font-family: "Tangerine", cursive;
 
   }
+}
+
+.control-panel.in-game,
+.control-panel.setup {
+  align-items: center;
+}
+
+.control-panel > * {
+  display: none;
+}
+.control-panel.preferences .settings {
+  display: block;
+}
+.control-panel.setup .reset {
+  display: block;
+}
+.control-panel.in-game .navigation,
+.control-panel.in-game .reset {
+  display: block;
 }
 
 .curtain {

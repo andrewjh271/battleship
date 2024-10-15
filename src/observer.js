@@ -1,4 +1,4 @@
-const events = {};
+let events = {};
 
 function on(eventName, fn) {
   events[eventName] ||= [];
@@ -22,4 +22,8 @@ function emit(eventName, data) {
   events[eventName].forEach((fn) => fn(data));
 }
 
-export { on, off, emit };
+function removeAllEvents() {
+  events = {};
+}
+
+export { on, off, emit, removeAllEvents };

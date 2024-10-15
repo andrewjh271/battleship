@@ -22,6 +22,8 @@ function setupDOMBoard(board) {
   currentBoard = board;
   showSetup(currentBoard);
   setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
+  on('dragEvent', highlightHoveredCells);
+  on('dragEnd', handleRelease);
 }
 
 function showStagedImage() {
@@ -46,9 +48,6 @@ function clearPlacedImages() {
   });
   previews.forEach((preview) => preview.classList.remove('disabled'));
 }
-
-on('dragEvent', highlightHoveredCells);
-on('dragEnd', handleRelease);
 
 let cellsToHighlight = [];
 let cellsToUnhighlight = [];
