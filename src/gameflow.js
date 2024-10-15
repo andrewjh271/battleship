@@ -6,6 +6,7 @@ import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
 import { setEnsemble } from './ensemble';
 
+const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
@@ -28,6 +29,7 @@ let DOMBoard2;
 
 let attackCount = 0;
 const attackMax = 3;
+const computerMoveTime = 500;
 
 function playerAttackProgression() {
   if (currentPlayer.sunkAllShips()) {
@@ -50,9 +52,10 @@ function beginSetup() {
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
   DOMBoard2 = DOMBoardFactory('board2', rowLength());
   player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2);
-  player2 = document.getElementById('opponent-select').value === 'computer'
-    ? computerPlayerFactory(board2, board1, DOMBoard2)
-    : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1));
+  player2 =
+    document.getElementById('opponent-select').value === 'computer'
+      ? computerPlayerFactory(board2, board1, DOMBoard2)
+      : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1));
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
@@ -62,12 +65,13 @@ function finishSetup() {
   if (player2.isComputer()) {
     startGame();
   } else {
+    controlPanel.classList.add('two-player');
     setBoardButton.addEventListener('click', startGame, { once: true });
   }
 }
 
 function startGame() {
-  setGameView()
+  setGameView();
   on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
@@ -92,17 +96,21 @@ function finishRound() {
 }
 
 function coverBoards() {
-  curtains.forEach(curtain => curtain.classList.remove('invisible'));
+  curtains.forEach((curtain) => curtain.classList.remove('invisible'));
   startRoundButton.disabled = false;
   switchButton.disabled = true;
 }
 
 function playRound() {
-  curtains.forEach(curtain => curtain.classList.add('invisible'));
+  curtains.forEach((curtain) => curtain.classList.add('invisible'));
   switchButton.disabled = true;
   startRoundButton.disabled = true;
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
+    resetButton.disabled = true;
+    setTimeout(() => {
+      resetButton.disabled = false;
+    }, attackMax * computerMoveTime);
     computerAttacks();
   }
 }
@@ -110,7 +118,7 @@ function playRound() {
 function computerAttacks(i = 0) {
   if (i >= attackMax) {
     switchTurns();
-    setTimeout(() => playRound(), 500);
+    setTimeout(() => playRound(), computerMoveTime);
     return;
   }
 
@@ -121,7 +129,7 @@ function computerAttacks(i = 0) {
       return;
     }
     computerAttacks(i + 1);
-  }, 500);
+  }, computerMoveTime);
 }
 
 function switchTurns() {

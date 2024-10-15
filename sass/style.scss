@@ -68,7 +68,6 @@ button:disabled {
   align-items: flex-end;
   grid-column: span 2;
   background-color: #a0703598;
-  // padding: 20px;
   align-self: stretch;
 
   div,
@@ -95,6 +94,12 @@ button:disabled {
   }
 }
 
+.control-panel .navigation,
+.control-panel .reset {
+  font-size: 20px;
+  padding: 6px;
+}
+
 .control-panel.in-game,
 .control-panel.setup {
   align-items: center;
@@ -109,7 +114,7 @@ button:disabled {
 .control-panel.setup .reset {
   display: block;
 }
-.control-panel.in-game .navigation,
+.control-panel.in-game.two-player .navigation,
 .control-panel.in-game .reset {
   display: block;
 }

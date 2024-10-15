@@ -84,6 +84,12 @@ button:disabled {
   font-family: "Tangerine", cursive;
 }
 
+.control-panel .navigation,
+.control-panel .reset {
+  font-size: 20px;
+  padding: 6px;
+}
+
 .control-panel.in-game,
 .control-panel.setup {
   align-items: center;
@@ -101,7 +107,7 @@ button:disabled {
   display: block;
 }
 
-.control-panel.in-game .navigation,
+.control-panel.in-game.two-player .navigation,
 .control-panel.in-game .reset {
   display: block;
 }

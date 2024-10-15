@@ -18,6 +18,7 @@ function resetDOM() {
   setupContainer.classList.add('hidden');
   controlPanel.classList.remove('setup');
   controlPanel.classList.remove('in-game');
+  controlPanel.classList.remove('two-player')
   controlPanel.classList.add('preferences');
   curtains.forEach(curtain => curtain.classList.add('invisible'));
 
