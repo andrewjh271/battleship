@@ -94,10 +94,33 @@ button:disabled {
   }
 }
 
+.reset {
+  background-color: #7a2e2e;
+  color: white;
+}
+
 .control-panel .navigation,
 .control-panel .reset {
   font-size: 20px;
   padding: 6px;
+  position: relative;
+}
+
+.control-panel .navigation:enabled:before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  animation: enabled 800ms 1 forwards;
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+}
+
+@keyframes enabled {
+  0% {border: 4px solid #ffffff00;}
+  50% {border: 4px solid #83cded;}
+  100% {border: 4px solid #48b1ddeb;}
 }
 
 .control-panel.in-game,
@@ -344,10 +367,16 @@ button:disabled {
   object-fit: contain;
   padding: 5px;
   z-index: 2;
+  animation: rainbow 4s linear infinite;
 
   &:hover {
     cursor: grab;
   }
+}
+
+@keyframes rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg);}
 }
 
 
