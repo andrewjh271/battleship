@@ -286,7 +286,7 @@ button:disabled {
 .board-setup-container {
   position: relative;
   display: grid;
-  grid-template-rows: 100px 1fr 55px;
+  grid-template-rows: 116px 1fr 55px;
   grid-row-start: 2;
   margin: 30px;
   border: 14px solid $border;
@@ -309,6 +309,8 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  grid-row: 3 / 4;
+  grid-column: 1 / -1;
 }
 
 .preview-container {
@@ -320,9 +322,41 @@ button:disabled {
   padding-bottom: 5px;
 }
 
+.preview-container div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+  margin-right: 11px;
+}
+
+.preview-container div:has(.hidden) {
+  display: none;
+}
+
+.preview-container span {
+  width: 4px;
+  height: 0px;
+  margin-top: 9px;
+  margin-bottom: 2px;
+  position: relative;
+  box-shadow: 0px 0px 2px 2px #6baeec;
+}
+
+.preview-container .disabled + span {
+  box-shadow: 0px 0px 2px 2px #cf12cb;
+}
+
+.preview-container #trombone + span {
+  left: 3px
+}
+.preview-container #bassoon + span {
+  right: 1px
+}
+
 .img-preview {
-  max-height: 100%;
-  margin-right: 8px;
+  max-height: calc(100% - 9px);
 
   &.disabled {
     filter: grayscale(0.8) opacity(0.4);
@@ -337,19 +371,19 @@ button:disabled {
   &#violin,
   &#clarinet,
   &#flute {
-    max-height: 60%;
+    max-height: calc(60% - 9px)
   }
   &#bassoon {
-    max-height: 80%;
+    max-height: calc(80% - 9px)
   }
   &#piccolo {
-    max-height: 35%;
+    max-height: calc(35% - 9px)
   }
   &#horn {
-    max-height: 45%;
+    max-height: calc(45% - 9px)
   }
   &#trombone {
-    max-height: 96%;
+    max-height: calc(96% - 9px)
   }
 }
 
@@ -358,6 +392,8 @@ button:disabled {
   justify-content: center;
   align-items: center;
   background-color: $neutral;
+  grid-row: 2 / 4;
+  grid-column: 1 / -1;
 }
 
 .staging-img {
@@ -367,18 +403,39 @@ button:disabled {
   object-fit: contain;
   padding: 5px;
   z-index: 2;
-  animation: rainbow 4s linear infinite;
+  animation: flash 1.4s ease-in-out infinite alternate;
 
   &:hover {
     cursor: grab;
   }
 }
 
-@keyframes rainbow {
-  0% { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg);}
+img[src*=flute].staging-img,
+img[src*=clarinet].staging-img,
+img[src*=piccolo].staging-img,
+img[src*=bassoon].staging-img {
+  animation: invert 1.5s cubic-bezier(0.46, 0.03, 0.52, 0.96) infinite alternate;
 }
 
+img[src*=horn].staging-img,
+img[src*=trumpet].staging-img,
+img[src*=trombone].staging-img {
+  animation: rainbow 4s linear infinite;
+}
+
+@keyframes flash {
+  0% { filter: saturate(.4); }
+  100% { filter: saturate(1.6); }
+}
+
+@keyframes rainbow {
+  0% { filter: hue-rotate(0deg) saturate(3); }
+  100% { filter: hue-rotate(360deg) saturate(3);}
+}
+@keyframes invert {
+  0% { filter: invert(0); }
+  100% { filter: invert(.8);}
+}
 
 .grabbing {
   cursor: grabbing !important;
