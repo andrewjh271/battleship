@@ -147,6 +147,7 @@ function gameOver() {
 function reset() {
   resetDOM();
   removeAllEvents();
+  attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
 }

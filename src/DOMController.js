@@ -15,6 +15,8 @@ function resetDOM() {
   board2.classList.remove('defense');
   board1.classList.remove('offense');
   board2.classList.remove('offense');
+  board1.classList.remove('game-over');
+  board2.classList.remove('game-over');
   setupContainer.classList.add('hidden');
   controlPanel.classList.remove('setup');
   controlPanel.classList.remove('in-game');

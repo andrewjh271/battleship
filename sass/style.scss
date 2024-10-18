@@ -420,17 +420,16 @@ img[src*=bassoon].staging-img {
 img[src*=horn].staging-img,
 img[src*=trumpet].staging-img,
 img[src*=trombone].staging-img {
-  animation: rainbow 4s linear infinite;
+  animation: rainbow 3s linear infinite;
 }
 
 @keyframes flash {
   0% { filter: saturate(.4); }
   100% { filter: saturate(1.6); }
 }
-
 @keyframes rainbow {
-  0% { filter: hue-rotate(0deg) saturate(3); }
-  100% { filter: hue-rotate(360deg) saturate(3);}
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 @keyframes invert {
   0% { filter: invert(0); }

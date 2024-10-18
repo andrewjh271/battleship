@@ -332,6 +332,8 @@ function resetDOM() {
   board2.classList.remove('defense');
   board1.classList.remove('offense');
   board2.classList.remove('offense');
+  board1.classList.remove('game-over');
+  board2.classList.remove('game-over');
   setupContainer.classList.add('hidden');
   controlPanel.classList.remove('setup');
   controlPanel.classList.remove('in-game');
@@ -1114,6 +1116,7 @@ function gameOver() {
 function reset() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.resetDOM)();
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.removeAllEvents)();
+  attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
 }
