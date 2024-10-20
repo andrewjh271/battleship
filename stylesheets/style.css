@@ -49,7 +49,7 @@ button:disabled {
   display: grid;
   align-items: center;
   grid-template-columns: 50% 50%;
-  grid-template-rows: 100px 1fr;
+  grid-template-rows: 100px 1fr 100px;
   background-image: url("../images/hall2.jpg");
   background-size: cover;
   background-position: center;
@@ -306,6 +306,7 @@ button:disabled {
   padding-bottom: 5px;
 }
 
+.remaining-fleet div,
 .preview-container div {
   height: 100%;
   display: flex;
@@ -319,6 +320,7 @@ button:disabled {
   display: none;
 }
 
+.remaining-fleet span,
 .preview-container span {
   width: 4px;
   height: 0px;
@@ -350,19 +352,28 @@ button:disabled {
 .img-preview:hover {
   cursor: pointer;
 }
-.img-preview#trumpet, .img-preview#violin, .img-preview#clarinet, .img-preview#flute {
+
+.img-preview.trumpet, .img-preview.violin, .img-preview.clarinet, .img-preview.flute,
+.remaining-fleet img.trumpet,
+.remaining-fleet img.violin,
+.remaining-fleet img.clarinet,
+.remaining-fleet img.flute {
   max-height: calc(60% - 9px);
 }
-.img-preview#bassoon {
+.img-preview.bassoon,
+.remaining-fleet img.bassoon {
   max-height: calc(80% - 9px);
 }
-.img-preview#piccolo {
+.img-preview.piccolo,
+.remaining-fleet img.piccolo {
   max-height: calc(35% - 9px);
 }
-.img-preview#horn {
+.img-preview.horn,
+.remaining-fleet img.horn {
   max-height: calc(45% - 9px);
 }
-.img-preview#trombone {
+.img-preview.trombone,
+.remaining-fleet img.trombone {
   max-height: calc(96% - 9px);
 }
 
@@ -436,6 +447,43 @@ img[src*=trombone].staging-img {
 
 .board.covered {
   background-color: purple;
+}
+
+.remaining-fleet {
+  position: absolute;
+  width: calc(100% + 28px);
+  height: 100px;
+  top: calc(100% + 21px);
+  left: -14px;
+  display: flex;
+  align-items: end;
+  padding: 7px;
+  background-color: #4f5f2f;
+  pointer-events: none;
+}
+
+.remaining-fleet div:has(.hidden) {
+  display: none;
+}
+
+.remaining-fleet div {
+  margin-right: 28px;
+}
+
+.remaining-fleet span {
+  box-shadow: 0px 0px 2px 2px #6baeec;
+}
+
+.remaining-fleet img {
+  max-height: calc(100% - 9px);
+}
+
+.remaining-fleet img.sunk {
+  filter: grayscale(1);
+}
+
+.remaining-fleet .sunk + span {
+  box-shadow: 0px 0px 2px 2px #cf12cb;
 }
 
 /*# sourceMappingURL=style.css.map */

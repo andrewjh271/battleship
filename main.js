@@ -235,7 +235,7 @@ function DOMBoardFactory(id, ROWS) {
       row.forEach((square, j) => {
         const index = i + j * (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)();
         if (square.ship?.isSunk()) {
-          const img = board.querySelector(`img[src*=${square.ship.name}]`);
+          const img = board.querySelector(`img[src*=${square.ship.name}].placed-img`);
           img.parentElement.classList.add('sunk');
           board.cells[index].classList.add('sunk');
         }
@@ -311,7 +311,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setGameView: () => (/* binding */ setGameView),
 /* harmony export */   setSetupView: () => (/* binding */ setSetupView),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
-/* harmony export */   showSetup: () => (/* binding */ showSetup)
+/* harmony export */   showSetup: () => (/* binding */ showSetup),
+/* harmony export */   updateFleet: () => (/* binding */ updateFleet)
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
@@ -324,6 +325,8 @@ const setupContainer = document.querySelector('.board-setup-container');
 const controlPanel = document.querySelector('.control-panel');
 const curtains = document.querySelectorAll('.curtain');
 const stagingArea = document.querySelector('.staging-area');
+const fleetContainers = document.querySelectorAll('.remaining-fleet');
+const fleet = document.querySelectorAll('.fleet');
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -340,6 +343,8 @@ function resetDOM() {
   controlPanel.classList.remove('two-player')
   controlPanel.classList.add('preferences');
   curtains.forEach(curtain => curtain.classList.add('invisible'));
+  fleetContainers.forEach(container => container.classList.add('hidden'));
+  fleet.forEach(instrument => instrument.classList.remove('sunk'));
 
   stagingArea.innerHTML = '';
 }
@@ -355,7 +360,7 @@ function showSetup(board) {
   const previews = document.querySelectorAll('.img-preview');
   const whiteList = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)());
   previews.forEach(preview => {
-    if (whiteList.includes(preview.id)) {
+    if (whiteList.includes(preview.dataset.inst)) {
       preview.classList.remove('hidden');
     } else {
       preview.classList.add('hidden');
@@ -366,7 +371,22 @@ function showSetup(board) {
 function showBoards() {
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
+  fleetContainers.forEach(container => container.classList.remove('hidden'));
   setupContainer.classList.add('hidden');
+  const whiteList = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)());
+  fleet.forEach(instrument => {
+    if (whiteList.includes(instrument.dataset.inst)) {
+      instrument.classList.remove('hidden');
+    } else {
+      instrument.classList.add('hidden');
+    }
+  })
+}
+
+function updateFleet(data) {
+  const targetContainer = data.id === 'board1' ? board1 : board2;
+  const target = targetContainer.querySelector(`.${data.inst}`);
+  target.classList.add('sunk');
 }
 
 function setBoardSizes() {
@@ -408,7 +428,7 @@ __webpack_require__.r(__webpack_exports__);
 function createGrid(rows, board) {
   const children = Array.from(board.children);
   children.forEach(node => {
-    if(node.classList.contains('curtain')) {
+    if(node.classList.contains('permanent')) {
       return;
     }
     node.remove();
@@ -465,6 +485,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const stagingArea = document.querySelector('.staging-area');
+const previewContainer = document.querySelector('.preview-container');
 const previews = document.querySelectorAll('.img-preview');
 const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
@@ -486,7 +507,7 @@ function setupDOMBoard(board) {
 }
 
 function showStagedImage() {
-  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.id]();
+  const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.dataset.inst]();
   image.classList.add('staging-img');
   image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
   if (stagingArea.firstChild) {
@@ -586,7 +607,7 @@ function disablePreviewImage(instrument) {
   if (remainingInstruments.length === 0) {
     setBoardButton.disabled = false;
   }
-  document.getElementById(instrument).classList.add('disabled');
+  previewContainer.querySelector(`.${instrument}`).classList.add('disabled');
 }
 
 function enablePreviewImages() {
@@ -708,7 +729,10 @@ function boardFactory(id) {
     if (square.attacked) throw new Error('this square has already been attacked');
     if (square.ship) {
       square.ship.hit();
-      if (square.ship.isSunk()) shipsSunk++;
+      if (square.ship.isSunk()) {
+        shipsSunk++;
+        (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', {id, inst: square.ship.name});
+      }
     }
     square.attacked = true;
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', { squares, id });
@@ -1041,6 +1065,7 @@ function finishSetup() {
 
 function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGameView)();
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.updateFleet);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
