@@ -67,7 +67,10 @@ export default function boardFactory(id) {
     if (square.attacked) throw new Error('this square has already been attacked');
     if (square.ship) {
       square.ship.hit();
-      if (square.ship.isSunk()) shipsSunk++;
+      if (square.ship.isSunk()) {
+        shipsSunk++;
+        emit('sunk', {id, inst: square.ship.name});
+      }
     }
     square.attacked = true;
     emit('boardChange', { squares, id });

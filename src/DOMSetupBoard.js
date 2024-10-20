@@ -6,6 +6,7 @@ import { getEnsemble } from './ensemble';
 import { showSetup } from './DOMController';
 
 const stagingArea = document.querySelector('.staging-area');
+const previewContainer = document.querySelector('.preview-container');
 const previews = document.querySelectorAll('.img-preview');
 const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
@@ -27,7 +28,7 @@ function setupDOMBoard(board) {
 }
 
 function showStagedImage() {
-  const image = imageGenerator[this.id]();
+  const image = imageGenerator[this.dataset.inst]();
   image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
   if (stagingArea.firstChild) {
@@ -127,7 +128,7 @@ function disablePreviewImage(instrument) {
   if (remainingInstruments.length === 0) {
     setBoardButton.disabled = false;
   }
-  document.getElementById(instrument).classList.add('disabled');
+  previewContainer.querySelector(`.${instrument}`).classList.add('disabled');
 }
 
 function enablePreviewImages() {

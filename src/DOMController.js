@@ -7,6 +7,8 @@ const setupContainer = document.querySelector('.board-setup-container');
 const controlPanel = document.querySelector('.control-panel');
 const curtains = document.querySelectorAll('.curtain');
 const stagingArea = document.querySelector('.staging-area');
+const fleetContainers = document.querySelectorAll('.remaining-fleet');
+const fleet = document.querySelectorAll('.fleet');
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -23,6 +25,8 @@ function resetDOM() {
   controlPanel.classList.remove('two-player')
   controlPanel.classList.add('preferences');
   curtains.forEach(curtain => curtain.classList.add('invisible'));
+  fleetContainers.forEach(container => container.classList.add('hidden'));
+  fleet.forEach(instrument => instrument.classList.remove('sunk'));
 
   stagingArea.innerHTML = '';
 }
@@ -38,7 +42,7 @@ function showSetup(board) {
   const previews = document.querySelectorAll('.img-preview');
   const whiteList = Object.keys(getEnsemble());
   previews.forEach(preview => {
-    if (whiteList.includes(preview.id)) {
+    if (whiteList.includes(preview.dataset.inst)) {
       preview.classList.remove('hidden');
     } else {
       preview.classList.add('hidden');
@@ -49,7 +53,22 @@ function showSetup(board) {
 function showBoards() {
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
+  fleetContainers.forEach(container => container.classList.remove('hidden'));
   setupContainer.classList.add('hidden');
+  const whiteList = Object.keys(getEnsemble());
+  fleet.forEach(instrument => {
+    if (whiteList.includes(instrument.dataset.inst)) {
+      instrument.classList.remove('hidden');
+    } else {
+      instrument.classList.add('hidden');
+    }
+  })
+}
+
+function updateFleet(data) {
+  const targetContainer = data.id === 'board1' ? board1 : board2;
+  const target = targetContainer.querySelector(`.${data.inst}`);
+  target.classList.add('sunk');
 }
 
 function setBoardSizes() {
@@ -72,4 +91,4 @@ function setGameView() {
   controlPanel.classList.add('in-game');
 }
 
-export { showBoards, showSetup, setSetupView, setGameView, resetDOM };
+export { showBoards, showSetup, setSetupView, setGameView, resetDOM, updateFleet };

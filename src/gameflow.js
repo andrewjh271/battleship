@@ -1,7 +1,7 @@
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
-import { showBoards, setSetupView, setGameView, resetDOM } from './DOMController';
+import { showBoards, setSetupView, setGameView, resetDOM, updateFleet } from './DOMController';
 import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
 import { setEnsemble } from './ensemble';
@@ -72,6 +72,7 @@ function finishSetup() {
 
 function startGame() {
   setGameView();
+  on('sunk', updateFleet);
   on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();

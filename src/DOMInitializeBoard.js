@@ -2,7 +2,7 @@
 function createGrid(rows, board) {
   const children = Array.from(board.children);
   children.forEach(node => {
-    if(node.classList.contains('curtain')) {
+    if(node.classList.contains('permanent')) {
       return;
     }
     node.remove();
