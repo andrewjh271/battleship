@@ -284,4 +284,8 @@ describe('randomly placing  ships', () => {
     expect(find1DSets(board, 2).length).toBe(178);
     expect(find1DSets(board, 1).length).toBe(99);
   });
+
+  test('object too large for board', () => {
+    expect(() => find1DSets(board, 11)).toThrow('No sets found with given parameters');
+  })
 });

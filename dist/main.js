@@ -28,6 +28,7 @@ function find1DSets(board, length) {
       ...findSetsFromRow(vertical, length, board),
     ];
   }
+  if (sets.length === 0) throw new Error('No sets found with given parameters')
   return sets;
 }
 
@@ -85,6 +86,7 @@ function find2DSets(board, width, height) {
     const rotated = width === height ? [] : findSetsFrom2DRow(vertical, height, board);
     sets = [...sets, ...findSetsFrom2DRow(horizontal, height, board), ...rotated];
   }
+  if (sets.length === 0) throw new Error('No sets found with given parameters')
   return sets;
 }
 
@@ -913,15 +915,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setEnsemble: () => (/* binding */ setEnsemble)
 /* harmony export */ });
 let ensemble = {
-  flute: [1, 3],
+  cello: [2, 5],
   trombone: [1, 5],
+  bassoon: [1, 4],
+  horn: [2, 2],
+  flute: [1, 3],
   clarinet: [1, 3],
   violin: [1, 3],
-  bassoon: [1, 4],
-  cello: [2, 5],
-  horn: [2, 2],
-  piccolo: [1, 2],
   trumpet: [1, 3],
+  piccolo: [1, 2],
 };
 
 function setEnsemble() {
@@ -931,10 +933,10 @@ function setEnsemble() {
   switch (selection) {
     case 'chamber':
       ensemble = {
-        violin: [1, 3],
-        // clarinet: [1, 3],
         // cello: [2, 5],
         // horn: [2, 2],
+        violin: [1, 3],
+        // clarinet: [1, 3],
         // flute: [1, 3],
       };
       break;
@@ -947,23 +949,23 @@ function setEnsemble() {
       break;
     case 'woodwinds':
       ensemble = {
+        bassoon: [1, 4],
         flute: [1, 3],
         clarinet: [1, 3],
-        bassoon: [1, 4],
         piccolo: [1, 2],
       };
       break;
     default:
       ensemble = {
-        flute: [1, 3],
+        cello: [2, 5],
         trombone: [1, 5],
+        bassoon: [1, 4],
+        horn: [2, 2],
+        flute: [1, 3],
         clarinet: [1, 3],
         violin: [1, 3],
-        bassoon: [1, 4],
-        cello: [2, 5],
-        horn: [2, 2],
-        piccolo: [1, 2],
         trumpet: [1, 3],
+        piccolo: [1, 2],
       };
   }
 }

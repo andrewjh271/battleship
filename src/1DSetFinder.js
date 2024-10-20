@@ -14,6 +14,7 @@ function find1DSets(board, length) {
       ...findSetsFromRow(vertical, length, board),
     ];
   }
+  if (sets.length === 0) throw new Error('No sets found with given parameters')
   return sets;
 }
 
