@@ -1,7 +1,7 @@
 import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 
-function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
+function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -21,10 +21,14 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     return opponentBoard.allShipsSunk();
   }
 
-  return { isComputer, setup, setTurn, sunkAllShips };
+  function incrementMoveCounter() {
+    moveCounter.increment();
+  }
+
+  return { isComputer, setup, setTurn, sunkAllShips, incrementMoveCounter };
 }
 
-function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
+function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCounter) {
   const ships = getEnsemble();
   const size = rowLength();
   const possibleMoves = [];
@@ -45,6 +49,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
     possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
     possibleMoves.pop();
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
+    moveCounter.increment();
   }
 
   function setup() {

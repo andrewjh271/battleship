@@ -5,6 +5,7 @@ import { showBoards, setSetupView, setGameView, resetDOM, updateFleet } from './
 import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
 import { setEnsemble } from './ensemble';
+import { moveTrackerFactory } from './moveTracker'
 
 const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
@@ -20,6 +21,9 @@ startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
 startRoundButton.addEventListener('click', playRound);
 
+const moveTracker1 = moveTrackerFactory('moves1');
+const moveTracker2 = moveTrackerFactory('moves2');
+
 let player1;
 let player2;
 let currentPlayer;
@@ -28,7 +32,7 @@ let DOMBoard1;
 let DOMBoard2;
 
 let attackCount = 0;
-const attackMax = 3;
+let attackMax = 3;
 const computerMoveTime = 500;
 
 function playerAttackProgression() {
@@ -37,6 +41,7 @@ function playerAttackProgression() {
     return;
   }
   attackCount++;
+  currentPlayer.incrementMoveCounter();
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
@@ -47,15 +52,16 @@ function playerAttackProgression() {
 function beginSetup() {
   setEnsemble();
   setSetupView();
+  attackMax = Number(document.getElementById('move-select').value);
   const board1 = boardFactory('board1');
   const board2 = boardFactory('board2');
   DOMBoard1 = DOMBoardFactory('board1', rowLength());
   DOMBoard2 = DOMBoardFactory('board2', rowLength());
-  player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2);
+  player1 = humanPlayerFactory(board1, board2, DOMBoard1, DOMBoard2, moveTracker1);
   player2 =
     document.getElementById('opponent-select').value === 'computer'
-      ? computerPlayerFactory(board2, board1, DOMBoard2)
-      : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1));
+      ? computerPlayerFactory(board2, board1, DOMBoard2, moveTracker2)
+      : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1, moveTracker2));
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
@@ -72,11 +78,14 @@ function finishSetup() {
 
 function startGame() {
   setGameView();
+  moveTracker1.reset(attackMax);
+  moveTracker2.reset(attackMax);
   on('sunk', updateFleet);
   on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
+  moveTracker1.show();
   if (player2.isComputer()) {
     playRound();
     showBoards();
@@ -100,6 +109,8 @@ function coverBoards() {
   curtains.forEach((curtain) => curtain.classList.remove('invisible'));
   startRoundButton.disabled = false;
   switchButton.disabled = true;
+  moveTracker1.hide();
+  moveTracker2.hide();
 }
 
 function playRound() {
@@ -111,8 +122,11 @@ function playRound() {
     resetButton.disabled = true;
     setTimeout(() => {
       resetButton.disabled = false;
-    }, attackMax * computerMoveTime);
-    computerAttacks();
+    }, (attackMax + 2) * computerMoveTime);
+    setTimeout(switchMoveTracker, computerMoveTime);
+    setTimeout(computerAttacks, computerMoveTime);
+  } else {
+    switchMoveTracker();
   }
 }
 
@@ -137,6 +151,16 @@ function switchTurns() {
   currentPlayer = currentPlayer === player1 ? player2 : player1;
 }
 
+function switchMoveTracker() {
+  if (currentPlayer === player1) {
+    moveTracker1.show();
+    moveTracker2.hide();
+  } else {
+    moveTracker1.hide();
+    moveTracker2.show();
+  }
+}
+
 function gameOver() {
   const name = currentPlayer === player1 ? 'Player 1' : 'Player 2';
   console.log(name, 'is the winner');
@@ -148,6 +172,8 @@ function gameOver() {
 function reset() {
   resetDOM();
   removeAllEvents();
+  moveTracker1.hide();
+  moveTracker2.hide();
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
