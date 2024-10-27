@@ -34,6 +34,7 @@ select {
   background-color: #b4c3ae;
   opacity: 0.75;
   transition: 0.3s;
+  user-select: none;
 }
 button:hover,
 select:hover {
@@ -81,6 +82,7 @@ button:disabled {
 .control-panel button {
   font-size: 16px;
   padding: 5px;
+  height: 31px;
 }
 .control-panel h3 {
   color: #2f0a05;
@@ -88,6 +90,7 @@ button:disabled {
   margin-bottom: 4px;
   font-size: 36px;
   font-family: "Tangerine", cursive;
+  user-select: none;
 }
 
 .reset {
@@ -100,6 +103,7 @@ button:disabled {
   font-size: 20px;
   padding: 6px;
   position: relative;
+  height: auto;
 }
 
 .control-panel .navigation:enabled:before {
@@ -107,8 +111,7 @@ button:disabled {
   position: absolute;
   top: -4px;
   left: -4px;
-  animation: enabled 800ms 1 forwards;
-  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  animation: enabled ease-in-out 1.3s infinite alternate;
   width: calc(100% + 8px);
   height: calc(100% + 8px);
 }
@@ -117,11 +120,8 @@ button:disabled {
   0% {
     border: 4px solid rgba(255, 255, 255, 0);
   }
-  50% {
-    border: 4px solid #83cded;
-  }
   100% {
-    border: 4px solid rgba(72, 177, 221, 0.9215686275);
+    border: 4px solid #4993ed;
   }
 }
 .control-panel.in-game,
@@ -204,6 +204,7 @@ button:disabled {
   margin: 30px;
   border: 14px solid rgba(160, 111, 53, 0.8196078431);
   width: 80%;
+  max-width: 540px;
   justify-self: center;
   aspect-ratio: 1;
   display: inline-grid;
@@ -283,6 +284,7 @@ button:disabled {
   margin: 30px;
   border: 14px solid rgba(160, 111, 53, 0.8196078431);
   width: 80%;
+  max-width: 540px;
   justify-self: center;
   aspect-ratio: 1;
 }
