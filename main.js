@@ -993,6 +993,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _moveTracker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./moveTracker */ "./src/moveTracker.js");
+
 
 
 
@@ -1015,6 +1017,9 @@ startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
 startRoundButton.addEventListener('click', playRound);
 
+const moveTracker1 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_7__.moveTrackerFactory)('moves1');
+const moveTracker2 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_7__.moveTrackerFactory)('moves2');
+
 let player1;
 let player2;
 let currentPlayer;
@@ -1023,7 +1028,7 @@ let DOMBoard1;
 let DOMBoard2;
 
 let attackCount = 0;
-const attackMax = 3;
+let attackMax = 3;
 const computerMoveTime = 500;
 
 function playerAttackProgression() {
@@ -1032,6 +1037,7 @@ function playerAttackProgression() {
     return;
   }
   attackCount++;
+  currentPlayer.incrementMoveCounter();
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
@@ -1042,15 +1048,16 @@ function playerAttackProgression() {
 function beginSetup() {
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupView)();
+  attackMax = Number(document.getElementById('move-select').value);
   const board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
   const board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
   DOMBoard1 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board1', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
   DOMBoard2 = (0,_DOMBoard__WEBPACK_IMPORTED_MODULE_2__.DOMBoardFactory)('board2', (0,_boardSize__WEBPACK_IMPORTED_MODULE_4__.rowLength)());
-  player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2);
+  player1 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board1, board2, DOMBoard1, DOMBoard2, moveTracker1);
   player2 =
     document.getElementById('opponent-select').value === 'computer'
-      ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2)
-      : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1));
+      ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2, moveTracker2)
+      : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1, moveTracker2));
   player1.setup();
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
@@ -1067,11 +1074,14 @@ function finishSetup() {
 
 function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGameView)();
+  moveTracker1.reset(attackMax);
+  moveTracker2.reset(attackMax);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.updateFleet);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
+  moveTracker1.show();
   if (player2.isComputer()) {
     playRound();
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
@@ -1095,6 +1105,8 @@ function coverBoards() {
   curtains.forEach((curtain) => curtain.classList.remove('invisible'));
   startRoundButton.disabled = false;
   switchButton.disabled = true;
+  moveTracker1.hide();
+  moveTracker2.hide();
 }
 
 function playRound() {
@@ -1106,8 +1118,11 @@ function playRound() {
     resetButton.disabled = true;
     setTimeout(() => {
       resetButton.disabled = false;
-    }, attackMax * computerMoveTime);
-    computerAttacks();
+    }, (attackMax + 2) * computerMoveTime);
+    setTimeout(switchMoveTracker, computerMoveTime);
+    setTimeout(computerAttacks, computerMoveTime);
+  } else {
+    switchMoveTracker();
   }
 }
 
@@ -1132,6 +1147,16 @@ function switchTurns() {
   currentPlayer = currentPlayer === player1 ? player2 : player1;
 }
 
+function switchMoveTracker() {
+  if (currentPlayer === player1) {
+    moveTracker1.show();
+    moveTracker2.hide();
+  } else {
+    moveTracker1.hide();
+    moveTracker2.show();
+  }
+}
+
 function gameOver() {
   const name = currentPlayer === player1 ? 'Player 1' : 'Player 2';
   console.log(name, 'is the winner');
@@ -1143,6 +1168,8 @@ function gameOver() {
 function reset() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.resetDOM)();
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.removeAllEvents)();
+  moveTracker1.hide();
+  moveTracker2.hide();
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
@@ -1226,6 +1253,62 @@ function newImage(type, width, height) {
 
 /***/ }),
 
+/***/ "./src/moveTracker.js":
+/*!****************************!*\
+  !*** ./src/moveTracker.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   moveTrackerFactory: () => (/* binding */ moveTrackerFactory)
+/* harmony export */ });
+function moveTrackerFactory(id) {
+  const tracker = document.getElementById(id);
+  tracker.moves = [];
+
+  let current = 0;
+
+  function hide() {
+    tracker.classList.add('hidden');
+  }
+
+  function show() {
+    tracker.classList.remove('hidden');
+    tracker.moves.forEach(move => {
+      move.classList.remove('moved');
+    });
+    current = 0;
+  }
+
+  function reset(n) {
+    current = 0;
+    tracker.innerHTML = '';
+    tracker.moves = [];
+    for(let i = 0; i < n; i++) {
+      const move = document.createElement('span');
+      move.classList.add('move');
+      tracker.moves[i] = move;
+      tracker.appendChild(move);
+    }
+  }
+
+  function increment() {
+    tracker.moves[current].classList.add('moved');
+    current++;
+  }
+
+
+  return {
+    hide,
+    show,
+    reset,
+    increment
+  }
+}
+
+/***/ }),
+
 /***/ "./src/observer.js":
 /*!*************************!*\
   !*** ./src/observer.js ***!
@@ -1288,7 +1371,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard) {
+function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -1308,10 +1391,14 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     return opponentBoard.allShipsSunk();
   }
 
-  return { isComputer, setup, setTurn, sunkAllShips };
+  function incrementMoveCounter() {
+    moveCounter.increment();
+  }
+
+  return { isComputer, setup, setTurn, sunkAllShips, incrementMoveCounter };
 }
 
-function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
+function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCounter) {
   const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
   const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
   const possibleMoves = [];
@@ -1332,6 +1419,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard) {
     possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
     possibleMoves.pop();
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
+    moveCounter.increment();
   }
 
   function setup() {
