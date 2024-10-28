@@ -1211,6 +1211,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   trumpet: () => (/* binding */ trumpet),
 /* harmony export */   violin: () => (/* binding */ violin)
 /* harmony export */ });
+/* eslint-disable no-param-reassign */
 function flute() {
   return newImage('flute', 1, 3);
 }
@@ -1250,17 +1251,22 @@ function trumpet() {
 }
 
 function newImage(type, width, height) {
-  const cell = document.querySelector(".board:not(.hidden) > .cell")
-  const squareWidth = cell.offsetWidth;
   const image = new Image();
   image.src = `./images/${type}.png`;
-  image.style.width = `${squareWidth * width}px`;
-  image.style.height = `${squareWidth * height}px`;
   image.spanX = width;
   image.spanY = height;
   image.area = width * height;
   image.type = type;
+  setImageSize(image);
+  window.addEventListener('resize', () => setImageSize(image));
   return image;
+}
+
+function setImageSize(image) {
+  const cell = document.querySelector(".board:not(.hidden) > .cell")
+  const squareWidth = cell.offsetWidth;
+  image.style.width = `${squareWidth * image.spanX}px`;
+  image.style.height = `${squareWidth * image.spanY}px`;
 }
 
 
