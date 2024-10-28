@@ -317,6 +317,7 @@ button:disabled {
 .remaining-fleet div,
 .preview-container div {
   height: 100%;
+  max-width: 40px;
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -353,6 +354,7 @@ button:disabled {
 }
 
 .img-preview {
+  height: 91px;
   max-height: calc(100% - 9px);
 }
 .img-preview.disabled {
@@ -472,7 +474,7 @@ img[src*=piccolo].staging-img {
 }
 
 .remaining-fleet div {
-  margin-right: 28px;
+  margin-right: 6%;
 }
 
 .remaining-fleet span {
@@ -484,6 +486,7 @@ img[src*=piccolo].staging-img {
 }
 
 .remaining-fleet img {
+  height: 91px;
   max-height: calc(100% - 9px);
 }
 

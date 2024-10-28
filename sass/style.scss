@@ -334,6 +334,7 @@ button:disabled {
 .remaining-fleet div,
 .preview-container div {
   height: 100%;
+  max-width: 40px; // necessary for weird image width issues w/ Firefox and Safari
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -369,6 +370,7 @@ button:disabled {
 }
 
 .img-preview {
+  height: 91px; // necessary for weird image width issues w/ Firefox and Safari
   max-height: calc(100% - 9px);
 
   &.disabled {
@@ -387,19 +389,19 @@ button:disabled {
   &.violin,
   &.clarinet,
   &.flute {
-    max-height: calc(60% - 9px)
+    max-height: calc(60% - 9px);
   }
   &.bassoon {
-    max-height: calc(80% - 9px)
+    max-height: calc(80% - 9px);
   }
   &.piccolo {
-    max-height: calc(35% - 9px)
+    max-height: calc(35% - 9px);
   }
   &.horn {
-    max-height: calc(45% - 9px)
+    max-height: calc(45% - 9px);
   }
   &.trombone {
-    max-height: calc(96% - 9px)
+    max-height: calc(96% - 9px);
   }
 }
 
@@ -482,7 +484,7 @@ img[src*=piccolo].staging-img {
 }
 
 .remaining-fleet div {
-  margin-right: 28px;
+  margin-right: 6%;
 }
 
 .remaining-fleet span {
@@ -494,6 +496,7 @@ img[src*=piccolo].staging-img {
 }
 
 .remaining-fleet img {
+  height: 91px; // necessary for weird image width issues w/ Firefox and Safari
   max-height: calc(100% - 9px);
 }
 
