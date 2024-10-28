@@ -309,11 +309,13 @@ function DOMBoardFactory(id, ROWS) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   coverFleets: () => (/* binding */ coverFleets),
 /* harmony export */   resetDOM: () => (/* binding */ resetDOM),
 /* harmony export */   setGameView: () => (/* binding */ setGameView),
 /* harmony export */   setSetupView: () => (/* binding */ setSetupView),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
 /* harmony export */   showSetup: () => (/* binding */ showSetup),
+/* harmony export */   uncoverFleets: () => (/* binding */ uncoverFleets),
 /* harmony export */   updateFleet: () => (/* binding */ updateFleet)
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
@@ -342,11 +344,12 @@ function resetDOM() {
   setupContainer.classList.add('hidden');
   controlPanel.classList.remove('setup');
   controlPanel.classList.remove('in-game');
-  controlPanel.classList.remove('two-player')
+  controlPanel.classList.remove('two-player');
   controlPanel.classList.add('preferences');
-  curtains.forEach(curtain => curtain.classList.add('invisible'));
-  fleetContainers.forEach(container => container.classList.add('hidden'));
-  fleet.forEach(instrument => instrument.classList.remove('sunk'));
+  curtains.forEach((curtain) => curtain.classList.add('invisible'));
+  fleetContainers.forEach((container) => container.classList.add('invisible'));
+  fleetContainers.forEach((container) => container.classList.add('opaque'));
+  fleet.forEach((instrument) => instrument.classList.remove('sunk'));
 
   stagingArea.innerHTML = '';
 }
@@ -361,28 +364,28 @@ function showSetup(board) {
   }
   const previews = document.querySelectorAll('.img-preview');
   const whiteList = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)());
-  previews.forEach(preview => {
+  previews.forEach((preview) => {
     if (whiteList.includes(preview.dataset.inst)) {
       preview.classList.remove('hidden');
     } else {
       preview.classList.add('hidden');
     }
-  })
+  });
 }
 
 function showBoards() {
+  setupContainer.classList.add('hidden');
   board1.classList.remove('hidden');
   board2.classList.remove('hidden');
-  fleetContainers.forEach(container => container.classList.remove('hidden'));
-  setupContainer.classList.add('hidden');
+  setTimeout(() => fleetContainers.forEach((container) => container.classList.remove('invisible')), 50);
   const whiteList = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)());
-  fleet.forEach(instrument => {
+  fleet.forEach((instrument) => {
     if (whiteList.includes(instrument.dataset.inst)) {
       instrument.classList.remove('hidden');
     } else {
       instrument.classList.add('hidden');
     }
-  })
+  });
 }
 
 function updateFleet(data) {
@@ -391,13 +394,21 @@ function updateFleet(data) {
   target.classList.add('sunk');
 }
 
+function coverFleets() {
+  fleetContainers.forEach((container) => container.classList.add('opaque'));
+}
+
+function uncoverFleets() {
+  fleetContainers.forEach((container) => container.classList.remove('opaque'));
+}
+
 function setBoardSizes() {
-  const rowLength = Number(document.querySelector('.size-select').value) || 10
-  ;(0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.setRowLength)(rowLength);
-  board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
-  board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`
-  board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
-  board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`
+  const rowLength = Number(document.querySelector('.size-select').value) || 10;
+  (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.setRowLength)(rowLength);
+  board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
+  board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+  board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
+  board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
 }
 
 function setSetupView() {
@@ -1015,6 +1026,7 @@ resetButton.addEventListener('click', reset);
 
 startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
+switchButton.addEventListener('click', _DOMController__WEBPACK_IMPORTED_MODULE_3__.coverFleets);
 startRoundButton.addEventListener('click', playRound);
 
 const moveTracker1 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_7__.moveTrackerFactory)('moves1');
@@ -1032,12 +1044,12 @@ let attackMax = 3;
 const computerMoveTime = 500;
 
 function playerAttackProgression() {
+  currentPlayer.incrementMoveCounter();
   if (currentPlayer.sunkAllShips()) {
     gameOver();
     return;
   }
   attackCount++;
-  currentPlayer.incrementMoveCounter();
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
@@ -1087,7 +1099,7 @@ function startGame() {
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
   } else {
     coverBoards();
-    setTimeout(_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards, 2000);
+    setTimeout(_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 
@@ -1103,7 +1115,9 @@ function finishRound() {
 
 function coverBoards() {
   curtains.forEach((curtain) => curtain.classList.remove('invisible'));
-  startRoundButton.disabled = false;
+  setTimeout(() => {
+    startRoundButton.disabled = false;
+  }, 2000);
   switchButton.disabled = true;
   moveTracker1.hide();
   moveTracker2.hide();
@@ -1111,6 +1125,7 @@ function coverBoards() {
 
 function playRound() {
   curtains.forEach((curtain) => curtain.classList.add('invisible'));
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.uncoverFleets)();
   switchButton.disabled = true;
   startRoundButton.disabled = true;
   currentPlayer.setTurn();
