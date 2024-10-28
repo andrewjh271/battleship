@@ -1,11 +1,19 @@
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
-import { showBoards, setSetupView, setGameView, resetDOM, updateFleet } from './DOMController';
+import {
+  showBoards,
+  setSetupView,
+  setGameView,
+  resetDOM,
+  updateFleet,
+  coverFleets,
+  uncoverFleets,
+} from './DOMController';
 import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
 import { setEnsemble } from './ensemble';
-import { moveTrackerFactory } from './moveTracker'
+import { moveTrackerFactory } from './moveTracker';
 
 const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
@@ -19,6 +27,7 @@ resetButton.addEventListener('click', reset);
 
 startButton.addEventListener('click', beginSetup);
 switchButton.addEventListener('click', coverBoards);
+switchButton.addEventListener('click', coverFleets);
 startRoundButton.addEventListener('click', playRound);
 
 const moveTracker1 = moveTrackerFactory('moves1');
@@ -36,12 +45,12 @@ let attackMax = 3;
 const computerMoveTime = 500;
 
 function playerAttackProgression() {
+  currentPlayer.incrementMoveCounter();
   if (currentPlayer.sunkAllShips()) {
     gameOver();
     return;
   }
   attackCount++;
-  currentPlayer.incrementMoveCounter();
   if (attackCount >= attackMax) {
     attackCount = 0;
     switchTurns();
@@ -91,7 +100,7 @@ function startGame() {
     showBoards();
   } else {
     coverBoards();
-    setTimeout(showBoards, 2000);
+    setTimeout(showBoards, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 
@@ -107,7 +116,9 @@ function finishRound() {
 
 function coverBoards() {
   curtains.forEach((curtain) => curtain.classList.remove('invisible'));
-  startRoundButton.disabled = false;
+  setTimeout(() => {
+    startRoundButton.disabled = false;
+  }, 2000);
   switchButton.disabled = true;
   moveTracker1.hide();
   moveTracker2.hide();
@@ -115,6 +126,7 @@ function coverBoards() {
 
 function playRound() {
   curtains.forEach((curtain) => curtain.classList.add('invisible'));
+  uncoverFleets();
   switchButton.disabled = true;
   startRoundButton.disabled = true;
   currentPlayer.setTurn();

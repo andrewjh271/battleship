@@ -180,13 +180,13 @@ button:disabled {
 #board1::before {
   content: 'Intermission...';
 }
-#board1:has(.invisible)::before {
+#board1:has(.curtain.invisible)::before {
   content: "Player 1's Board";
 }
 #board2::before {
   content: 'Intermission...'
 }
-#board2:has(.invisible)::before {
+#board2:has(.curtain.invisible)::before {
   content: "Player 2's Board";
 }
 .board-setup-container:has(.invisible)::before {
@@ -466,6 +466,15 @@ img[src*=piccolo].staging-img {
   background-color: #41444cd9;
   border: 1px solid #00000040;
   pointer-events: none;
+  transition: 2s;
+}
+
+.remaining-fleet * {
+  transition: 2s;
+}
+
+.remaining-fleet.opaque * {
+  opacity: 0;
 }
 
 .remaining-fleet div:has(.hidden) {
