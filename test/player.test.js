@@ -6,7 +6,8 @@ import { getEnsemble } from '../src/ensemble';
 describe('attacking', () => {
   test('computers can randomly attack unoccupied squares', () => {
     const opponentBoard = boardFactory();
-    const computer = computerPlayerFactory(null, opponentBoard);
+    const moveCounterMock = { increment: () => true }
+    const computer = computerPlayerFactory(null, opponentBoard, null, moveCounterMock);
     for (let i = 0; i < 100; i++) {
       computer.attack();
     }
