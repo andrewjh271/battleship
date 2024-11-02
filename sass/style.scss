@@ -58,8 +58,9 @@ button:disabled {
 .container {
   height: 100vh;
   display: grid;
+  column-gap: 40px;
   align-items: center;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 1fr 1fr;
   grid-template-rows: 100px 1fr 100px;
   background-image: url('../images/hall2.jpg');
   background-size: cover;
@@ -573,4 +574,64 @@ img[src*=piccolo].staging-img {
   0% { --c3: #e61717 }
   50% { --c3: #124fc7 }
   100% { --c3: #e61717 }
+}
+
+.attack-direction {
+  position: absolute;
+  left: calc(50% - 53px);
+  top: calc(50% - 130px);
+  width: 106px;
+  background-color: #79636396;
+  padding: 30px 6px 30px 6px;
+  box-shadow: 1px 1px 20px 12px #7c00008f;
+  transition: opacity 2s;
+
+  h3 {
+    color: #ebf4ff;
+    margin-bottom: 4px;
+    font-size: 22px;
+    font-family: "Sorts Mill Goudy", serif;
+    font-weight: 400;
+    font-style: normal;
+    white-space: nowrap;
+    text-align: center;
+    transition: 1s;
+  }
+
+  .player2 {
+    display: none;
+  }
+
+  img {
+    width: 100%;
+    transition: 1s;
+    transform: translateX(-5px);
+    rotate: 15deg;
+    margin-top: 5px;
+  }
+}
+
+.attack-direction.player2 {
+  .player1 {
+    display: none;
+  }
+
+  .player2 {
+    display: block;
+  }
+}
+
+.attack-direction.computer {
+  img {
+    rotate: -15deg;
+    scale: -1 1;
+  }
+}
+
+.attack-direction.opaque * {
+  opacity: 0;
+}
+
+.attack-direction.invisible {
+  transition: 0s;
 }

@@ -9,6 +9,7 @@ const curtains = document.querySelectorAll('.curtain');
 const stagingArea = document.querySelector('.staging-area');
 const fleetContainers = document.querySelectorAll('.remaining-fleet');
 const fleet = document.querySelectorAll('.fleet');
+const attackDirection = document.querySelector('.attack-direction');
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -28,6 +29,8 @@ function resetDOM() {
   fleetContainers.forEach((container) => container.classList.add('invisible'));
   fleetContainers.forEach((container) => container.classList.add('opaque'));
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
+  attackDirection.classList.add('invisible');
+  attackDirection.classList.remove('player2');
 
   stagingArea.innerHTML = '';
 }

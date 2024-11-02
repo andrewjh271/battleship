@@ -21,6 +21,7 @@ const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
 const curtains = document.querySelectorAll('.curtain');
+const attackDirection = document.querySelector('.attack-direction');
 
 const resetButton = document.querySelector('.reset');
 resetButton.addEventListener('click', reset);
@@ -53,6 +54,9 @@ function playerAttackProgression() {
   attackCount++;
   if (attackCount >= attackMax) {
     attackCount = 0;
+    if (!player2.isComputer()) {
+      attackDirection.classList.add('opaque');
+    }
     switchTurns();
     finishRound();
   }
@@ -127,6 +131,8 @@ function coverBoards() {
 function playRound() {
   curtains.forEach((curtain) => curtain.classList.add('invisible'));
   uncoverFleets();
+  attackDirection.classList.remove('invisible');
+  attackDirection.classList.remove('opaque');
   switchButton.disabled = true;
   startRoundButton.disabled = true;
   currentPlayer.setTurn();
@@ -134,9 +140,9 @@ function playRound() {
     resetButton.disabled = true;
     setTimeout(() => {
       resetButton.disabled = false;
-    }, (attackMax + 2) * computerMoveTime);
-    setTimeout(switchMoveTracker, computerMoveTime);
-    setTimeout(computerAttacks, computerMoveTime);
+    }, attackMax * computerMoveTime + 1500);
+    setTimeout(switchMoveTracker, 500);
+    setTimeout(computerAttacks, 1000);
   } else {
     switchMoveTracker();
   }
@@ -167,9 +173,17 @@ function switchMoveTracker() {
   if (currentPlayer === player1) {
     moveTracker1.show();
     moveTracker2.hide();
+    attackDirection.classList.remove('player2');
+    if (player2.isComputer()) {
+      attackDirection.classList.remove('computer');
+    }
   } else {
     moveTracker1.hide();
     moveTracker2.show();
+    attackDirection.classList.add('player2');
+    if (player2.isComputer()) {
+      attackDirection.classList.add('computer');
+    }
   }
 }
 
