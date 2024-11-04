@@ -22,6 +22,7 @@ const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
 const curtains = document.querySelectorAll('.curtain');
 const attackDirection = document.querySelector('.attack-direction');
+const gameState = document.querySelector('.game-state');
 
 const resetButton = document.querySelector('.reset');
 resetButton.addEventListener('click', reset);
@@ -188,9 +189,7 @@ function switchMoveTracker() {
 }
 
 function gameOver() {
-  const name = currentPlayer === player1 ? 'Player 1' : 'Player 2';
-  console.log(name, 'is the winner');
-
+  gameState.textContent = 'Wins!';
   DOMBoard1.setGameOver();
   DOMBoard2.setGameOver();
 }

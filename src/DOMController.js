@@ -10,6 +10,7 @@ const stagingArea = document.querySelector('.staging-area');
 const fleetContainers = document.querySelectorAll('.remaining-fleet');
 const fleet = document.querySelectorAll('.fleet');
 const attackDirection = document.querySelector('.attack-direction');
+const gameState = document.querySelector('.game-state');
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -31,6 +32,7 @@ function resetDOM() {
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
+  gameState.textContent = 'Attack!';
 
   stagingArea.innerHTML = '';
 }

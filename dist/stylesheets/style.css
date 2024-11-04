@@ -162,6 +162,11 @@ button:disabled {
   opacity: 0;
 }
 
+.game-over .curtain {
+  opacity: 1;
+  background-color: rgba(101, 98, 137, 0.5607843137);
+}
+
 .board::before,
 .board-setup-container::before {
   content: "Intermission...";
