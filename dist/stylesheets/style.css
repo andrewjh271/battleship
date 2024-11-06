@@ -205,6 +205,16 @@ button:disabled {
   background-color: rgba(55, 30, 0, 0.6705882353);
 }
 
+@property --start-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: rgba(217, 0, 0, 0.9294117647);
+}
+@property --end-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: rgba(144, 193, 255, 0.9607843137);
+}
 .board {
   position: relative;
   margin: 30px;
@@ -225,9 +235,11 @@ button:disabled {
 .board .cell.attacked {
   background-color: rgba(144, 193, 255, 0.9607843137);
   pointer-events: none;
+  animation: swell 1.5s ease-in-out 1;
 }
 .board .cell.attacked.highlight-placed {
   background-color: rgba(161, 0, 0, 0.9215686275);
+  --end-color: #a10000eb;
 }
 .board .highlight-hovered {
   background-color: aquamarine;
@@ -242,21 +254,44 @@ button:disabled {
 .board.defense .highlight-placed {
   background-color: #fffbf1;
 }
-.board.defense .cell:hover {
+.board.defense .cell:not(.attacked):hover {
   cursor: pointer;
   background-color: rgba(217, 0, 0, 0.9294117647);
 }
-.board.defense .cell.sunk.highlight-placed {
+.board.defense .cell:not(.attacked).sunk.highlight-placed {
   background-color: rgba(161, 0, 0, 0.9215686275);
 }
 .board.offense {
   grid-column-start: 1;
   pointer-events: none;
 }
+.board.offense .cell {
+  --start-color: #fffbf1;
+}
+.board.offense .highlight-placed {
+  --start-color: #b3aa92;
+}
 .board.disabled {
   pointer-events: none;
 }
 
+@keyframes swell {
+  0% {
+    transform: scale(1);
+    background-color: var(--start-color);
+    z-index: 3;
+  }
+  30% {
+    transform: scale(1.2);
+    background-color: #3d0a43;
+  }
+  55% {
+    background-color: var(--end-color);
+  }
+  60% {
+    transform: scale(1);
+  }
+}
 .placed-img {
   object-fit: contain;
   padding: 5px;
@@ -266,7 +301,7 @@ button:disabled {
 .placed-img-wrapper {
   border: 0.5px solid black;
   overflow: hidden;
-  z-index: 3;
+  z-index: 4;
   opacity: 0.8;
 }
 
@@ -278,8 +313,9 @@ button:disabled {
 .offense .placed-img-wrapper,
 .sunk.placed-img-wrapper,
 .game-over .placed-img-wrapper {
-  z-index: 3;
+  z-index: 4;
   opacity: 0.8;
+  transition: 1.5s;
 }
 
 .board-setup-container {

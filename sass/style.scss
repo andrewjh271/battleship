@@ -204,6 +204,17 @@ button:disabled {
   background-color: #371e00ab;
 }
 
+@property --start-color {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #d90000ed;
+}
+@property --end-color {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #90c1fff5;
+}
+
 .board {
   position: relative;
   margin: 30px;
@@ -224,9 +235,12 @@ button:disabled {
     &.attacked {
       background-color: #90c1fff5;
       pointer-events: none;
+      animation: swell 1.5s ease-in-out 1;
 
       &.highlight-placed {
         background-color: $attacked;
+        --end-color: #a10000eb;
+        // doesn't work with sass variable
       }
     }
   }
@@ -246,8 +260,8 @@ button:disabled {
     .highlight-placed {
       background-color: $neutral;
     }
-
-    .cell {
+    // :not prevents hovered state from taking precedence until cursor moves in Safari
+    .cell:not(.attacked) {
       &:hover {
         cursor: pointer;
         background-color: #d90000ed;
@@ -264,12 +278,36 @@ button:disabled {
   &.offense {
     grid-column-start: 1;
     pointer-events: none;
+
+    .cell {
+      --start-color: #fffbf1;
+      // when computer is attacking player 1's board it still has .offense class
+    }
+
+    .highlight-placed {
+      --start-color: #b3aa92;
+    }
   }
 
   &.disabled {
     pointer-events: none;
   }
 }
+
+@keyframes swell {
+  0% { 
+    transform: scale(1); 
+    background-color: var(--start-color);
+    z-index: 3;
+  }
+  30% { 
+    transform: scale(1.2); 
+    background-color: #3d0a43;
+  }
+  55% { background-color: var(--end-color); }
+  60% { transform: scale(1); }
+}
+// 60% so that z-index remains 3 through the end of scaling animation
 
 .placed-img {
   object-fit: contain;
@@ -280,7 +318,7 @@ button:disabled {
 .placed-img-wrapper {
   border: 0.5px solid black;
   overflow: hidden;
-  z-index: 3;
+  z-index: 4;
   opacity: 0.8;
 }
 
@@ -293,8 +331,9 @@ button:disabled {
 .offense .placed-img-wrapper,
 .sunk.placed-img-wrapper,
 .game-over .placed-img-wrapper {
-  z-index: 3;
+  z-index: 4;
   opacity: 0.8;
+  transition: 1.5s;
 }
 
 .board-setup-container {

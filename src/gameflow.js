@@ -44,7 +44,7 @@ let DOMBoard2;
 
 let attackCount = 0;
 let attackMax = 3;
-const computerMoveTime = 500;
+const computerMoveTime = 700;
 
 function playerAttackProgression() {
   currentPlayer.incrementMoveCounter();
