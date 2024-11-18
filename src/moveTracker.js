@@ -10,7 +10,7 @@ export function moveTrackerFactory(id) {
 
   function show() {
     tracker.classList.remove('hidden');
-    tracker.moves.forEach(move => {
+    tracker.moves.forEach((move) => {
       move.classList.remove('moved');
     });
     current = 0;
@@ -20,7 +20,7 @@ export function moveTrackerFactory(id) {
     current = 0;
     tracker.innerHTML = '';
     tracker.moves = [];
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
       const move = document.createElement('span');
       move.classList.add('move');
       tracker.moves[i] = move;
@@ -33,11 +33,10 @@ export function moveTrackerFactory(id) {
     current++;
   }
 
-
   return {
     hide,
     show,
     reset,
-    increment
-  }
+    increment,
+  };
 }

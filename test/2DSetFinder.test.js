@@ -422,7 +422,7 @@ describe('Throws error when set is empty', () => {
 
   test('object too large for board', () => {
     expect(() => find2DSets(board, 4, 11)).toThrow('No sets found with given parameters');
-  })
+  });
 
   test('no room for object', () => {
     board.placeShip([
@@ -435,7 +435,7 @@ describe('Throws error when set is empty', () => {
       [1, 7],
       [1, 8],
     ]);
-    
+
     board.placeShip([
       [3, 1],
       [3, 2],
@@ -478,5 +478,5 @@ describe('Throws error when set is empty', () => {
     ]);
 
     expect(() => find2DSets(board, 2, 2)).toThrow('No sets found with given parameters');
-  })
-})
+  });
+});

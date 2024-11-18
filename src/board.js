@@ -32,9 +32,6 @@ export default function boardFactory(id) {
   }
 
   const isOccupied = (coords) => {
-    if (typeof coords[0] === 'number') {
-      return !!squares[coords[0]][coords[1]].ship;
-    }
     for (let i = 0; i < coords.length; i++) {
       const coord = coords[i];
       if (squares[coord[0]][coord[1]].ship) return true;
@@ -42,8 +39,7 @@ export default function boardFactory(id) {
     return false;
   };
 
-  const outOfRange = (coords) =>
-    coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
+  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
 
   const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
@@ -69,7 +65,7 @@ export default function boardFactory(id) {
       square.ship.hit();
       if (square.ship.isSunk()) {
         shipsSunk++;
-        emit('sunk', {id, inst: square.ship.name});
+        emit('sunk', { id, inst: square.ship.name });
       }
     }
     square.attacked = true;

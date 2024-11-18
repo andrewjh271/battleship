@@ -111,9 +111,7 @@ function placeImage(element) {
   imageWrapper.style.gridRow = `${Math.floor(startingCell / currentBoard.numRows) + 1} / span ${
     element.spanY
   }`;
-  imageWrapper.style.gridColumn = `${(startingCell % currentBoard.numRows) + 1} / span ${
-    element.spanX
-  }`;
+  imageWrapper.style.gridColumn = `${(startingCell % currentBoard.numRows) + 1} / span ${element.spanX}`;
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);

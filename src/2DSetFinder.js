@@ -10,7 +10,7 @@ function find2DSets(board, width, height) {
     const rotated = width === height ? [] : findSetsFrom2DRow(vertical, height, board);
     sets = [...sets, ...findSetsFrom2DRow(horizontal, height, board), ...rotated];
   }
-  if (sets.length === 0) throw new Error('No sets found with given parameters')
+  if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
 

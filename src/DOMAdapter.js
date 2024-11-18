@@ -14,7 +14,7 @@ function getShipData(DOMboard) {
       object[name] = getCoordinates(xStart, xEnd, yStart, yEnd);
       return object;
     })
-    .reduce((object, entry) => ({ ...object, ...entry }), {});
+    .reduce((object, entry) => ({ ...object, ...entry }), {}); // converts array of objects into 1 object
 }
 
 function getCoordinates(xStart, xEnd, yStart, yEnd) {

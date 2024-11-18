@@ -50,7 +50,7 @@ function newImage(type, width, height) {
 }
 
 function setImageSize(image) {
-  const cell = document.querySelector(".board:not(.hidden) > .cell")
+  const cell = document.querySelector('.board:not(.hidden) > .cell');
   const squareWidth = cell.offsetWidth;
   image.style.width = `${squareWidth * image.spanX}px`;
   image.style.height = `${squareWidth * image.spanY}px`;

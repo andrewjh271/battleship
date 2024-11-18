@@ -28,7 +28,7 @@ function find1DSets(board, length) {
       ...findSetsFromRow(vertical, length, board),
     ];
   }
-  if (sets.length === 0) throw new Error('No sets found with given parameters')
+  if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
 
@@ -38,10 +38,10 @@ function findSetsFromRow(row, length, board) {
   const sets = [];
 
   while (rt < row.length) {
-    if (board.isOccupied([row[lft][0], row[lft][1]])) {
+    if (board.isOccupied([[row[lft][0], row[lft][1]]])) {
       lft = rt;
       rt += 1;
-    } else if (board.isOccupied([row[rt][0], row[rt][1]])) {
+    } else if (board.isOccupied([[row[rt][0], row[rt][1]]])) {
       lft = rt + 1;
       rt += 2;
     } else if (rt - lft + 1 === length) {
@@ -86,7 +86,7 @@ function find2DSets(board, width, height) {
     const rotated = width === height ? [] : findSetsFrom2DRow(vertical, height, board);
     sets = [...sets, ...findSetsFrom2DRow(horizontal, height, board), ...rotated];
   }
-  if (sets.length === 0) throw new Error('No sets found with given parameters')
+  if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
 
@@ -148,7 +148,7 @@ function getShipData(DOMboard) {
       object[name] = getCoordinates(xStart, xEnd, yStart, yEnd);
       return object;
     })
-    .reduce((object, entry) => ({ ...object, ...entry }), {});
+    .reduce((object, entry) => ({ ...object, ...entry }), {}); // converts array of objects into 1 object
 }
 
 function getCoordinates(xStart, xEnd, yStart, yEnd) {
@@ -266,11 +266,9 @@ function DOMBoardFactory(id, ROWS) {
 
   function setPosition(image, wrapper, set) {
     const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
-    const rowSpan =
-      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
+    const rowSpan = set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
     const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
-    const colSpan =
-      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
+    const colSpan = set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
 
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
@@ -445,21 +443,18 @@ __webpack_require__.r(__webpack_exports__);
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
   const children = Array.from(board.children);
-  children.forEach(node => {
-    if(node.classList.contains('permanent')) {
+  children.forEach((node) => {
+    if (node.classList.contains('permanent')) {
       return;
     }
     node.remove();
-  })
-  
+  });
 
   board.cells = [];
   for (let i = 0; i < rows * rows; i++) {
     board.cells[i] = document.createElement('div');
     board.cells[i].classList.add('cell');
-    board.cells[i].style.gridArea = `${Math.floor(i / rows) + 1} / ${
-      (i % rows) + 1
-    } / span 1 / span 1`;
+    board.cells[i].style.gridArea = `${Math.floor(i / rows) + 1} / ${(i % rows) + 1} / span 1 / span 1`;
     board.cells[i].dataset.index = i;
     board.appendChild(board.cells[i]);
   }
@@ -608,9 +603,7 @@ function placeImage(element) {
   imageWrapper.style.gridRow = `${Math.floor(startingCell / currentBoard.numRows) + 1} / span ${
     element.spanY
   }`;
-  imageWrapper.style.gridColumn = `${(startingCell % currentBoard.numRows) + 1} / span ${
-    element.spanX
-  }`;
+  imageWrapper.style.gridColumn = `${(startingCell % currentBoard.numRows) + 1} / span ${element.spanX}`;
 
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
@@ -712,9 +705,6 @@ function boardFactory(id) {
   }
 
   const isOccupied = (coords) => {
-    if (typeof coords[0] === 'number') {
-      return !!squares[coords[0]][coords[1]].ship;
-    }
     for (let i = 0; i < coords.length; i++) {
       const coord = coords[i];
       if (squares[coord[0]][coord[1]].ship) return true;
@@ -722,8 +712,7 @@ function boardFactory(id) {
     return false;
   };
 
-  const outOfRange = (coords) =>
-    coords.flat().some((coord) => coord < 0 || coord > (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1);
+  const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1);
 
   const placeShip = (coords, name) => {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
@@ -749,7 +738,7 @@ function boardFactory(id) {
       square.ship.hit();
       if (square.ship.isSunk()) {
         shipsSunk++;
-        (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', {id, inst: square.ship.name});
+        (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', { id, inst: square.ship.name });
       }
     }
     square.attacked = true;
@@ -903,7 +892,7 @@ function dragMove(e) {
     endX: bound.right,
     startY: bound.top,
     endY: bound.bottom,
-    area: this.area
+    area: this.area,
   };
 
   (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEvent', positionData);
@@ -1281,7 +1270,7 @@ function newImage(type, width, height) {
 }
 
 function setImageSize(image) {
-  const cell = document.querySelector(".board:not(.hidden) > .cell")
+  const cell = document.querySelector('.board:not(.hidden) > .cell');
   const squareWidth = cell.offsetWidth;
   image.style.width = `${squareWidth * image.spanX}px`;
   image.style.height = `${squareWidth * image.spanY}px`;
@@ -1314,7 +1303,7 @@ function moveTrackerFactory(id) {
 
   function show() {
     tracker.classList.remove('hidden');
-    tracker.moves.forEach(move => {
+    tracker.moves.forEach((move) => {
       move.classList.remove('moved');
     });
     current = 0;
@@ -1324,7 +1313,7 @@ function moveTrackerFactory(id) {
     current = 0;
     tracker.innerHTML = '';
     tracker.moves = [];
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
       const move = document.createElement('span');
       move.classList.add('move');
       tracker.moves[i] = move;
@@ -1337,14 +1326,14 @@ function moveTrackerFactory(id) {
     current++;
   }
 
-
   return {
     hide,
     show,
     reset,
-    increment
-  }
+    increment,
+  };
 }
+
 
 /***/ }),
 

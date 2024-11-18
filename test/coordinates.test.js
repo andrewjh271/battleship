@@ -14,15 +14,15 @@ describe('converts index number to x/y coordinates', () => {
     expect(indexToCoordinates(6)).toEqual([6, 0]);
     expect(indexToCoordinates(20)).toEqual([4, 2]);
     expect(indexToCoordinates(57)).toEqual([1, 7]);
-  })
+  });
 
   test('13x13 board', () => {
     setRowLength(13);
     expect(indexToCoordinates(19)).toEqual([6, 1]);
     expect(indexToCoordinates(140)).toEqual([10, 10]);
     expect(indexToCoordinates(93)).toEqual([2, 7]);
-  })
-})
+  });
+});
 
 describe('converts x/y coordinates to an index number', () => {
   test('10x10 board', () => {
@@ -45,5 +45,4 @@ describe('converts x/y coordinates to an index number', () => {
     expect(coordinatesToIndex([2, 7])).toBe(93);
     expect(coordinatesToIndex([8, 12])).toBe(164);
   });
-})
-
+});

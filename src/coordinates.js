@@ -1,4 +1,4 @@
-import { rowLength } from "./boardSize";
+import { rowLength } from './boardSize';
 
 function indexToCoordinates(index) {
   const size = rowLength();

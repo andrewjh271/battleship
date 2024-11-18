@@ -31,7 +31,7 @@ function dragMove(e) {
     endX: bound.right,
     startY: bound.top,
     endY: bound.bottom,
-    area: this.area
+    area: this.area,
   };
 
   emit('dragEvent', positionData);

@@ -1,21 +1,18 @@
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
   const children = Array.from(board.children);
-  children.forEach(node => {
-    if(node.classList.contains('permanent')) {
+  children.forEach((node) => {
+    if (node.classList.contains('permanent')) {
       return;
     }
     node.remove();
-  })
-  
+  });
 
   board.cells = [];
   for (let i = 0; i < rows * rows; i++) {
     board.cells[i] = document.createElement('div');
     board.cells[i].classList.add('cell');
-    board.cells[i].style.gridArea = `${Math.floor(i / rows) + 1} / ${
-      (i % rows) + 1
-    } / span 1 / span 1`;
+    board.cells[i].style.gridArea = `${Math.floor(i / rows) + 1} / ${(i % rows) + 1} / span 1 / span 1`;
     board.cells[i].dataset.index = i;
     board.appendChild(board.cells[i]);
   }

@@ -14,7 +14,7 @@ function find1DSets(board, length) {
       ...findSetsFromRow(vertical, length, board),
     ];
   }
-  if (sets.length === 0) throw new Error('No sets found with given parameters')
+  if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
 
@@ -24,10 +24,10 @@ function findSetsFromRow(row, length, board) {
   const sets = [];
 
   while (rt < row.length) {
-    if (board.isOccupied([row[lft][0], row[lft][1]])) {
+    if (board.isOccupied([[row[lft][0], row[lft][1]]])) {
       lft = rt;
       rt += 1;
-    } else if (board.isOccupied([row[rt][0], row[rt][1]])) {
+    } else if (board.isOccupied([[row[rt][0], row[rt][1]]])) {
       lft = rt + 1;
       rt += 2;
     } else if (rt - lft + 1 === length) {

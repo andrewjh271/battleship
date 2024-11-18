@@ -83,11 +83,9 @@ export function DOMBoardFactory(id, ROWS) {
 
   function setPosition(image, wrapper, set) {
     const rowStart = set.reduce((min, coord) => (coord[1] < min ? coord[1] : min), 100) + 1;
-    const rowSpan =
-      set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
+    const rowSpan = set.reduce((max, coord) => (coord[1] > max ? coord[1] : max), -100) + 2 - rowStart;
     const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
-    const colSpan =
-      set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
+    const colSpan = set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
 
     if (colSpan > rowSpan) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;

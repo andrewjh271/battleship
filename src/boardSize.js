@@ -8,4 +8,4 @@ function setRowLength(x) {
   rows = x;
 }
 
-export { rowLength, setRowLength }
+export { rowLength, setRowLength };
