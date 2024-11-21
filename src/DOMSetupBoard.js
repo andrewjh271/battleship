@@ -116,9 +116,10 @@ function placeImage(element) {
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
   disablePreviewImage(element.type);
+  updateRemainingInstruments(element.type);
 }
 
-function disablePreviewImage(instrument) {
+function updateRemainingInstruments(instrument) {
   const index = remainingInstruments.indexOf(instrument);
   if (index > -1) {
     remainingInstruments.splice(index, 1);
@@ -126,6 +127,9 @@ function disablePreviewImage(instrument) {
   if (remainingInstruments.length === 0) {
     setBoardButton.disabled = false;
   }
+}
+
+function disablePreviewImage(instrument) {
   previewContainer.querySelector(`.${instrument}`).classList.add('disabled');
 }
 

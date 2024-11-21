@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
+  // HTML element remains after a reset; revert back to initial state
   const children = Array.from(board.children);
   children.forEach((node) => {
     if (node.classList.contains('permanent')) {

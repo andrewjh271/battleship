@@ -70,7 +70,7 @@ export function DOMBoardFactory(id, ROWS) {
   }
 
   function placeSetImages(dataBoard) {
-    // places on DOMboard(board variable) all images from board object argument
+    // places on DOMboard (board variable) all images from board object argument
     dataBoard.placedShips.forEach((ship) => {
       const image = newTemplateImage(ship.name);
       const imageWrapper = newTemplateWrapper();

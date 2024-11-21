@@ -253,7 +253,7 @@ function DOMBoardFactory(id, ROWS) {
   }
 
   function placeSetImages(dataBoard) {
-    // places on DOMboard(board variable) all images from board object argument
+    // places on DOMboard (board variable) all images from board object argument
     dataBoard.placedShips.forEach((ship) => {
       const image = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateImage)(ship.name);
       const imageWrapper = (0,_DOMSetupBoard__WEBPACK_IMPORTED_MODULE_1__.newTemplateWrapper)();
@@ -442,6 +442,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* eslint-disable no-param-reassign */
 function createGrid(rows, board) {
+  // HTML element remains after a reset; revert back to initial state
   const children = Array.from(board.children);
   children.forEach((node) => {
     if (node.classList.contains('permanent')) {
@@ -608,9 +609,10 @@ function placeImage(element) {
   imageWrapper.appendChild(image);
   currentBoard.appendChild(imageWrapper);
   disablePreviewImage(element.type);
+  updateRemainingInstruments(element.type);
 }
 
-function disablePreviewImage(instrument) {
+function updateRemainingInstruments(instrument) {
   const index = remainingInstruments.indexOf(instrument);
   if (index > -1) {
     remainingInstruments.splice(index, 1);
@@ -618,6 +620,9 @@ function disablePreviewImage(instrument) {
   if (remainingInstruments.length === 0) {
     setBoardButton.disabled = false;
   }
+}
+
+function disablePreviewImage(instrument) {
   previewContainer.querySelector(`.${instrument}`).classList.add('disabled');
 }
 
