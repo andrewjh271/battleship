@@ -1,16 +1,23 @@
 import { setRowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 
+const controlPanel = document.querySelector('.control-panel');
+const startRoundButton = document.querySelector('.start-round');
+
+const setupContainer = document.querySelector('.board-setup-container');
+const stagingArea = document.querySelector('.staging-area');
+
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
-const setupContainer = document.querySelector('.board-setup-container');
-const controlPanel = document.querySelector('.control-panel');
-const curtains = document.querySelectorAll('.curtain');
-const stagingArea = document.querySelector('.staging-area');
 const fleetContainers = document.querySelectorAll('.remaining-fleet');
 const fleet = document.querySelectorAll('.fleet');
 const attackDirection = document.querySelector('.attack-direction');
 const gameState = document.querySelector('.game-state');
+
+const switchButton = document.querySelector('.switch-turns');
+const curtains = document.querySelectorAll('.curtain');
+
+const moveTrackers = document.querySelectorAll('.moves');
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -33,7 +40,7 @@ function resetDOM() {
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
   gameState.textContent = 'Attack!';
-
+  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
   stagingArea.innerHTML = '';
 }
 
@@ -56,6 +63,15 @@ function showSetup(board) {
   });
 }
 
+function setBoardSizes() {
+  const rowLength = Number(document.querySelector('.size-select').value) || 10;
+  setRowLength(rowLength);
+  board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
+  board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+  board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
+  board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+}
+
 function showBoards() {
   setupContainer.classList.add('hidden');
   board1.classList.remove('hidden');
@@ -71,10 +87,28 @@ function showBoards() {
   });
 }
 
+function setPlayRoundView() {
+  curtains.forEach((curtain) => curtain.classList.add('invisible'));
+  uncoverFleets();
+  attackDirection.classList.remove('invisible');
+  attackDirection.classList.remove('opaque');
+  switchButton.disabled = true;
+  startRoundButton.disabled = true;
+}
+
 function updateFleet(data) {
   const targetContainer = data.id === 'board1' ? board1 : board2;
   const target = targetContainer.querySelector(`.${data.inst}`);
   target.classList.add('sunk');
+}
+
+function coverBoards() {
+  curtains.forEach((curtain) => curtain.classList.remove('invisible'));
+  setTimeout(() => {
+    startRoundButton.disabled = false;
+  }, 2000);
+  switchButton.disabled = true;
+  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
 }
 
 function coverFleets() {
@@ -85,22 +119,12 @@ function uncoverFleets() {
   fleetContainers.forEach((container) => container.classList.remove('opaque'));
 }
 
-function setBoardSizes() {
-  const rowLength = Number(document.querySelector('.size-select').value) || 10;
-  setRowLength(rowLength);
-  board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
-  board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
-  board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
-  board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
-}
-
-function setSetupView() {
-  setBoardSizes();
+function setSetupPanelView() {
   controlPanel.classList.remove('preferences');
   controlPanel.classList.add('setup');
 }
 
-function setGameView() {
+function setGamePanelView() {
   controlPanel.classList.remove('setup');
   controlPanel.classList.add('in-game');
 }
@@ -108,9 +132,12 @@ function setGameView() {
 export {
   showBoards,
   showSetup,
-  setSetupView,
-  setGameView,
+  setBoardSizes,
+  setPlayRoundView,
+  setSetupPanelView,
+  setGamePanelView,
   resetDOM,
+  coverBoards,
   updateFleet,
   coverFleets,
   uncoverFleets,

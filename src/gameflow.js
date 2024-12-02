@@ -3,12 +3,14 @@ import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
 import {
   showBoards,
-  setSetupView,
-  setGameView,
+  setSetupPanelView,
+  setGamePanelView,
   resetDOM,
   updateFleet,
+  coverBoards,
   coverFleets,
-  uncoverFleets,
+  setPlayRoundView,
+  setBoardSizes,
 } from './DOMController';
 import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
@@ -20,7 +22,6 @@ const startButton = document.querySelector('.start-game');
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
-const curtains = document.querySelectorAll('.curtain');
 const attackDirection = document.querySelector('.attack-direction');
 const gameState = document.querySelector('.game-state');
 
@@ -46,26 +47,10 @@ let attackCount = 0;
 let attackMax = 3;
 const computerMoveTime = 700;
 
-function playerAttackProgression() {
-  currentPlayer.incrementMoveCounter();
-  if (currentPlayer.sunkAllShips()) {
-    gameOver();
-    return;
-  }
-  attackCount++;
-  if (attackCount >= attackMax) {
-    attackCount = 0;
-    if (!player2.isComputer()) {
-      attackDirection.classList.add('opaque');
-    }
-    switchTurns();
-    finishRound();
-  }
-}
-
 function beginSetup() {
   setEnsemble();
-  setSetupView();
+  setSetupPanelView();
+  setBoardSizes();
   attackMax = Number(document.getElementById('move-select').value);
   const board1 = boardFactory('board1');
   const board2 = boardFactory('board2');
@@ -91,11 +76,11 @@ function finishSetup() {
 }
 
 function startGame() {
-  setGameView();
+  setGamePanelView();
   moveTracker1.reset(attackMax);
   moveTracker2.reset(attackMax);
   on('sunk', updateFleet);
-  on('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
+  on('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -109,33 +94,8 @@ function startGame() {
   }
 }
 
-function finishRound() {
-  if (player2.isComputer()) {
-    playRound();
-  } else {
-    DOMBoard1.disable();
-    DOMBoard2.disable();
-    switchButton.disabled = false;
-  }
-}
-
-function coverBoards() {
-  curtains.forEach((curtain) => curtain.classList.remove('invisible'));
-  setTimeout(() => {
-    startRoundButton.disabled = false;
-  }, 2000);
-  switchButton.disabled = true;
-  moveTracker1.hide();
-  moveTracker2.hide();
-}
-
 function playRound() {
-  curtains.forEach((curtain) => curtain.classList.add('invisible'));
-  uncoverFleets();
-  attackDirection.classList.remove('invisible');
-  attackDirection.classList.remove('opaque');
-  switchButton.disabled = true;
-  startRoundButton.disabled = true;
+  setPlayRoundView();
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
     resetButton.disabled = true;
@@ -146,6 +106,34 @@ function playRound() {
     setTimeout(computerAttacks, 1000);
   } else {
     switchMoveTracker();
+  }
+}
+
+function postAttackContinuation() {
+  // only runs after a player's attack, not the computer's
+  currentPlayer.incrementMoveCounter();
+  if (currentPlayer.sunkAllShips()) {
+    gameOver();
+    return;
+  }
+  attackCount++;
+  if (attackCount >= attackMax) {
+    attackCount = 0;
+    if (!player2.isComputer()) {
+      attackDirection.classList.add('opaque');
+    }
+    switchTurns();
+    finishRound();
+  }
+}
+
+function finishRound() {
+  if (player2.isComputer()) {
+    playRound();
+  } else {
+    DOMBoard1.disable();
+    DOMBoard2.disable();
+    switchButton.disabled = false;
   }
 }
 
@@ -197,8 +185,6 @@ function gameOver() {
 function reset() {
   resetDOM();
   removeAllEvents();
-  moveTracker1.hide();
-  moveTracker2.hide();
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();

@@ -307,10 +307,13 @@ function DOMBoardFactory(id, ROWS) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   coverBoards: () => (/* binding */ coverBoards),
 /* harmony export */   coverFleets: () => (/* binding */ coverFleets),
 /* harmony export */   resetDOM: () => (/* binding */ resetDOM),
-/* harmony export */   setGameView: () => (/* binding */ setGameView),
-/* harmony export */   setSetupView: () => (/* binding */ setSetupView),
+/* harmony export */   setBoardSizes: () => (/* binding */ setBoardSizes),
+/* harmony export */   setGamePanelView: () => (/* binding */ setGamePanelView),
+/* harmony export */   setPlayRoundView: () => (/* binding */ setPlayRoundView),
+/* harmony export */   setSetupPanelView: () => (/* binding */ setSetupPanelView),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
 /* harmony export */   showSetup: () => (/* binding */ showSetup),
 /* harmony export */   uncoverFleets: () => (/* binding */ uncoverFleets),
@@ -321,16 +324,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const controlPanel = document.querySelector('.control-panel');
+const startRoundButton = document.querySelector('.start-round');
+
+const setupContainer = document.querySelector('.board-setup-container');
+const stagingArea = document.querySelector('.staging-area');
+
 const board1 = document.querySelector('#board1');
 const board2 = document.querySelector('#board2');
-const setupContainer = document.querySelector('.board-setup-container');
-const controlPanel = document.querySelector('.control-panel');
-const curtains = document.querySelectorAll('.curtain');
-const stagingArea = document.querySelector('.staging-area');
 const fleetContainers = document.querySelectorAll('.remaining-fleet');
 const fleet = document.querySelectorAll('.fleet');
 const attackDirection = document.querySelector('.attack-direction');
 const gameState = document.querySelector('.game-state');
+
+const switchButton = document.querySelector('.switch-turns');
+const curtains = document.querySelectorAll('.curtain');
+
+const moveTrackers = document.querySelectorAll('.moves');
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -353,7 +363,7 @@ function resetDOM() {
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
   gameState.textContent = 'Attack!';
-
+  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
   stagingArea.innerHTML = '';
 }
 
@@ -376,6 +386,15 @@ function showSetup(board) {
   });
 }
 
+function setBoardSizes() {
+  const rowLength = Number(document.querySelector('.size-select').value) || 10;
+  (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.setRowLength)(rowLength);
+  board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
+  board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+  board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
+  board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+}
+
 function showBoards() {
   setupContainer.classList.add('hidden');
   board1.classList.remove('hidden');
@@ -391,10 +410,28 @@ function showBoards() {
   });
 }
 
+function setPlayRoundView() {
+  curtains.forEach((curtain) => curtain.classList.add('invisible'));
+  uncoverFleets();
+  attackDirection.classList.remove('invisible');
+  attackDirection.classList.remove('opaque');
+  switchButton.disabled = true;
+  startRoundButton.disabled = true;
+}
+
 function updateFleet(data) {
   const targetContainer = data.id === 'board1' ? board1 : board2;
   const target = targetContainer.querySelector(`.${data.inst}`);
   target.classList.add('sunk');
+}
+
+function coverBoards() {
+  curtains.forEach((curtain) => curtain.classList.remove('invisible'));
+  setTimeout(() => {
+    startRoundButton.disabled = false;
+  }, 2000);
+  switchButton.disabled = true;
+  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
 }
 
 function coverFleets() {
@@ -405,22 +442,12 @@ function uncoverFleets() {
   fleetContainers.forEach((container) => container.classList.remove('opaque'));
 }
 
-function setBoardSizes() {
-  const rowLength = Number(document.querySelector('.size-select').value) || 10;
-  (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.setRowLength)(rowLength);
-  board1.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
-  board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
-  board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
-  board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
-}
-
-function setSetupView() {
-  setBoardSizes();
+function setSetupPanelView() {
   controlPanel.classList.remove('preferences');
   controlPanel.classList.add('setup');
 }
 
-function setGameView() {
+function setGamePanelView() {
   controlPanel.classList.remove('setup');
   controlPanel.classList.add('in-game');
 }
@@ -1018,7 +1045,6 @@ const startButton = document.querySelector('.start-game');
 const setBoardButton = document.querySelector('.set-board');
 const switchButton = document.querySelector('.switch-turns');
 const startRoundButton = document.querySelector('.start-round');
-const curtains = document.querySelectorAll('.curtain');
 const attackDirection = document.querySelector('.attack-direction');
 const gameState = document.querySelector('.game-state');
 
@@ -1026,7 +1052,7 @@ const resetButton = document.querySelector('.reset');
 resetButton.addEventListener('click', reset);
 
 startButton.addEventListener('click', beginSetup);
-switchButton.addEventListener('click', coverBoards);
+switchButton.addEventListener('click', _DOMController__WEBPACK_IMPORTED_MODULE_3__.coverBoards);
 switchButton.addEventListener('click', _DOMController__WEBPACK_IMPORTED_MODULE_3__.coverFleets);
 startRoundButton.addEventListener('click', playRound);
 
@@ -1044,26 +1070,10 @@ let attackCount = 0;
 let attackMax = 3;
 const computerMoveTime = 700;
 
-function playerAttackProgression() {
-  currentPlayer.incrementMoveCounter();
-  if (currentPlayer.sunkAllShips()) {
-    gameOver();
-    return;
-  }
-  attackCount++;
-  if (attackCount >= attackMax) {
-    attackCount = 0;
-    if (!player2.isComputer()) {
-      attackDirection.classList.add('opaque');
-    }
-    switchTurns();
-    finishRound();
-  }
-}
-
 function beginSetup() {
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupView)();
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupPanelView)();
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   attackMax = Number(document.getElementById('move-select').value);
   const board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
   const board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
@@ -1089,11 +1099,11 @@ function finishSetup() {
 }
 
 function startGame() {
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGameView)();
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGamePanelView)();
   moveTracker1.reset(attackMax);
   moveTracker2.reset(attackMax);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.updateFleet);
-  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', playerAttackProgression); // must be after 'attack' subscription from board.js
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -1102,38 +1112,13 @@ function startGame() {
     playRound();
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
   } else {
-    coverBoards();
+    (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.coverBoards)();
     setTimeout(_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 
-function finishRound() {
-  if (player2.isComputer()) {
-    playRound();
-  } else {
-    DOMBoard1.disable();
-    DOMBoard2.disable();
-    switchButton.disabled = false;
-  }
-}
-
-function coverBoards() {
-  curtains.forEach((curtain) => curtain.classList.remove('invisible'));
-  setTimeout(() => {
-    startRoundButton.disabled = false;
-  }, 2000);
-  switchButton.disabled = true;
-  moveTracker1.hide();
-  moveTracker2.hide();
-}
-
 function playRound() {
-  curtains.forEach((curtain) => curtain.classList.add('invisible'));
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.uncoverFleets)();
-  attackDirection.classList.remove('invisible');
-  attackDirection.classList.remove('opaque');
-  switchButton.disabled = true;
-  startRoundButton.disabled = true;
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setPlayRoundView)();
   currentPlayer.setTurn();
   if (currentPlayer.isComputer()) {
     resetButton.disabled = true;
@@ -1144,6 +1129,34 @@ function playRound() {
     setTimeout(computerAttacks, 1000);
   } else {
     switchMoveTracker();
+  }
+}
+
+function postAttackContinuation() {
+  // only runs after a player's attack, not the computer's
+  currentPlayer.incrementMoveCounter();
+  if (currentPlayer.sunkAllShips()) {
+    gameOver();
+    return;
+  }
+  attackCount++;
+  if (attackCount >= attackMax) {
+    attackCount = 0;
+    if (!player2.isComputer()) {
+      attackDirection.classList.add('opaque');
+    }
+    switchTurns();
+    finishRound();
+  }
+}
+
+function finishRound() {
+  if (player2.isComputer()) {
+    playRound();
+  } else {
+    DOMBoard1.disable();
+    DOMBoard2.disable();
+    switchButton.disabled = false;
   }
 }
 
@@ -1195,8 +1208,6 @@ function gameOver() {
 function reset() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.resetDOM)();
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.removeAllEvents)();
-  moveTracker1.hide();
-  moveTracker2.hide();
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
