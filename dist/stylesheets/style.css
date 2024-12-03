@@ -173,7 +173,7 @@ button:disabled {
   position: absolute;
   transform: translate(-14px, -70px);
   color: #053778;
-  background-color: rgba(226, 226, 226, 0.5019607843);
+  background-color: rgba(226, 226, 226, 0.5490196078);
   padding: 7px;
   width: calc(100% + 28px);
   font-family: "Tangerine", cursive;
@@ -558,17 +558,17 @@ img[src*=piccolo].staging-img {
 @property --c {
   syntax: "<color>";
   inherits: false;
-  initial-value: red;
+  initial-value: #d6b76a;
 }
 @property --c2 {
   syntax: "<color>";
   inherits: false;
-  initial-value: blue;
+  initial-value: #899267;
 }
 @property --c3 {
   syntax: "<color>";
   inherits: false;
-  initial-value: blue;
+  initial-value: #d6b76a;
 }
 .move {
   height: 20px;
@@ -588,28 +588,34 @@ img[src*=piccolo].staging-img {
 @keyframes lava {
   0% {
     --a: 0deg;
-    --c: #e61717;
-    --c2: #124fc7;
+    --c: #bb2a2a;
+    --c2: #899267;
   }
   50% {
-    --c: #c800ff;
-    --c2: #00ffc3;
+    --c: #ffab24;
+    --c2: #67a2da;
   }
   100% {
     --a: 360deg;
-    --c: #e61717;
-    --c2: #124fc7;
+    --c: #bb2a2a;
+    --c2: #899267;
   }
 }
 @keyframes color-shift {
   0% {
-    --c3: #e61717 ;
+    --c3: #bb2a2a ;
+  }
+  25% {
+    --c3: #6e774d ;
   }
   50% {
-    --c3: #124fc7 ;
+    --c3: #d08205;
+  }
+  75% {
+    --c3: #67a2da;
   }
   100% {
-    --c3: #e61717 ;
+    --c3: #bb2a2a ;
   }
 }
 .attack-direction {
