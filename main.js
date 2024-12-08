@@ -1113,7 +1113,10 @@ function startGame() {
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
   } else {
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.coverBoards)();
-    setTimeout(_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
+    setTimeout( () => {
+      (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
+      currentPlayer.setTurn();
+    }, 2000 ) // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 

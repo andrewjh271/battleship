@@ -62,6 +62,13 @@ button:disabled {
   background-position: center;
 }
 
+@media (max-width: 850px) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px 30px 1fr 1fr;
+    background-image: url("../images/hall.jpg");
+  }
+}
 .control-panel {
   width: 100%;
   justify-self: center;
@@ -94,6 +101,32 @@ button:disabled {
   user-select: none;
 }
 
+@media (max-width: 850px) {
+  .control-panel {
+    grid-column: span 1;
+  }
+  .control-panel.preferences {
+    flex-direction: column;
+    grid-row: span 3;
+    justify-content: start;
+    align-items: center;
+    z-index: 4;
+  }
+  .control-panel.preferences select,
+  .control-panel.preferences button {
+    padding: 0;
+    width: 156px;
+  }
+  .control-panel.preferences button {
+    margin-top: 27px;
+    font-weight: bold;
+    text-shadow: 0px 1px 1px white;
+    transition: 0.6s;
+  }
+  .control-panel.preferences button:hover {
+    text-shadow: 0px 1px 1px rgb(194, 194, 194);
+  }
+}
 .reset {
   background-color: #7a2e2e;
   color: white;
@@ -338,6 +371,26 @@ button:disabled {
   opacity: 35%;
 }
 
+@media (max-width: 850px) {
+  .board::before,
+  .board-setup-container::before {
+    transform: translate(-14px, -56px);
+    padding: 5px;
+    font-size: 25px;
+  }
+  .board {
+    grid-row-start: 3;
+    max-width: 360px;
+  }
+  .board-setup-container {
+    grid-row-start: 4;
+    max-width: 360px;
+  }
+  .board.defense {
+    grid-column-start: 1;
+    grid-row-start: 4;
+  }
+}
 .staging-buttons {
   background-color: #fffbf1;
   display: flex;
@@ -500,7 +553,7 @@ img[src*=piccolo].staging-img {
   background-color: rgba(65, 68, 76, 0.8509803922);
   border: 1px solid rgba(0, 0, 0, 0.2509803922);
   pointer-events: none;
-  transition: 2s;
+  transition: opacity 2s;
 }
 
 .remaining-fleet * {
@@ -550,6 +603,16 @@ img[src*=piccolo].staging-img {
   pointer-events: all;
 }
 
+@media (max-width: 850px) {
+  .moves {
+    top: -47px;
+  }
+  .remaining-fleet {
+    rotate: 90deg;
+    left: 75%;
+    top: 106px;
+  }
+}
 @property --a {
   syntax: "<angle>";
   inherits: false;
@@ -668,6 +731,28 @@ img[src*=piccolo].staging-img {
 
 .attack-direction.invisible {
   transition: 0s;
+}
+
+@media (max-width: 850px) {
+  .attack-direction {
+    width: 115px;
+    padding: 35px 14px 35px 14px;
+    left: 7vw;
+  }
+  .attack-direction img {
+    margin-top: 15px;
+    rotate: 90deg;
+    scale: 1;
+  }
+  .attack-direction.computer img {
+    rotate: 0deg;
+    scale: 1;
+  }
+}
+@media (max-width: 740px) {
+  .attack-direction {
+    left: 4vw;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */
