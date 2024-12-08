@@ -90,7 +90,10 @@ function startGame() {
     showBoards();
   } else {
     coverBoards();
-    setTimeout(showBoards, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
+    setTimeout( () => {
+      showBoards();
+      currentPlayer.setTurn();
+    }, 2000 ) // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 
