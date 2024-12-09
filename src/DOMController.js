@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { setRowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 
@@ -16,6 +17,7 @@ const gameState = document.querySelector('.game-state');
 
 const switchButton = document.querySelector('.switch-turns');
 const curtains = document.querySelectorAll('.curtain');
+const infoButtons = document.querySelectorAll('.info');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
@@ -34,13 +36,20 @@ function resetDOM() {
   controlPanel.classList.remove('two-player');
   controlPanel.classList.add('preferences');
   curtains.forEach((curtain) => curtain.classList.add('invisible'));
-  fleetContainers.forEach((container) => container.classList.add('invisible'));
-  fleetContainers.forEach((container) => container.classList.add('opaque'));
+  fleetContainers.forEach((container) => {
+    container.classList.add('invisible')
+    container.classList.add('opaque')
+    container.classList.remove('active');
+  })
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
   gameState.textContent = 'Attack!';
   moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
+  infoButtons.forEach((button) => {
+    button.classList.add('hidden');
+    button.textContent = 'info';
+  })
   stagingArea.innerHTML = '';
 }
 
@@ -129,6 +138,19 @@ function setGamePanelView() {
   controlPanel.classList.add('in-game');
 }
 
+function showInfoButtons() {
+  infoButtons.forEach((button) => button.classList.remove('hidden'));
+}
+
+infoButtons.forEach((button) => button.addEventListener('click', () => {
+  const currentIcon = button.textContent;
+  button.textContent = currentIcon === 'info' ? 'cancel' : 'info';
+  
+  const targetBoard = button.dataset.board === '1' ? board1 : board2;
+  const targetFleetContainer = targetBoard.querySelector('.remaining-fleet');
+  targetFleetContainer.classList.toggle('active');
+}));
+
 export {
   showBoards,
   showSetup,
@@ -141,4 +163,5 @@ export {
   updateFleet,
   coverFleets,
   uncoverFleets,
+  showInfoButtons
 };

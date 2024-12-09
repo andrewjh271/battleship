@@ -11,6 +11,7 @@ import {
   coverFleets,
   setPlayRoundView,
   setBoardSizes,
+  showInfoButtons
 } from './DOMController';
 import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
@@ -77,6 +78,7 @@ function finishSetup() {
 
 function startGame() {
   setGamePanelView();
+  showInfoButtons();
   moveTracker1.reset(attackMax);
   moveTracker2.reset(attackMax);
   on('sunk', updateFleet);

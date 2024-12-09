@@ -316,7 +316,11 @@ button:disabled {
 
   &.offense {
     grid-column-start: 1;
-    pointer-events: none;
+    // pointer-events: none;
+
+    div:not(.moves) {
+      pointer-events: none;
+    }
 
     .cell {
       --start-color: #fffbf1;
@@ -328,7 +332,7 @@ button:disabled {
     }
   }
 
-  &.disabled {
+  &.disabled div:not(.moves) {
     pointer-events: none;
   }
 }
@@ -618,6 +622,64 @@ img[src*=piccolo].staging-img {
   filter: grayscale(1) opacity(0.5);
 }
 
+@media (max-width: 850px) and (min-width: 681px) {
+  .remaining-fleet {
+    rotate: 90deg;
+    left: 75%;
+    top: 106px;
+  }
+}
+
+@media (max-width: 680px) {
+  .remaining-fleet {
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding-top: calc(50% - 60px);
+    padding-bottom: calc(50% - 60px);
+    background-color: #41444ceb;
+    border: 0;
+    opacity: 0;
+    transition: opacity 1.5s;
+  }
+
+  .remaining-fleet.active {
+    opacity: 1;
+  }
+
+  .remaining-fleet:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: calc(50% - 60px);
+    top: 0;
+    left: 0;
+    background-color: #ffffff70;
+  }
+
+  .remaining-fleet:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: calc(50% - 60px);
+    top: calc(50% + 60px);
+    left: 0;
+    background-color: #ffffff70;
+  }
+
+  .remaining-fleet div {
+    height: 88%;
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
+  .board:has(.remaining-fleet.active) div {
+    pointer-events: none;
+  }
+}
+
 .moves {
   position: absolute;
   right: 0;
@@ -629,12 +691,6 @@ img[src*=piccolo].staging-img {
 @media (max-width: 850px) {
   .moves {
     top: -47px;
-  }
-
-  .remaining-fleet {
-    rotate: 90deg;
-    left: 75%;
-    top: 106px;
   }
 }
 
@@ -780,5 +836,41 @@ img[src*=piccolo].staging-img {
 @media (max-width: 740px) {
   .attack-direction {
     left: 4vw;
+  }
+}
+
+@media (max-width: 680px) {
+  .attack-direction {
+    display: none;
+  }
+}
+
+.info {
+  display: none;
+}
+
+@media (max-width: 680px) {
+  .info {
+    display: block;
+    position: absolute;
+    left: 122px;
+    top: -50px;
+    font-size: 25px;
+    color: #053778;
+    opacity: .75;
+    transition: .3s;
+  }
+
+  .info:hover {
+    cursor: pointer;
+    opacity: .9;
+  }
+
+  .defense > .info {
+    color: #d02b15db;
+  }
+
+  .board:has(.curtain:not(.invisible)) > .info {
+    display: none;
   }
 }

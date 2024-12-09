@@ -315,12 +315,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setPlayRoundView: () => (/* binding */ setPlayRoundView),
 /* harmony export */   setSetupPanelView: () => (/* binding */ setSetupPanelView),
 /* harmony export */   showBoards: () => (/* binding */ showBoards),
+/* harmony export */   showInfoButtons: () => (/* binding */ showInfoButtons),
 /* harmony export */   showSetup: () => (/* binding */ showSetup),
 /* harmony export */   uncoverFleets: () => (/* binding */ uncoverFleets),
 /* harmony export */   updateFleet: () => (/* binding */ updateFleet)
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* eslint-disable no-param-reassign */
 
 
 
@@ -339,6 +341,7 @@ const gameState = document.querySelector('.game-state');
 
 const switchButton = document.querySelector('.switch-turns');
 const curtains = document.querySelectorAll('.curtain');
+const infoButtons = document.querySelectorAll('.info');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
@@ -357,13 +360,20 @@ function resetDOM() {
   controlPanel.classList.remove('two-player');
   controlPanel.classList.add('preferences');
   curtains.forEach((curtain) => curtain.classList.add('invisible'));
-  fleetContainers.forEach((container) => container.classList.add('invisible'));
-  fleetContainers.forEach((container) => container.classList.add('opaque'));
+  fleetContainers.forEach((container) => {
+    container.classList.add('invisible')
+    container.classList.add('opaque')
+    container.classList.remove('active');
+  })
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
   gameState.textContent = 'Attack!';
   moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
+  infoButtons.forEach((button) => {
+    button.classList.add('hidden');
+    button.textContent = 'info';
+  })
   stagingArea.innerHTML = '';
 }
 
@@ -451,6 +461,19 @@ function setGamePanelView() {
   controlPanel.classList.remove('setup');
   controlPanel.classList.add('in-game');
 }
+
+function showInfoButtons() {
+  infoButtons.forEach((button) => button.classList.remove('hidden'));
+}
+
+infoButtons.forEach((button) => button.addEventListener('click', () => {
+  const currentIcon = button.textContent;
+  button.textContent = currentIcon === 'info' ? 'cancel' : 'info';
+  
+  const targetBoard = button.dataset.board === '1' ? board1 : board2;
+  const targetFleetContainer = targetBoard.querySelector('.remaining-fleet');
+  targetFleetContainer.classList.toggle('active');
+}));
 
 
 
@@ -1100,6 +1123,7 @@ function finishSetup() {
 
 function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setGamePanelView)();
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showInfoButtons)();
   moveTracker1.reset(attackMax);
   moveTracker2.reset(attackMax);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.updateFleet);
