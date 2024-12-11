@@ -78,6 +78,7 @@ button:disabled {
   grid-column: span 2;
   background-color: rgba(160, 112, 53, 0.5960784314);
   align-self: stretch;
+  z-index: 1;
 }
 .control-panel div,
 .control-panel button {
@@ -260,6 +261,7 @@ button:disabled {
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
   grid-row-start: 2;
+  z-index: 1;
 }
 .board .cell {
   background-color: #fffbf1;
@@ -753,12 +755,15 @@ img[src*=piccolo].staging-img {
 .attack-direction .player2 {
   display: none;
 }
-.attack-direction img {
+.attack-direction img.large {
   width: 100%;
   transition: 1s;
   transform: translateX(-5px);
   rotate: 15deg;
   margin-top: 5px;
+}
+.attack-direction img.small {
+  display: none;
 }
 
 .attack-direction.player2 .player1 {
@@ -768,9 +773,13 @@ img[src*=piccolo].staging-img {
   display: block;
 }
 
-.attack-direction.computer img {
+.attack-direction.computer img.large {
   rotate: -15deg;
   scale: -1 1;
+}
+.attack-direction.computer img.small {
+  rotate: -15deg;
+  scale: 1;
 }
 
 .attack-direction.opaque * {
@@ -781,7 +790,7 @@ img[src*=piccolo].staging-img {
   transition: 0s;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 850px) and (min-width: 681px) {
   .attack-direction {
     width: 115px;
     padding: 35px 14px 35px 14px;
@@ -804,16 +813,86 @@ img[src*=piccolo].staging-img {
 }
 @media (max-width: 680px) {
   .attack-direction {
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr min(360px, 80%) 1fr;
+    justify-items: center;
+    align-items: center;
+    background: none;
+    overflow: hidden;
+  }
+  .attack-direction h3 {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    position: relative;
+    margin-top: 70px;
+    left: -15px;
+    font-family: "Abril Fatface", serif;
+    font-size: 30px;
+    letter-spacing: -1px;
+    word-spacing: -15px;
+    text-shadow: 0px 0px 10px #ff3c3c;
+    text-orientation: upright;
+    writing-mode: vertical-rl;
+  }
+  .attack-direction .game-state {
+    left: 15px;
+  }
+  .attack-direction img.large {
     display: none;
   }
+  .attack-direction img.small {
+    display: block;
+    height: 250px;
+    margin-top: 70px;
+    grid-column: 3;
+    transition: 1s;
+    rotate: 10deg;
+    scale: 1 -1;
+    filter: drop-shadow(0px 0px 11px #ff3c3c);
+  }
 }
-.info {
-  display: none;
+@media (max-width: 570px) {
+  .attack-direction img.small {
+    height: 200px;
+    rotate: 8deg;
+  }
+  .attack-direction.computer img.small {
+    rotate: -8deg;
+  }
 }
-
+@media (max-width: 520px) {
+  .attack-direction h3 {
+    left: -12px;
+  }
+  .attack-direction .game-state {
+    left: 12px;
+  }
+}
+@media (max-width: 470px) {
+  .attack-direction h3 {
+    left: 0;
+    top: -170px;
+  }
+  .attack-direction .game-state {
+    left: 0;
+    top: 196px;
+  }
+}
+@media (max-width: 440px) {
+  .attack-direction img.small {
+    rotate: 3deg;
+  }
+  .attack-direction.computer img.small {
+    rotate: -3deg;
+  }
+}
 @media (max-width: 680px) {
   .info {
-    display: block;
     position: absolute;
     left: 122px;
     top: -50px;
@@ -821,6 +900,7 @@ img[src*=piccolo].staging-img {
     color: #053778;
     opacity: 0.75;
     transition: 0.3s;
+    z-index: 1;
   }
   .info:hover {
     cursor: pointer;

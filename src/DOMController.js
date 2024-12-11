@@ -145,7 +145,7 @@ function showInfoButtons() {
 infoButtons.forEach((button) => button.addEventListener('click', () => {
   const currentIcon = button.textContent;
   button.textContent = currentIcon === 'info' ? 'cancel' : 'info';
-  
+
   const targetBoard = button.dataset.board === '1' ? board1 : board2;
   const targetFleetContainer = targetBoard.querySelector('.remaining-fleet');
   targetFleetContainer.classList.toggle('active');
