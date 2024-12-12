@@ -15,6 +15,7 @@ import {
 } from './DOMController';
 import { rowLength } from './boardSize';
 import { on, removeAllEvents } from './observer';
+import { removeWindowEvents } from './imageGenerator';
 import { setEnsemble } from './ensemble';
 import { moveTrackerFactory } from './moveTracker';
 
@@ -190,6 +191,7 @@ function gameOver() {
 function reset() {
   resetDOM();
   removeAllEvents();
+  removeWindowEvents();
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();

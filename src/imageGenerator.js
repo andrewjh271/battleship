@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+let windowEvents = [];
+
 function flute() {
   return newImage('flute', 1, 3);
 }
@@ -45,7 +47,10 @@ function newImage(type, width, height) {
   image.area = width * height;
   image.type = type;
   setImageSize(image);
-  window.addEventListener('resize', () => setImageSize(image));
+  const boundSetImageSize = setImageSize.bind(null, image);
+  window.addEventListener('resize', boundSetImageSize);
+  windowEvents.push(boundSetImageSize)
+  image.removeResizeListener = () => window.removeEventListener('resize', boundSetImageSize);
   return image;
 }
 
@@ -56,4 +61,11 @@ function setImageSize(image) {
   image.style.height = `${squareWidth * image.spanY}px`;
 }
 
-export { clarinet, flute, trombone, violin, bassoon, cello, horn, trumpet, piccolo };
+function removeWindowEvents() {
+  windowEvents.forEach(event => {
+    window.removeEventListener('resize', event)
+  })
+  windowEvents = [];
+}
+
+export { clarinet, flute, trombone, violin, bassoon, cello, horn, trumpet, piccolo, removeWindowEvents };

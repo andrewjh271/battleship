@@ -32,6 +32,7 @@ function showStagedImage() {
   image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
   if (stagingArea.firstChild) {
+    stagingArea.firstChild.removeResizeListener();
     stagingArea.removeChild(stagingArea.firstChild);
   }
   stagingArea.appendChild(image);
@@ -42,6 +43,7 @@ function clearPlacedImages() {
   const children = Array.from(currentBoard.children);
   children.forEach((element) => {
     if (element.classList.contains('placed-img-wrapper')) {
+      element.firstChild.removeResizeListener();
       element.remove();
     } else {
       element.classList.remove('highlight-placed');
@@ -92,6 +94,7 @@ function handleRelease(element) {
   ).length;
   if (validArea === element.area) {
     placeImage(element);
+    element.removeResizeListener();
     element.remove();
     updateHighlights();
   } else {
