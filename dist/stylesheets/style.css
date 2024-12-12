@@ -733,17 +733,24 @@ img[src*=piccolo].staging-img {
 }
 .attack-direction {
   position: absolute;
-  left: calc(50% - 53px);
-  top: calc(50% - 130px);
-  width: 106px;
-  background-color: rgba(121, 99, 99, 0.5882352941);
-  padding: 30px 6px 30px 6px;
-  box-shadow: 1px 1px 20px 12px rgba(124, 0, 0, 0.5607843137);
+  left: 44%;
+  top: calc(50% - 296px);
+  width: 12%;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(0deg, rgba(121, 99, 99, 0) 0%, rgba(121, 99, 99, 0.7) 50%, rgba(121, 99, 99, 0) 100%);
   transition: opacity 2s;
+}
+.attack-direction * {
+  filter: drop-shadow(0px 0px 11px #ff3c3c);
 }
 .attack-direction h3 {
   color: #ebf4ff;
-  margin-bottom: 4px;
+  margin-bottom: -4px;
+  font-size: 28px;
+  letter-spacing: 1px;
   font-size: 22px;
   font-family: "Sorts Mill Goudy", serif;
   font-weight: 400;
@@ -756,11 +763,11 @@ img[src*=piccolo].staging-img {
   display: none;
 }
 .attack-direction img.large {
-  width: 100%;
+  width: 92%;
   transition: 1s;
-  transform: translateX(-5px);
+  transform: translateX(-5%);
   rotate: 15deg;
-  margin-top: 5px;
+  margin-top: 20px;
 }
 .attack-direction img.small {
   display: none;
@@ -776,6 +783,7 @@ img[src*=piccolo].staging-img {
 .attack-direction.computer img.large {
   rotate: -15deg;
   scale: -1 1;
+  transform: translateX(-15%);
 }
 .attack-direction.computer img.small {
   rotate: -15deg;
@@ -891,6 +899,10 @@ img[src*=piccolo].staging-img {
     rotate: -3deg;
   }
 }
+.info {
+  display: none;
+}
+
 @media (max-width: 680px) {
   .info {
     position: absolute;
