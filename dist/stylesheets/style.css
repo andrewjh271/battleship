@@ -599,14 +599,7 @@ img[src*=piccolo].staging-img {
   filter: grayscale(1) opacity(0.5);
 }
 
-@media (max-width: 850px) and (min-width: 681px) {
-  .remaining-fleet {
-    rotate: 90deg;
-    left: 75%;
-    top: 106px;
-  }
-}
-@media (max-width: 680px) {
+@media (max-width: 850px) {
   .remaining-fleet {
     z-index: 10;
     width: 100%;
@@ -798,28 +791,7 @@ img[src*=piccolo].staging-img {
   transition: 0s;
 }
 
-@media (max-width: 850px) and (min-width: 681px) {
-  .attack-direction {
-    width: 115px;
-    padding: 35px 14px 35px 14px;
-    left: 7vw;
-  }
-  .attack-direction img {
-    margin-top: 15px;
-    rotate: 90deg;
-    scale: 1;
-  }
-  .attack-direction.computer img {
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-@media (max-width: 740px) {
-  .attack-direction {
-    left: 4vw;
-  }
-}
-@media (max-width: 680px) {
+@media (max-width: 850px) {
   .attack-direction {
     padding: 0;
     left: 0;
@@ -903,8 +875,9 @@ img[src*=piccolo].staging-img {
   display: none;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 850px) {
   .info {
+    display: block;
     position: absolute;
     left: 122px;
     top: -50px;

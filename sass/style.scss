@@ -624,15 +624,7 @@ img[src*=piccolo].staging-img {
   filter: grayscale(1) opacity(0.5);
 }
 
-@media (max-width: 850px) and (min-width: 681px) {
-  .remaining-fleet {
-    rotate: 90deg;
-    left: 75%;
-    top: 106px;
-  }
-}
-
-@media (max-width: 680px) {
+@media (max-width: 850px) {
   .remaining-fleet {
     z-index: 10;
     width: 100%;
@@ -757,15 +749,6 @@ img[src*=piccolo].staging-img {
 }
 
 .attack-direction {
-  // position: absolute;
-  // left: calc(50% - 53px);
-  // top: calc(50% - 130px);
-  // width: 106px;
-  // background-color: #79636396;
-  // padding: 30px 6px 30px 6px;
-  // box-shadow: 1px 1px 20px 12px #7c00008f;
-  // transition: opacity 2s;
-
   position: absolute;
   left: calc(50% - 6%);
   top: calc(50% - 296px);
@@ -843,32 +826,7 @@ img[src*=piccolo].staging-img {
   transition: 0s;
 }
 
-@media (max-width: 850px) and (min-width: 681px) {
-  .attack-direction {
-    width: 115px;
-    padding: 35px 14px 35px 14px;
-    left: 7vw;
-
-    img {
-      margin-top: 15px;
-      rotate: 90deg;
-      scale: 1;
-    }
-  }
-
-  .attack-direction.computer img {
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-
-@media (max-width: 740px) {
-  .attack-direction {
-    left: 4vw;
-  }
-}
-
-@media (max-width: 680px) {
+@media (max-width: 850px) {
   .attack-direction {
     padding: 0;
     left: 0;
@@ -965,8 +923,9 @@ img[src*=piccolo].staging-img {
   display: none;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 850px) {
   .info {
+    display: block;
     position: absolute;
     left: 122px;
     top: -50px;
