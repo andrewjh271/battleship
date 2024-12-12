@@ -417,18 +417,18 @@ button:disabled {
   .board::before,
   .board-setup-container::before {
     transform: translate(-14px, -56px);
-    padding: 5px;
+    padding: 5px 5px 5px 11px;
     font-size: 25px;
   }
 
   .board {
     grid-row-start: 3;
-    max-width: 360px;
+    max-width: 400px;
   }
 
   .board-setup-container {
     grid-row-start: 4;
-    max-width: 360px;
+    max-width: 400px;
   }
 
   .board.defense {
@@ -460,6 +460,7 @@ button:disabled {
   background-color: $neutral;
   border-bottom: 1px dashed $border;
   padding-bottom: 5px;
+  overflow: hidden;
 }
 
 .remaining-fleet div,
@@ -657,6 +658,7 @@ img[src*='piccolo'].staging-img {
     left: 0;
     padding-top: calc(50% - 60px);
     padding-bottom: calc(50% - 60px);
+    padding-left: 7px;
     background-color: #41444ceb;
     border: 0;
     opacity: 0;
@@ -688,9 +690,16 @@ img[src*='piccolo'].staging-img {
   }
 
   .remaining-fleet div {
-    height: 88%;
+    height: 80%;
     margin-top: 6px;
     margin-bottom: 6px;
+    margin-right: 5.5%;
+  }
+
+  .remaining-fleet div:has(.trombone),
+  .remaining-fleet div:has(.trumpet),
+  .remaining-fleet div:has(.horn) {
+    margin-left: -3px;
   }
 
   .board:has(.remaining-fleet.active) div {
@@ -700,7 +709,7 @@ img[src*='piccolo'].staging-img {
 
 .moves {
   position: absolute;
-  right: 0;
+  right: -4px;
   top: -56px;
   display: flex;
   pointer-events: all;
@@ -966,7 +975,7 @@ img[src*='piccolo'].staging-img {
   .info {
     display: block;
     position: absolute;
-    left: 122px;
+    left: 130px;
     top: -50px;
     font-size: 25px;
     color: #053778;
@@ -1000,9 +1009,19 @@ img[src*='piccolo'].staging-img {
   }
 }
 
+@media (max-width: 850px) and (max-height: 950px) {
+  // .board-setup-container {
+  //   grid-template-rows: 102px 1fr 36px;
+  // }
+}
+
 @media (max-width: 850px) and (max-height: 900px) {
   .container {
     grid-template-rows: 44px 30px 1fr 1fr;
+  }
+
+  .board-setup-container {
+    grid-template-rows: 102px 1fr 36px;
   }
 
   .control-panel .navigation,
@@ -1018,11 +1037,11 @@ img[src*='piccolo'].staging-img {
 
   .board,
   .board-setup-container {
-    max-width: 315px;
+    max-width: 320px;
   }
 
   .board-setup-container {
-    grid-template-rows: 110px 1fr 36px;
+    grid-template-rows: 90px 1fr 36px;
   }
 
   .staging-buttons {
@@ -1034,14 +1053,38 @@ img[src*='piccolo'].staging-img {
   }
 
   .attack-direction {
-    grid-template-columns: 1fr min(315px, 80%) 1fr;
+    grid-template-columns: 1fr min(320px, 80%) 1fr;
   }
 }
 
-@media (max-width: 850px) and (max-height: 800px) {
+@media (max-width: 850px) and (max-height: 810px) {
   .board,
   .board-setup-container {
-    max-width: 270px;
+    max-width: 275px;
+  }
+
+  .board::before {
+    padding-left: 3px;
+  }
+
+  .remaining-fleet {
+    padding-left: 3px;
+    margin-right: 5%;
+  }
+
+  .info {
+    left: 118px;
+    font-size: 24px;
+  }
+
+  .moves {
+    right: -10px;
+  }
+
+  .move {
+    margin-left: 3px;
+    height: 19px;
+    width: 19px;
   }
 
   .board-setup-container {
@@ -1049,7 +1092,7 @@ img[src*='piccolo'].staging-img {
   }
 
   .attack-direction {
-    grid-template-columns: 1fr min(270px, 80%) 1fr;
+    grid-template-columns: 1fr min(275px, 80%) 1fr;
 
     h3 {
       margin-top: 122px;
@@ -1057,25 +1100,61 @@ img[src*='piccolo'].staging-img {
       word-spacing: -15px;
     }
   }
+
+  .img-preview {
+    &.trumpet,
+    &.violin,
+    &.clarinet,
+    &.flute {
+      max-height: calc(74% - 9px);
+    }
+    &.bassoon {
+      max-height: calc(86% - 9px);
+    }
+    &.piccolo {
+      max-height: calc(55% - 9px);
+    }
+    &.horn {
+      max-height: calc(50% - 9px);
+    }
+    &.trombone {
+      max-height: calc(96% - 9px);
+    }
+  }
 }
 
 @media (max-width: 850px) and (max-height: 700px) {
   .board,
   .board-setup-container {
-    max-width: 240px;
+    max-width: 247px;
+  }
+
+  .board-setup-container {
+    grid-template-rows: 77px 1fr 36px;
+  }
+
+  .remaining-fleet div {
+    height: 72%;
   }
 
   .attack-direction {
-    grid-template-columns: 1fr min(240px, 80%) 1fr;
+    grid-template-columns: 1fr min(247px, 80%) 1fr;
+  }
+
+  .moves {
+    right: -10px;
+    top: -46px;
   }
 
   .move {
-    height: 17px;
-    width: 17px;
+    height: 16px;
+    width: 16px;
+    margin-left: 2px;
   }
 
   .info {
-    font-size: 22px;
+    font-size: 20px;
+    top: -48px;
   }
 
   .staging-buttons .material-icons {
