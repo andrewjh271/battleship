@@ -575,6 +575,7 @@ function showStagedImage() {
   image.classList.add('staging-img');
   image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
   if (stagingArea.firstChild) {
+    stagingArea.firstChild.removeResizeListener();
     stagingArea.removeChild(stagingArea.firstChild);
   }
   stagingArea.appendChild(image);
@@ -585,6 +586,7 @@ function clearPlacedImages() {
   const children = Array.from(currentBoard.children);
   children.forEach((element) => {
     if (element.classList.contains('placed-img-wrapper')) {
+      element.firstChild.removeResizeListener();
       element.remove();
     } else {
       element.classList.remove('highlight-placed');
@@ -635,6 +637,7 @@ function handleRelease(element) {
   ).length;
   if (validArea === element.area) {
     placeImage(element);
+    element.removeResizeListener();
     element.remove();
     updateHighlights();
   } else {
@@ -1052,8 +1055,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
-/* harmony import */ var _moveTracker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./moveTracker */ "./src/moveTracker.js");
+/* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _moveTracker__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./moveTracker */ "./src/moveTracker.js");
+
 
 
 
@@ -1079,8 +1084,8 @@ switchButton.addEventListener('click', _DOMController__WEBPACK_IMPORTED_MODULE_3
 switchButton.addEventListener('click', _DOMController__WEBPACK_IMPORTED_MODULE_3__.coverFleets);
 startRoundButton.addEventListener('click', playRound);
 
-const moveTracker1 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_7__.moveTrackerFactory)('moves1');
-const moveTracker2 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_7__.moveTrackerFactory)('moves2');
+const moveTracker1 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_8__.moveTrackerFactory)('moves1');
+const moveTracker2 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_8__.moveTrackerFactory)('moves2');
 
 let player1;
 let player2;
@@ -1094,7 +1099,7 @@ let attackMax = 3;
 const computerMoveTime = 700;
 
 function beginSetup() {
-  (0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.setEnsemble)();
+  (0,_ensemble__WEBPACK_IMPORTED_MODULE_7__.setEnsemble)();
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupPanelView)();
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   attackMax = Number(document.getElementById('move-select').value);
@@ -1235,6 +1240,7 @@ function gameOver() {
 function reset() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.resetDOM)();
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.removeAllEvents)();
+  (0,_imageGenerator__WEBPACK_IMPORTED_MODULE_6__.removeWindowEvents)();
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
@@ -1257,11 +1263,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   flute: () => (/* binding */ flute),
 /* harmony export */   horn: () => (/* binding */ horn),
 /* harmony export */   piccolo: () => (/* binding */ piccolo),
+/* harmony export */   removeWindowEvents: () => (/* binding */ removeWindowEvents),
 /* harmony export */   trombone: () => (/* binding */ trombone),
 /* harmony export */   trumpet: () => (/* binding */ trumpet),
 /* harmony export */   violin: () => (/* binding */ violin)
 /* harmony export */ });
 /* eslint-disable no-param-reassign */
+let windowEvents = [];
+
 function flute() {
   return newImage('flute', 1, 3);
 }
@@ -1308,7 +1317,10 @@ function newImage(type, width, height) {
   image.area = width * height;
   image.type = type;
   setImageSize(image);
-  window.addEventListener('resize', () => setImageSize(image));
+  const boundSetImageSize = setImageSize.bind(null, image);
+  window.addEventListener('resize', boundSetImageSize);
+  windowEvents.push(boundSetImageSize)
+  image.removeResizeListener = () => window.removeEventListener('resize', boundSetImageSize);
   return image;
 }
 
@@ -1317,6 +1329,13 @@ function setImageSize(image) {
   const squareWidth = cell.offsetWidth;
   image.style.width = `${squareWidth * image.spanX}px`;
   image.style.height = `${squareWidth * image.spanY}px`;
+}
+
+function removeWindowEvents() {
+  windowEvents.forEach(event => {
+    window.removeEventListener('resize', event)
+  })
+  windowEvents = [];
 }
 
 
