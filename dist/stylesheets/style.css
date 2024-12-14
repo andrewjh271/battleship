@@ -51,7 +51,7 @@ button:disabled {
 }
 
 .container {
-  height: 100vh;
+  height: 100%;
   display: grid;
   column-gap: 40px;
   align-items: center;
@@ -89,9 +89,9 @@ button:disabled {
 }
 .control-panel select,
 .control-panel button {
-  font-size: 16px;
+  font-size: 15px;
   padding: 5px;
-  height: 31px;
+  height: 32px;
 }
 .control-panel h3 {
   color: #2f0a05;
@@ -117,22 +117,53 @@ button:disabled {
   }
   .control-panel.preferences select,
   .control-panel.preferences button {
-    padding: 0;
-    width: 156px;
+    width: 157px;
+    color: black;
   }
   .control-panel.preferences button {
+    position: relative;
     margin-top: 27px;
     font-weight: bold;
     text-shadow: 0px 1px 1px white;
     transition: 0.6s;
+    width: 125px;
   }
   .control-panel.preferences button:hover {
     text-shadow: 0px 1px 1px rgb(194, 194, 194);
+  }
+  .control-panel.preferences button:before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1;
+    background-color: #b4c3ae;
+    top: 0;
+    left: -16px;
+    border-radius: 50%;
+  }
+  .control-panel.preferences button:after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1;
+    background-color: #b4c3ae;
+    top: 0;
+    left: 109px;
+    border-radius: 50%;
   }
 }
 .reset {
   background-color: #7a2e2e;
   color: white;
+}
+
+.control-panel .navigation {
+  color: black;
+}
+
+.control-panel .navigation:disabled {
+  color: rgba(16, 16, 16, 0.3019607843);
+  opacity: 0.75;
 }
 
 .control-panel .navigation,
@@ -214,6 +245,11 @@ button:disabled {
   width: calc(100% + 28px);
   font-family: "Tangerine", cursive;
   font-size: 31px;
+}
+
+.board-setup-container:has(.curtain:not(.invisible))::before {
+  color: #de130f;
+  background-color: rgba(44, 24, 0, 0.7490196078);
 }
 
 #board1::before {
@@ -424,7 +460,7 @@ button:disabled {
 
 .remaining-fleet div,
 .preview-container div {
-  height: 100%;
+  height: 100px;
   max-width: 40px;
   display: flex;
   flex-direction: column;
@@ -645,7 +681,7 @@ img[src*=piccolo].staging-img {
     background-color: rgba(255, 255, 255, 0.4392156863);
   }
   .remaining-fleet div {
-    height: 80%;
+    height: 75%;
     margin-top: 6px;
     margin-bottom: 6px;
     margin-right: 5.5%;
@@ -835,6 +871,11 @@ img[src*=piccolo].staging-img {
     text-orientation: upright;
     writing-mode: vertical-rl;
   }
+  @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
+    .attack-direction h3 {
+      word-spacing: 12px;
+    }
+  }
   .attack-direction .game-state {
     left: 15px;
   }
@@ -928,7 +969,10 @@ img[src*=piccolo].staging-img {
     grid-template-rows: 44px 30px 1fr 1fr;
   }
   .board-setup-container {
-    grid-template-rows: 102px 1fr 36px;
+    grid-template-rows: 90px 1fr 36px;
+  }
+  .preview-container div {
+    height: 74px;
   }
   .control-panel .navigation,
   .control-panel .reset {
@@ -942,9 +986,6 @@ img[src*=piccolo].staging-img {
   .board,
   .board-setup-container {
     max-width: 320px;
-  }
-  .board-setup-container {
-    grid-template-rows: 90px 1fr 36px;
   }
   .staging-buttons {
     padding: 0 4px 4px 4px;
@@ -983,13 +1024,15 @@ img[src*=piccolo].staging-img {
   .board-setup-container {
     grid-template-rows: 80px 1fr 36px;
   }
+  .preview-container div {
+    height: 64px;
+  }
   .attack-direction {
     grid-template-columns: 1fr min(275px, 80%) 1fr;
   }
   .attack-direction h3 {
     margin-top: 122px;
     letter-spacing: -5px;
-    word-spacing: -15px;
   }
   .img-preview.trumpet, .img-preview.violin, .img-preview.clarinet, .img-preview.flute {
     max-height: calc(74% - 9px);
@@ -1015,8 +1058,11 @@ img[src*=piccolo].staging-img {
   .board-setup-container {
     grid-template-rows: 77px 1fr 36px;
   }
+  .preview-container div {
+    height: 61px;
+  }
   .remaining-fleet div {
-    height: 72%;
+    height: 68%;
   }
   .attack-direction {
     grid-template-columns: 1fr min(247px, 80%) 1fr;

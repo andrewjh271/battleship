@@ -345,6 +345,13 @@ const infoButtons = document.querySelectorAll('.info');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
+function setWindowHeight() {
+  document.body.style.height = `${window.innerHeight}px`;
+}
+
+setWindowHeight();
+window.addEventListener('resize', setWindowHeight)
+
 function resetDOM() {
   board1.classList.add('hidden');
   board2.classList.add('hidden');
