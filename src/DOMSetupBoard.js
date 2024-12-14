@@ -31,6 +31,7 @@ function showStagedImage() {
   const image = imageGenerator[this.dataset.inst]();
   image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
+  image.addEventListener('touchstart', dragStart);
   if (stagingArea.firstChild) {
     stagingArea.firstChild.removeResizeListener();
     stagingArea.removeChild(stagingArea.firstChild);

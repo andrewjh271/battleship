@@ -574,6 +574,7 @@ function showStagedImage() {
   const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.dataset.inst]();
   image.classList.add('staging-img');
   image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
+  image.addEventListener('touchstart', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
   if (stagingArea.firstChild) {
     stagingArea.firstChild.removeResizeListener();
     stagingArea.removeChild(stagingArea.firstChild);
@@ -925,11 +926,12 @@ let cursurOffsetY;
 
 function dragStart(e) {
   e.preventDefault();
-  cursorOffsetX = e.clientX - this.offsetLeft;
-  cursurOffsetY = e.clientY - this.offsetTop;
+  cursorOffsetX = (e.clientX || e.touches[0].screenX) - this.offsetLeft;
+  cursurOffsetY = (e.clientY || e.touches[0].screenY) - this.offsetTop;
   this.classList.add('grabbing');
 
   const boundDragMove = dragMove.bind(this);
+
   document.addEventListener('mousemove', boundDragMove);
   document.addEventListener(
     'mouseup',
@@ -939,11 +941,21 @@ function dragStart(e) {
     },
     { once: true }
   );
+
+  document.addEventListener('touchmove', boundDragMove);
+  document.addEventListener(
+    'touchend',
+    () => {
+      document.removeEventListener('touchmove', boundDragMove);
+      (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEnd', this);
+    },
+    { once: true }
+  );
 }
 
 function dragMove(e) {
-  this.style.top = (e.clientY - cursurOffsetY).toString() + 'px';
-  this.style.left = (e.clientX - cursorOffsetX).toString() + 'px';
+  this.style.top = ((e.clientY || e.touches[0].screenY) - cursurOffsetY).toString() + 'px';
+  this.style.left = ((e.clientX || e.touches[0].screenX) - cursorOffsetX).toString() + 'px';
   const bound = this.getBoundingClientRect();
   const positionData = {
     startX: bound.left,
