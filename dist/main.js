@@ -342,6 +342,7 @@ const gameState = document.querySelector('.game-state');
 const switchButton = document.querySelector('.switch-turns');
 const curtains = document.querySelectorAll('.curtain');
 const infoButtons = document.querySelectorAll('.info');
+const intro = document.querySelector('.intro-text');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
@@ -460,6 +461,7 @@ function uncoverFleets() {
 }
 
 function setSetupPanelView() {
+  intro.classList.add('hidden');
   controlPanel.classList.remove('preferences');
   controlPanel.classList.add('setup');
 }
