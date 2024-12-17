@@ -1289,7 +1289,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   trumpet: () => (/* binding */ trumpet),
 /* harmony export */   violin: () => (/* binding */ violin)
 /* harmony export */ });
+/* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
 /* eslint-disable no-param-reassign */
+
+
 let windowEvents = [];
 
 function flute() {
@@ -1338,10 +1341,10 @@ function newImage(type, width, height) {
   image.area = width * height;
   image.type = type;
   setImageSize(image);
-  const boundSetImageSize = setImageSize.bind(null, image);
-  window.addEventListener('resize', boundSetImageSize);
-  windowEvents.push(boundSetImageSize)
-  image.removeResizeListener = () => window.removeEventListener('resize', boundSetImageSize);
+  const boundResetImageSize = resetImageSize.bind(null, image);
+  window.addEventListener('resize', boundResetImageSize);
+  windowEvents.push(boundResetImageSize)
+  image.removeResizeListener = () => window.removeEventListener('resize', boundResetImageSize);
   return image;
 }
 
@@ -1350,6 +1353,11 @@ function setImageSize(image) {
   const squareWidth = cell.offsetWidth;
   image.style.width = `${squareWidth * image.spanX}px`;
   image.style.height = `${squareWidth * image.spanY}px`;
+}
+
+function resetImageSize(image) {
+  setImageSize(image);
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_0__.resetRotationAdjustment)(image);
 }
 
 function removeWindowEvents() {
@@ -1569,6 +1577,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   adjustForRotation: () => (/* binding */ adjustForRotation),
+/* harmony export */   resetRotationAdjustment: () => (/* binding */ resetRotationAdjustment),
 /* harmony export */   rotate: () => (/* binding */ rotate),
 /* harmony export */   setStagedImage: () => (/* binding */ setStagedImage)
 /* harmony export */ });
@@ -1603,6 +1612,16 @@ function adjustForRotation(draggedImage, newImage) {
   }
   if (rotation !== 180) {
     [draggedImage.spanY, draggedImage.spanX] = [draggedImage.spanX, draggedImage.spanY];
+  }
+}
+
+function resetRotationAdjustment(image) {
+  const rotation = Number(image.style.transform.match(/\d+(?=deg)/));
+  const { height, width } = image.style;
+  if (rotation === 90) {
+    image.style.transform = image.style.transform.replace(/\d+px/, height); // replace translateX value
+  } else if (rotation === 270) {
+    image.style.transform = image.style.transform.replace(/\d+px/, width); // replace translateY value
   }
 }
 

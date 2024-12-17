@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+import { resetRotationAdjustment } from "./rotatable";
+
 let windowEvents = [];
 
 function flute() {
@@ -47,10 +49,10 @@ function newImage(type, width, height) {
   image.area = width * height;
   image.type = type;
   setImageSize(image);
-  const boundSetImageSize = setImageSize.bind(null, image);
-  window.addEventListener('resize', boundSetImageSize);
-  windowEvents.push(boundSetImageSize)
-  image.removeResizeListener = () => window.removeEventListener('resize', boundSetImageSize);
+  const boundResetImageSize = resetImageSize.bind(null, image);
+  window.addEventListener('resize', boundResetImageSize);
+  windowEvents.push(boundResetImageSize)
+  image.removeResizeListener = () => window.removeEventListener('resize', boundResetImageSize);
   return image;
 }
 
@@ -59,6 +61,11 @@ function setImageSize(image) {
   const squareWidth = cell.offsetWidth;
   image.style.width = `${squareWidth * image.spanX}px`;
   image.style.height = `${squareWidth * image.spanY}px`;
+}
+
+function resetImageSize(image) {
+  setImageSize(image);
+  resetRotationAdjustment(image);
 }
 
 function removeWindowEvents() {

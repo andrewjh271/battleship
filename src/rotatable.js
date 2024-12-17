@@ -32,4 +32,14 @@ function adjustForRotation(draggedImage, newImage) {
   }
 }
 
-export { rotate, setStagedImage, adjustForRotation };
+function resetRotationAdjustment(image) {
+  const rotation = Number(image.style.transform.match(/\d+(?=deg)/));
+  const { height, width } = image.style;
+  if (rotation === 90) {
+    image.style.transform = image.style.transform.replace(/\d+px/, height); // replace translateX value
+  } else if (rotation === 270) {
+    image.style.transform = image.style.transform.replace(/\d+px/, width); // replace translateY value
+  }
+}
+
+export { rotate, setStagedImage, adjustForRotation, resetRotationAdjustment };
