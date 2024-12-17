@@ -160,6 +160,7 @@ button:disabled {
 
 .control-panel .navigation {
   color: black;
+  transition: 1s;
 }
 
 .control-panel .navigation:disabled {
@@ -346,6 +347,11 @@ button:disabled {
 }
 .board.offense .highlight-placed {
   --start-color: #b3aa92;
+}
+@media (hover: none) {
+  .board .cell {
+    --start-color: #fffbf1;
+  }
 }
 .board.disabled div:not(.moves) {
   pointer-events: none;
@@ -584,7 +590,7 @@ img[src*=piccolo].staging-img {
 
 .stretch {
   object-fit: fill;
-  padding: 20px 1px 20px 1px;
+  padding: 10px 1px 10px 1px;
 }
 
 .board.covered {
