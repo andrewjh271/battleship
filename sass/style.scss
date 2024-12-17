@@ -179,6 +179,7 @@ button:disabled {
 
 .control-panel .navigation {
   color: black;
+  transition: 1s;
 }
 
 .control-panel .navigation:disabled {
@@ -379,6 +380,15 @@ button:disabled {
       --start-color: #b3aa92;
     }
   }
+
+  @media (hover: none) {
+    // no red highlight on touch screen
+    .cell {
+      --start-color: #fffbf1;
+    }
+  }
+
+
 
   &.disabled div:not(.moves) {
     pointer-events: none;
@@ -631,7 +641,7 @@ img[src*='piccolo'].staging-img {
 
 .stretch {
   object-fit: fill;
-  padding: 20px 1px 20px 1px;
+  padding: 10px 1px 10px 1px;
 }
 
 .board.covered {
