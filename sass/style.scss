@@ -351,9 +351,11 @@ button:disabled {
     }
     // :not prevents hovered state from taking precedence until cursor moves in Safari
     .cell:not(.attacked) {
-      &:hover {
-        cursor: pointer;
-        background-color: #d90000ed;
+      @media (hover: hover) {
+        &:hover {
+          cursor: pointer;
+          background-color: #d90000ed;
+        }
       }
 
       &.sunk {
@@ -387,8 +389,6 @@ button:disabled {
       --start-color: #fffbf1;
     }
   }
-
-
 
   &.disabled div:not(.moves) {
     pointer-events: none;

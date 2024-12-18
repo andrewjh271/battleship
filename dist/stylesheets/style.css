@@ -329,9 +329,11 @@ button:disabled {
 .board.defense .highlight-placed {
   background-color: #fffbf1;
 }
-.board.defense .cell:not(.attacked):hover {
-  cursor: pointer;
-  background-color: rgba(217, 0, 0, 0.9294117647);
+@media (hover: hover) {
+  .board.defense .cell:not(.attacked):hover {
+    cursor: pointer;
+    background-color: rgba(217, 0, 0, 0.9294117647);
+  }
 }
 .board.defense .cell:not(.attacked).sunk.highlight-placed {
   background-color: rgba(161, 0, 0, 0.9215686275);
