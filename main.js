@@ -351,7 +351,7 @@ function setWindowHeight() {
 }
 
 setWindowHeight();
-window.addEventListener('resize', setWindowHeight)
+window.addEventListener('resize', setWindowHeight);
 
 function resetDOM() {
   board1.classList.add('hidden');
@@ -369,10 +369,10 @@ function resetDOM() {
   controlPanel.classList.add('preferences');
   curtains.forEach((curtain) => curtain.classList.add('invisible'));
   fleetContainers.forEach((container) => {
-    container.classList.add('invisible')
-    container.classList.add('opaque')
+    container.classList.add('invisible');
+    container.classList.add('opaque');
     container.classList.remove('active');
-  })
+  });
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
@@ -381,7 +381,7 @@ function resetDOM() {
   infoButtons.forEach((button) => {
     button.classList.add('hidden');
     button.textContent = 'info';
-  })
+  });
   stagingArea.innerHTML = '';
 }
 
@@ -450,6 +450,10 @@ function coverBoards() {
   }, 2000);
   switchButton.disabled = true;
   moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
+  fleetContainers.forEach((container) => container.classList.remove('active'));
+  infoButtons.forEach((button) => {
+    button.textContent = 'info';
+  });
 }
 
 function coverFleets() {
@@ -475,14 +479,16 @@ function showInfoButtons() {
   infoButtons.forEach((button) => button.classList.remove('hidden'));
 }
 
-infoButtons.forEach((button) => button.addEventListener('click', () => {
-  const currentIcon = button.textContent;
-  button.textContent = currentIcon === 'info' ? 'cancel' : 'info';
+infoButtons.forEach((button) =>
+  button.addEventListener('click', () => {
+    const currentIcon = button.textContent;
+    button.textContent = currentIcon === 'info' ? 'cancel' : 'info';
 
-  const targetBoard = button.dataset.board === '1' ? board1 : board2;
-  const targetFleetContainer = targetBoard.querySelector('.remaining-fleet');
-  targetFleetContainer.classList.toggle('active');
-}));
+    const targetBoard = button.dataset.board === '1' ? board1 : board2;
+    const targetFleetContainer = targetBoard.querySelector('.remaining-fleet');
+    targetFleetContainer.classList.toggle('active');
+  })
+);
 
 
 
@@ -1301,7 +1307,7 @@ function flute() {
 
 function trombone() {
   const image = newImage('trombone', 1, 5);
-  image.classList.add('stretch');
+  image.classList.add('stretch-trombone');
   return image;
 }
 
@@ -1310,7 +1316,9 @@ function clarinet() {
 }
 
 function violin() {
-  return newImage('violin', 1, 3);
+  const image = newImage('violin', 1, 3);
+  image.classList.add('stretch-violin');
+  return image;
 }
 
 function bassoon() {
