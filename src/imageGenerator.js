@@ -9,7 +9,7 @@ function flute() {
 
 function trombone() {
   const image = newImage('trombone', 1, 5);
-  image.classList.add('stretch');
+  image.classList.add('stretch-trombone');
   return image;
 }
 
@@ -18,7 +18,9 @@ function clarinet() {
 }
 
 function violin() {
-  return newImage('violin', 1, 3);
+  const image = newImage('violin', 1, 3);
+  image.classList.add('stretch-violin');
+  return image;
 }
 
 function bassoon() {
