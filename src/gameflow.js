@@ -195,4 +195,6 @@ function reset() {
   attackCount = 0;
   DOMBoard1.unlistenForAttack();
   DOMBoard2.unlistenForAttack();
+  setBoardButton.removeEventListener('click', finishSetup, { once: true });
+  setBoardButton.removeEventListener('click', startGame, { once: true });
 }
