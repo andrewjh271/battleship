@@ -379,6 +379,10 @@ button:disabled {
     background-color: aquamarine;
   }
 
+  .highlight-hovered-invalid {
+    background-color: #a1b8b0;
+  }
+
   .highlight-placed {
     background-color: $placed;
     z-index: 2;

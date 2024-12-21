@@ -55,13 +55,18 @@ function clearPlacedImages() {
 
 let cellsToHighlight = [];
 let cellsToUnhighlight = [];
+
 function highlightHoveredCells(positionData) {
   const { startX, endX, startY, endY, area } = positionData;
 
   currentBoard.cells.forEach((cell) => {
     const bound = cell.getBoundingClientRect();
-    const half = bound.width / 2 + 1;
-    // + 1 to give some leeway to pass comparisons (rounding errors, etc.)
+    const errorTolerance = isWithinBoard(startX, endX, startY, endY) ? 1 : -0.3;
+    const half = bound.width / 2 + errorTolerance;
+    // errorTolerance provides some leeway to pass comparisons (rounding errors, etc.)
+    // however, if image is not within board, comparisons need to be stricter to avoid
+    // highlighting a set of cells with the wrong dimensions (the check in commitValidHighlights
+    // is not helpful in this case, because the size of the set could still be within the limit)
 
     const maxLeft = bound.left + half;
     const minRight = bound.right - half;
@@ -78,14 +83,25 @@ function highlightHoveredCells(positionData) {
 }
 
 function commitValidHighlights(targetArea) {
-  // fixes issue of too many cells being highlighted if image is centered exactly between them
-  // <= instead of === to allow change when image is dragged off board
-  if (cellsToHighlight.length <= targetArea) {
+  // if too many cells are in cellsToHighlight because image is straddling a border, do nothing
+  // if cellsToHighlight.length is less than targetArea, image is partially off board
+  if (cellsToHighlight.length < targetArea) {
+    cellsToHighlight.forEach((cell) => cell.classList.add('highlight-hovered-invalid'));
+    cellsToUnhighlight.forEach((cell) => cell.classList.remove('highlight-hovered-invalid'));
+    currentBoard.cells.forEach((cell) => cell.classList.remove('highlight-hovered'));
+  } else if (cellsToHighlight.length === targetArea) {
     cellsToHighlight.forEach((cell) => cell.classList.add('highlight-hovered'));
     cellsToUnhighlight.forEach((cell) => cell.classList.remove('highlight-hovered'));
+    currentBoard.cells.forEach((cell) => cell.classList.remove('highlight-hovered-invalid'));
   }
+
   cellsToHighlight = [];
   cellsToUnhighlight = [];
+}
+
+function isWithinBoard(startX, endX, startY, endY) {
+  const bound = currentBoard.getBoundingClientRect();
+  return bound.left <= startX && bound.right >= endX && bound.top <= startY && bound.bottom >= endY;
 }
 
 function handleRelease(element) {
@@ -155,6 +171,7 @@ function newTemplateWrapper() {
 
 function removeDraggedHighlights() {
   currentBoard.cells.forEach((cell) => cell.classList.remove('highlight-hovered'));
+  currentBoard.cells.forEach((cell) => cell.classList.remove('highlight-hovered-invalid'));
 }
 
 function updateHighlights() {

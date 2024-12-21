@@ -354,6 +354,9 @@ button:disabled {
 .board .highlight-hovered {
   background-color: aquamarine;
 }
+.board .highlight-hovered-invalid {
+  background-color: #a1b8b0;
+}
 .board .highlight-placed {
   background-color: #b3aa92;
   z-index: 2;
