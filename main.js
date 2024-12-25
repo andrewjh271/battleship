@@ -637,6 +637,7 @@ function highlightHoveredCells(positionData) {
       cellsToUnhighlight.push(cell);
     }
   });
+  cellsToHighlight = cellsToHighlight.filter((cell) => !cell.classList.contains('highlight-placed'))
   commitValidHighlights(area);
 }
 
