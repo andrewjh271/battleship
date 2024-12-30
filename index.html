@@ -77,8 +77,8 @@
         <h3 class="player1">Player 1</h3>
         <h3 class="player2">Player 2</h3>
         <h3 class="game-state">Attack!</h3>
-        <img class='large' src="/images/bow.png">
-        <img class='small' src="/images/bow-arrow.png">
+        <img class='large' src="/images/bow.png" draggable="false">
+        <img class='small' src="/images/bow-arrow.png" draggable="false">
       </div>
       <div class="board hidden" id="board2">
         <div class="curtain invisible permanent"></div>
@@ -113,9 +113,14 @@
 
         <div class="staging-area"></div>
         <div class="staging-buttons">
-          <button class="set-board" title="Set Board">
-            <span class="material-icons">task_alt</span>
-          </button>
+          <div>
+            <button class="set-board" title="Set Board">
+              <span class="material-icons">task_alt</span>
+            </button>
+            <button class="random" title="Random Setup">
+              <span class="material-icons">auto_fix_high</span>
+            </button>
+          </div>
           <div>
             <button class="rotate" title="Rotate">
               <span class="material-icons">autorenew</span>
