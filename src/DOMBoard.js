@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { initializeDOMBoard } from './DOMInitializeBoard';
-import { setupDOMBoard, newTemplateImage, newTemplateWrapper } from './DOMSetupBoard';
+import { setupDOMBoard, newTemplateImage, newTemplateWrapper, disableAllPreviewImages } from './DOMSetupBoard';
 import { on, emit } from './observer';
 import { coordinatesToIndex, indexToCoordinates } from './coordinates';
 import { rowLength } from './boardSize';
@@ -69,8 +69,23 @@ export function DOMBoardFactory(id, ROWS) {
     setupDOMBoard(board);
   }
 
+  function clearBoard() {
+    const children = Array.from(board.children);
+    children.forEach((node) => {
+      if (node.classList.contains('permanent')) {
+        return;
+      }
+      if (node.classList.contains('cell')) {
+        node.classList.remove('highlight-placed');
+        return;
+      }
+      node.remove();
+    });
+  }
+
   function placeSetImages(dataBoard) {
     // places on DOMboard (board variable) all images from board object argument
+    clearBoard();
     dataBoard.placedShips.forEach((ship) => {
       const image = newTemplateImage(ship.name);
       const imageWrapper = newTemplateWrapper();
@@ -79,6 +94,7 @@ export function DOMBoardFactory(id, ROWS) {
       imageWrapper.appendChild(image);
       board.appendChild(imageWrapper);
     });
+    disableAllPreviewImages();
   }
 
   function setPosition(image, wrapper, set) {

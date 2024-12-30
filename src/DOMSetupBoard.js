@@ -51,6 +51,9 @@ function clearPlacedImages() {
     }
   });
   previews.forEach((preview) => preview.classList.remove('disabled'));
+  remainingInstruments = Object.keys(getEnsemble());
+  setBoardButton.disabled = true;
+  emit('clearPosition');
 }
 
 let cellsToHighlight = [];
@@ -154,6 +157,11 @@ function disablePreviewImage(instrument) {
   previewContainer.querySelector(`.${instrument}`).classList.add('disabled');
 }
 
+function disableAllPreviewImages() {
+  previews.forEach((preview) => preview.classList.add('disabled'));
+  setBoardButton.disabled = false;
+}
+
 function enablePreviewImages() {
   previews.forEach((preview) => preview.classList.remove('disabled'));
 }
@@ -184,4 +192,4 @@ function updateHighlights() {
   });
 }
 
-export { setupDOMBoard, newTemplateImage, newTemplateWrapper };
+export { setupDOMBoard, newTemplateImage, newTemplateWrapper, disableAllPreviewImages };

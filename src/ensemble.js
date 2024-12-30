@@ -17,11 +17,11 @@ function setEnsemble() {
   switch (selection) {
     case 'chamber':
       ensemble = {
-        // cello: [2, 5],
-        // horn: [2, 2],
+        cello: [2, 5],
+        horn: [2, 2],
         violin: [1, 3],
-        // clarinet: [1, 3],
-        // flute: [1, 3],
+        clarinet: [1, 3],
+        flute: [1, 3],
       };
       break;
     case 'brass':

@@ -17,10 +17,25 @@ export default function boardFactory(id) {
     }
   }
 
+  function resetSetup() {
+    totalShips = 0;
+    placedShips.length = 0; // reassigning placedShips to [] messes up reference
+    for (let i = 0; i < rowLength(); i++) {
+      for (let j = 0; j < rowLength(); j++) {
+        delete squares[i][j].ship; // reassigning squares[i][j] to {} similarly causes bugs
+      }
+    }
+  }
+
   let boundSetPosition;
   function listenForPosition() {
     boundSetPosition = setPosition.bind(this);
-    on('setPosition', boundSetPosition);
+    on('setPosition', boundSetPosition); // board listens for setup onto the DOMBoard to be finalized
+    on('clearPosition', resetSetup); // autoSetup() relies on adding ships to the board object, not just the DOMBoard
+  }
+
+  function unlistenForPosition() {
+    off('setPosition', boundSetPosition);
   }
 
   function setPosition(DOMBoard) {
@@ -29,6 +44,7 @@ export default function boardFactory(id) {
       this.placeShip(ship[1], ship[0]);
     });
     off('setPosition', boundSetPosition);
+    off('clearPosition', resetSetup);
   }
 
   const isOccupied = (coords) => {
@@ -41,7 +57,7 @@ export default function boardFactory(id) {
 
   const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
 
-  const placeShip = (coords, name) => {
+  function placeShip(coords, name) {
     if (outOfRange(coords)) throw new Error('Ships cannot be placed off the board');
     if (isOccupied(coords)) throw new Error('Ships cannot be on top of ships');
 
@@ -51,7 +67,7 @@ export default function boardFactory(id) {
     });
     totalShips++;
     placedShips.push(newShip);
-  };
+  }
 
   on('attack', receiveAttack);
 
@@ -105,6 +121,8 @@ export default function boardFactory(id) {
     allShipsSunk,
     emptySquares,
     listenForPosition,
+    unlistenForPosition,
+    resetSetup,
     placedShips,
     squares,
     id,

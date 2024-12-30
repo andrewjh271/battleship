@@ -2,6 +2,7 @@ import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
+  const ships = getEnsemble();
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -11,6 +12,20 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     opponentDOMBoard.setDefense();
     opponentDOMBoard.enable();
     homeDOMBoard.setOffense();
+  }
+
+  function autoSetup() {
+    homeBoard.resetSetup();
+    Object.entries(ships).forEach((ship) => {
+      const name = ship[0];
+      const dimensions = ship[1];
+      const set = homeBoard.findSets(...dimensions);
+      const coords = set[Math.floor(Math.random() * set.length)];
+      homeBoard.placeShip(coords, name);
+    });
+    homeDOMBoard.placeSetImages(homeBoard);
+    homeBoard.unlistenForPosition();
+    // ships have already been placed onto homeBoard — don't re-add them from DOMBoard
   }
 
   function isComputer() {
@@ -25,7 +40,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     moveCounter.increment();
   }
 
-  return { isComputer, setup, setTurn, sunkAllShips, incrementMoveCounter };
+  return { isComputer, setup, autoSetup, setTurn, sunkAllShips, incrementMoveCounter };
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCounter) {
