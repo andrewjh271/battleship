@@ -66,10 +66,10 @@ function highlightHoveredCells(positionData) {
     const bound = cell.getBoundingClientRect();
     const errorTolerance = isWithinBoard(startX, endX, startY, endY) ? 1 : -0.3;
     const half = bound.width / 2 + errorTolerance;
-    // errorTolerance provides some leeway to pass comparisons (rounding errors, etc.)
-    // however, if image is not within board, comparisons need to be stricter to avoid
+    // errorTolerance provides some leeway to pass comparisons (rounding errors, etc.);
+    // however, if the image is not fully within the board, comparisons need to be stricter to avoid
     // highlighting a set of cells with the wrong dimensions (the check in commitValidHighlights
-    // is not helpful in this case, because the size of the set could still be within the limit)
+    // is not helpful in this case because the size of the set could still be within the limit)
 
     const maxLeft = bound.left + half;
     const minRight = bound.right - half;
@@ -82,13 +82,21 @@ function highlightHoveredCells(positionData) {
       cellsToUnhighlight.push(cell);
     }
   });
-  cellsToHighlight = cellsToHighlight.filter((cell) => !cell.classList.contains('highlight-placed'))
   commitValidHighlights(area);
+  cellsToHighlight = [];
+  cellsToUnhighlight = [];
 }
 
 function commitValidHighlights(targetArea) {
-  // if too many cells are in cellsToHighlight because image is straddling a border, do nothing
-  // if cellsToHighlight.length is less than targetArea, image is partially off board
+  // if too many cells are in cellsToHighlight because the image is straddling a border, do nothing.
+  // perform this check before filtering; otherwise a set of cells with the wrong dimensions could
+  // be incorrectly highlighted
+  if (cellsToHighlight.length > targetArea) {
+    return;
+  }
+  cellsToHighlight = cellsToHighlight.filter((cell) => !cell.classList.contains('highlight-placed'));
+  // if cellsToHighlight.length is less than targetArea, image is partially off board or partially over
+  // an already-placed image
   if (cellsToHighlight.length < targetArea) {
     cellsToHighlight.forEach((cell) => cell.classList.add('highlight-hovered-invalid'));
     cellsToUnhighlight.forEach((cell) => cell.classList.remove('highlight-hovered-invalid'));
@@ -98,9 +106,6 @@ function commitValidHighlights(targetArea) {
     cellsToUnhighlight.forEach((cell) => cell.classList.remove('highlight-hovered'));
     currentBoard.cells.forEach((cell) => cell.classList.remove('highlight-hovered-invalid'));
   }
-
-  cellsToHighlight = [];
-  cellsToUnhighlight = [];
 }
 
 function isWithinBoard(startX, endX, startY, endY) {
