@@ -537,7 +537,7 @@ button:disabled {
   .board-setup-container {
     width: 322px;
     height: 322px;
-    // specifically targeting my 5th gen iPad with iOS Safari 16, when cannot handle width: 80%,
+    // specifically targeting my 5th gen iPad with iOS Safari 16, which cannot handle width: 80%,
     // or even matching width and height with the aspect-ratio if I set width alone
   }
 }
@@ -1114,6 +1114,25 @@ img[src*='piccolo'].staging-img {
   display: none;
 }
 
+@media (max-width: 1140px) {
+  .board-setup-container {
+    grid-template-rows: 85px 1fr 36px;
+  }
+
+  .preview-container div {
+    height: 69px; // 16px - height of container
+    // height: 100%;
+  }
+
+  .staging-buttons {
+    padding: 0 4px 4px 4px;
+
+    .material-icons {
+      font-size: 30px;
+    }
+  }
+}
+
 @media (max-width: 850px) {
   .info {
     display: block;
@@ -1159,10 +1178,12 @@ img[src*='piccolo'].staging-img {
 
   .board-setup-container {
     grid-template-rows: 90px 1fr 36px;
+    grid-template-rows: 71px 1fr 36px;
   }
 
   .preview-container div {
     height: 74px; // 16px - height of container
+    height: 100%;
   }
 
   .control-panel .navigation,

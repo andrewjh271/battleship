@@ -1009,6 +1009,20 @@ img[src*=piccolo].staging-img {
   display: none;
 }
 
+@media (max-width: 1140px) {
+  .board-setup-container {
+    grid-template-rows: 85px 1fr 36px;
+  }
+  .preview-container div {
+    height: 69px;
+  }
+  .staging-buttons {
+    padding: 0 4px 4px 4px;
+  }
+  .staging-buttons .material-icons {
+    font-size: 30px;
+  }
+}
 @media (max-width: 850px) {
   .info {
     display: block;
@@ -1047,9 +1061,11 @@ img[src*=piccolo].staging-img {
   }
   .board-setup-container {
     grid-template-rows: 90px 1fr 36px;
+    grid-template-rows: 71px 1fr 36px;
   }
   .preview-container div {
     height: 74px;
+    height: 100%;
   }
   .control-panel .navigation,
   .control-panel .reset {
