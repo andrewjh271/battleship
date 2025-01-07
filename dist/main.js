@@ -14,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 function find1DSets(board, length) {
   if (length === 1) return board.emptySquares();
-  let sets = [];
+  const sets = [];
   for (let i = 0; i < board.size; i++) {
     const horizontal = [];
     const vertical = [];
@@ -22,32 +22,31 @@ function find1DSets(board, length) {
       horizontal.push([j, i]);
       vertical.push([i, j]);
     }
-    sets = [
-      ...sets,
-      ...findSetsFromRow(horizontal, length, board),
-      ...findSetsFromRow(vertical, length, board),
-    ];
+    sets.push(
+      ...findSetsFromLine(horizontal, length, board),
+      ...findSetsFromLine(vertical, length, board),
+    );
   }
   if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
 
-function findSetsFromRow(row, length, board) {
+function findSetsFromLine(line, length, board) {
   let lft = 0;
   let rt = 1;
   const sets = [];
 
-  while (rt < row.length) {
-    if (board.isOccupied([[row[lft][0], row[lft][1]]])) {
+  while (rt < line.length) {
+    if (board.isOccupied([line[lft]])) {
       lft = rt;
       rt += 1;
-    } else if (board.isOccupied([[row[rt][0], row[rt][1]]])) {
+    } else if (board.isOccupied([line[rt]])) {
       lft = rt + 1;
       rt += 2;
     } else if (rt - lft + 1 === length) {
       const set = [];
       for (let j = lft; j <= rt; j++) {
-        set.push(row[j]);
+        set.push(line[j]);
       }
       sets.push(set);
       lft++;
@@ -75,21 +74,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   find2DSets: () => (/* binding */ find2DSets)
 /* harmony export */ });
 function find2DSets(board, width, height) {
-  let sets = [];
+  const sets = [];
   for (let i = 0; i <= board.size - width; i++) {
-    const horizontal = [];
-    const vertical = [];
+    const rows = [];
+    const columns = [];
     for (let j = 0; j < board.size; j++) {
-      horizontal.push(createXComponent(j, i, width));
-      if (width !== height) vertical.push(createYComponent(j, i, width));
+      rows.push(createXComponent(j, i, width));
+      if (width !== height) columns.push(createYComponent(j, i, width));
     }
-    const rotatedSets = width === height ? [] : findSetsFromRows(vertical, height, board);
-    sets = [...sets, ...findSetsFromRows(horizontal, height, board), ...rotatedSets];
+    sets.push(
+      ...findSetsFromComponents(rows, height, board),
+      ...findSetsFromComponents(columns, height, board) // empty array if width === height
+    );
   }
   if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
-
 
 function createXComponent(fixed, variable, length) {
   const component = [];
@@ -107,10 +107,10 @@ function createYComponent(fixed, variable, length) {
   return component;
 }
 
-function findSetsFromRows(rows, length, board) {
+function findSetsFromComponents(components, length, board) {
   const sets = [];
-  for (let i = 0; i <= rows.length - length; i++) {
-    const candidateSet = rows.slice(i, i + length).flat();
+  for (let i = 0; i <= components.length - length; i++) {
+    const candidateSet = components.slice(i, i + length).flat();
     if (!board.isOccupied(candidateSet)) {
       sets.push(candidateSet);
     }
