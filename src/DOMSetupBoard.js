@@ -10,9 +10,11 @@ const previewContainer = document.querySelector('.preview-container');
 const previews = document.querySelectorAll('.img-preview');
 const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
+const autoSetupButton = document.querySelector('.random');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 clearButton.addEventListener('click', clearPlacedImages);
+autoSetupButton.addEventListener('click', removeStagedImage);
 
 let remainingInstruments;
 let currentBoard;
@@ -32,12 +34,16 @@ function showStagedImage() {
   image.classList.add('staging-img');
   image.addEventListener('mousedown', dragStart);
   image.addEventListener('touchstart', dragStart);
+  removeStagedImage();
+  stagingArea.appendChild(image);
+  setStagedImage(image); // for rotation
+}
+
+function removeStagedImage() {
   if (stagingArea.firstChild) {
     stagingArea.firstChild.removeResizeListener();
     stagingArea.removeChild(stagingArea.firstChild);
   }
-  stagingArea.appendChild(image);
-  setStagedImage(image); // for rotation
 }
 
 function clearPlacedImages() {
@@ -51,6 +57,7 @@ function clearPlacedImages() {
     }
   });
   previews.forEach((preview) => preview.classList.remove('disabled'));
+  removeStagedImage();
   remainingInstruments = Object.keys(getEnsemble());
   setBoardButton.disabled = true;
   emit('clearPosition');
