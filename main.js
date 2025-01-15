@@ -586,9 +586,11 @@ const previewContainer = document.querySelector('.preview-container');
 const previews = document.querySelectorAll('.img-preview');
 const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
+const autoSetupButton = document.querySelector('.random');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 clearButton.addEventListener('click', clearPlacedImages);
+autoSetupButton.addEventListener('click', removeStagedImage);
 
 let remainingInstruments;
 let currentBoard;
@@ -608,12 +610,16 @@ function showStagedImage() {
   image.classList.add('staging-img');
   image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
   image.addEventListener('touchstart', _draggable__WEBPACK_IMPORTED_MODULE_2__.dragStart);
+  removeStagedImage();
+  stagingArea.appendChild(image);
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.setStagedImage)(image); // for rotation
+}
+
+function removeStagedImage() {
   if (stagingArea.firstChild) {
     stagingArea.firstChild.removeResizeListener();
     stagingArea.removeChild(stagingArea.firstChild);
   }
-  stagingArea.appendChild(image);
-  (0,_rotatable__WEBPACK_IMPORTED_MODULE_3__.setStagedImage)(image); // for rotation
 }
 
 function clearPlacedImages() {
@@ -627,6 +633,7 @@ function clearPlacedImages() {
     }
   });
   previews.forEach((preview) => preview.classList.remove('disabled'));
+  removeStagedImage();
   remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_4__.getEnsemble)());
   setBoardButton.disabled = true;
   (0,_observer__WEBPACK_IMPORTED_MODULE_1__.emit)('clearPosition');
