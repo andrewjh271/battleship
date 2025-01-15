@@ -4,14 +4,77 @@ import { rowLength } from '../src/boardSize';
 import { getEnsemble } from '../src/ensemble';
 
 describe('attacking', () => {
-  test('computers can randomly attack unoccupied squares', () => {
-    const opponentBoard = boardFactory();
-    const moveCounterMock = { increment: () => true };
+  const moveCounterMock = { increment: () => true };
+  const mockHomeDOMBoard = { placeSetImages: () => true };
+
+  test('computer can attack until it has sunk all ships', () => {
+    const opponentBoard = boardFactory(1);
     const computer = computerPlayerFactory(null, opponentBoard, null, moveCounterMock);
-    for (let i = 0; i < 100; i++) {
+    const opponent = computerPlayerFactory(opponentBoard, null, mockHomeDOMBoard);
+
+    opponent.setup();
+
+    while (!computer.sunkAllShips()) {
       computer.attack();
     }
-    expect(() => computer.attack().toThrow('there are no moves left'));
+    expect(opponentBoard.remainingShips).toEqual({});
+    expect(() => computer.attack()).toThrow('There are no remaining ships to test');
+  });
+
+  test('computer attack count falls within an expected range', () => {
+    const opponentBoard = boardFactory(1);
+    const computer = computerPlayerFactory(null, opponentBoard, null, moveCounterMock);
+    const opponent = computerPlayerFactory(opponentBoard, null, mockHomeDOMBoard);
+
+    opponent.setup();
+
+    let moveCount = 0;
+    while (!computer.sunkAllShips()) {
+      computer.attack();
+      moveCount++;
+    }
+
+    expect(moveCount).toBeGreaterThanOrEqual(37);
+    expect(moveCount).toBeLessThan(77);
+  });
+
+  test('computer attack statistics', () => {
+    let totalMoveCount = 0;
+    let minMoveCount = Infinity;
+    let maxMoveCount = -Infinity;
+    const n = 100;
+
+    for (let i = 0; i < n; i++) {
+      let moveCount = 0;
+      const opponentBoard = boardFactory(1);
+      const computer = computerPlayerFactory(null, opponentBoard, null, moveCounterMock);
+      const opponent = computerPlayerFactory(opponentBoard, null, mockHomeDOMBoard);
+
+      opponent.setup();
+      while (!computer.sunkAllShips()) {
+        computer.attack();
+        moveCount++;
+      }
+
+      if (moveCount < minMoveCount) {
+        minMoveCount = moveCount;
+      }
+      if (moveCount > maxMoveCount) {
+        maxMoveCount = moveCount;
+      }
+      totalMoveCount += moveCount;
+    }
+
+    const avgMoveCount = totalMoveCount / n;
+
+    // console.log(`Minimum moves: ${minMoveCount}`);
+    // console.log(`Maximum moves: ${maxMoveCount}`);
+    // console.log(`Average moves: ${avgMoveCount}`);
+
+    expect(minMoveCount).toBeGreaterThanOrEqual(37);
+    expect(maxMoveCount).toBeLessThan(82);
+    expect(avgMoveCount).toBeLessThan(70);
+    expect(avgMoveCount).toBeGreaterThan(50);
   });
 });
 

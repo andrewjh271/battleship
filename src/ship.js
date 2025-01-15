@@ -9,5 +9,5 @@ export default function shipFactory(length, name, coordinateSet) {
     }
   };
   const isSunk = () => hits === length;
-  return { hit, isSunk, name, coords };
+  return { hit, isSunk, name, coords, length };
 }

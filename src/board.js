@@ -4,12 +4,16 @@ import { find2DSets } from './2DSetFinder';
 import { getShipData } from './DOMAdapter';
 import { on, off, emit } from './observer';
 import { rowLength } from './boardSize';
+import { getEnsemble } from './ensemble';
 
 export default function boardFactory(id) {
   let totalShips = 0;
   let shipsSunk = 0;
+  let totalHits = 0;
+  let totalSunkHits = 0;
   const placedShips = [];
   const squares = [];
+  const remainingShips = { ...getEnsemble() };
   for (let i = 0; i < rowLength(); i++) {
     squares[i] = [];
     for (let j = 0; j < rowLength(); j++) {
@@ -47,13 +51,49 @@ export default function boardFactory(id) {
     off('clearPosition', resetSetup);
   }
 
-  const isOccupied = (coords) => {
-    for (let i = 0; i < coords.length; i++) {
-      const coord = coords[i];
-      if (squares[coord[0]][coord[1]].ship) return true;
+  const isOccupied = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      if (squares[coords[0]][coords[1]].ship) return true;
     }
     return false;
   };
+
+  const isAttacked = (coords) => squares[coords[0]][coords[1]].attacked;
+
+  const containsAttack = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      const square = squares[coords[0]][coords[1]];
+      if (square.attacked) return true;
+    }
+    return false;
+  };
+
+  const containsMissOrSunkSquare = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      const square = squares[coords[0]][coords[1]];
+      if ((square.attacked && !square.ship) || square.sunk) return true;
+      // the engine uses this function for finding moves, and while it should not necessarily know
+      // whether a square contains a ship, it does know about misses (i.e. an attacked square with
+      // no ship). it also does not necessarily know all squares that contain sunk ships, but can
+      // often deduce them by marking hit squares as sunk when there are no unresolved hits
+    }
+    return false;
+  };
+
+  const numAttacksInSet = (coordsSet) => {
+    let attacks = 0;
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      const square = squares[coords[0]][coords[1]];
+      if (square.attacked) attacks++;
+    }
+    return attacks;
+  };
+
+  const hasUnresolvedHits = () => totalHits > totalSunkHits;
 
   const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > rowLength() - 1);
 
@@ -77,15 +117,31 @@ export default function boardFactory(id) {
     const { coords } = attackData;
     const square = squares[coords[0]][coords[1]];
     if (square.attacked) throw new Error('this square has already been attacked');
+    square.attacked = true;
     if (square.ship) {
       square.ship.hit();
+      totalHits++;
       if (square.ship.isSunk()) {
         shipsSunk++;
+        totalSunkHits += square.ship.length;
+        delete remainingShips[square.ship.name];
+        markSunkSquares();
         emit('sunk', { id, inst: square.ship.name });
       }
     }
-    square.attacked = true;
     emit('boardChange', { squares, id });
+  }
+
+  function markSunkSquares() {
+    if (!hasUnresolvedHits()) {
+      for (let i = 0; i < rowLength(); i++) {
+        for (let j = 0; j < rowLength(); j++) {
+          if (squares[i][j].attacked) {
+            squares[i][j].sunk = true;
+          }
+        }
+      }
+    }
   }
 
   function allShipsSunk() {
@@ -93,12 +149,12 @@ export default function boardFactory(id) {
   }
 
   // find1DSets is a faster algorithm for finding sets with width or length equal to 1
-  function findSets(x, y = 1) {
+  function findSets(conditionFunction, x, y) {
     if (x === 1 || y === 1) {
       const length = x === 1 ? y : x;
-      return find1DSets(this, length);
+      return find1DSets(this, length, conditionFunction);
     }
-    return find2DSets(this, x, y);
+    return find2DSets(this, x, y, conditionFunction);
   }
 
   function emptySquares() {
@@ -116,6 +172,10 @@ export default function boardFactory(id) {
   return {
     findSets,
     isOccupied,
+    containsMissOrSunkSquare,
+    containsAttack,
+    isAttacked,
+    numAttacksInSet,
     placeShip,
     receiveAttack,
     allShipsSunk,
@@ -123,6 +183,8 @@ export default function boardFactory(id) {
     listenForPosition,
     unlistenForPosition,
     resetSetup,
+    hasUnresolvedHits,
+    remainingShips,
     placedShips,
     squares,
     id,

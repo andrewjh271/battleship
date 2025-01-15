@@ -1,8 +1,10 @@
 import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
+import { huntDistribution, targetDistribution, selectMove } from './engine';
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
   const ships = getEnsemble();
+
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -19,7 +21,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     Object.entries(ships).forEach((ship) => {
       const name = ship[0];
       const dimensions = ship[1];
-      const set = homeBoard.findSets(...dimensions);
+      const set = homeBoard.findSets(homeBoard.isOccupied, ...dimensions);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     });
@@ -58,11 +60,11 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
   }
 
   function attack() {
-    if (possibleMoves.length === 0) throw new Error('there are no moves left');
-    const index = Math.floor(Math.random() * possibleMoves.length);
-    const move = possibleMoves[index];
-    possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
-    possibleMoves.pop();
+    const distribution = opponentBoard.hasUnresolvedHits()
+      ? targetDistribution(opponentBoard)
+      : huntDistribution(opponentBoard);
+
+    const move = selectMove(distribution);
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
     moveCounter.increment();
   }
@@ -71,7 +73,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
     Object.entries(ships).forEach((ship) => {
       const name = ship[0];
       const dimensions = ship[1];
-      const set = homeBoard.findSets(...dimensions);
+      const set = homeBoard.findSets(homeBoard.isOccupied, ...dimensions);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     });

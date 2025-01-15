@@ -115,3 +115,104 @@ describe('allShipsSunk', () => {
     expect(board.allShipsSunk()).toBe(true);
   });
 });
+
+describe('hasUnresolvedHits', () => {
+  test('empty board', () => {
+    expect(board.hasUnresolvedHits()).toBe(false);
+  });
+
+  test('board with placed ships and no hits', () => {
+    board.placeShip([
+      [5, 0],
+      [5, 1],
+      [5, 2],
+    ]);
+
+    board.placeShip([
+      [4, 5],
+      [5, 5],
+      [6, 5],
+      [7, 5],
+      [8, 5],
+    ]);
+
+    board.placeShip([
+      [1, 7],
+      [1, 8],
+      [2, 7],
+      [2, 8],
+    ]);
+
+    board.receiveAttack({ id, coords: [6, 6] });
+    board.receiveAttack({ id, coords: [1, 0] });
+    board.receiveAttack({ id, coords: [9, 9] });
+    board.receiveAttack({ id, coords: [0, 7] });
+
+    expect(board.hasUnresolvedHits()).toBe(false);
+  });
+
+  test('board with unresolved hits', () => {
+    board.placeShip([
+      [5, 0],
+      [5, 1],
+      [5, 2],
+    ]);
+
+    board.placeShip([
+      [1, 7],
+      [1, 8],
+      [2, 7],
+      [2, 8],
+    ]);
+
+    board.receiveAttack({ id, coords: [6, 6] });
+    board.receiveAttack({ id, coords: [1, 0] });
+    board.receiveAttack({ id, coords: [2, 7] });
+
+    expect(board.hasUnresolvedHits()).toBe(true);
+  });
+
+  test('board with one sunk ship and misses', () => {
+    board.placeShip([
+      [5, 0],
+      [5, 1],
+      [5, 2],
+    ]);
+
+    board.placeShip([
+      [1, 7],
+      [1, 8],
+      [2, 7],
+      [2, 8],
+    ]);
+
+    board.receiveAttack({ id, coords: [5, 0] });
+    board.receiveAttack({ id, coords: [4, 4] });
+    board.receiveAttack({ id, coords: [5, 1] });
+    board.receiveAttack({ id, coords: [5, 2] });
+
+    expect(board.hasUnresolvedHits()).toBe(false);
+  });
+
+  test('board with one sunk ship and one unresolved hit', () => {
+    board.placeShip([
+      [5, 0],
+      [5, 1],
+      [5, 2],
+    ]);
+
+    board.placeShip([
+      [1, 7],
+      [1, 8],
+      [2, 7],
+      [2, 8],
+    ]);
+
+    board.receiveAttack({ id, coords: [5, 0] });
+    board.receiveAttack({ id, coords: [2, 8] });
+    board.receiveAttack({ id, coords: [5, 1] });
+    board.receiveAttack({ id, coords: [5, 2] });
+
+    expect(board.hasUnresolvedHits()).toBe(true);
+  });
+});

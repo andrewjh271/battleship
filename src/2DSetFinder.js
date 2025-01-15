@@ -1,4 +1,4 @@
-function find2DSets(board, width, height) {
+function find2DSets(board, width, height, exclusionCondition) {
   const sets = [];
   for (let i = 0; i <= board.size - width; i++) {
     const rows = [];
@@ -8,8 +8,8 @@ function find2DSets(board, width, height) {
       if (width !== height) columns.push(createYComponent(j, i, width));
     }
     sets.push(
-      ...findSetsFromComponents(rows, height, board),
-      ...findSetsFromComponents(columns, height, board) // empty array if width === height
+      ...findSetsFromComponents(rows, height, exclusionCondition),
+      ...findSetsFromComponents(columns, height, exclusionCondition) // empty array if width === height
     );
   }
   if (sets.length === 0) throw new Error('No sets found with given parameters');
@@ -32,11 +32,11 @@ function createYComponent(fixed, variable, length) {
   return component;
 }
 
-function findSetsFromComponents(components, length, board) {
+function findSetsFromComponents(components, length, exclusionCondition) {
   const sets = [];
   for (let i = 0; i <= components.length - length; i++) {
     const candidateSet = components.slice(i, i + length).flat();
-    if (!board.isOccupied(candidateSet)) {
+    if (!exclusionCondition(candidateSet)) {
       sets.push(candidateSet);
     }
   }

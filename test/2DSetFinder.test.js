@@ -9,31 +9,31 @@ describe('finds the correct number of sets on empty boards', () => {
   });
 
   test('2x2 object', () => {
-    expect(find2DSets(board, 2, 2).length).toBe(81);
+    expect(find2DSets(board, 2, 2, board.isOccupied).length).toBe(81);
   });
 
   test('4x4 object', () => {
-    expect(find2DSets(board, 4, 4).length).toBe(49);
+    expect(find2DSets(board, 4, 4, board.isOccupied).length).toBe(49);
   });
 
   test('5x2 object', () => {
-    expect(find2DSets(board, 5, 2).length).toBe(108);
+    expect(find2DSets(board, 5, 2, board.isOccupied).length).toBe(108);
   });
 
   test('5x4 object', () => {
-    expect(find2DSets(board, 5, 4).length).toBe(84);
+    expect(find2DSets(board, 5, 4, board.isOccupied).length).toBe(84);
   });
 
   test('5x3 object', () => {
-    expect(find2DSets(board, 5, 3).length).toBe(96);
+    expect(find2DSets(board, 5, 3, board.isOccupied).length).toBe(96);
   });
 
   test('5x1 object', () => {
-    expect(find2DSets(board, 5, 1).length).toBe(120);
+    expect(find2DSets(board, 5, 1, board.isOccupied).length).toBe(120);
   });
 
   test('1x2 object', () => {
-    expect(find2DSets(board, 1, 2).length).toBe(180);
+    expect(find2DSets(board, 1, 2, board.isOccupied).length).toBe(180);
   });
 });
 
@@ -121,7 +121,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
       ],
     ];
 
-    const result = find2DSets(board, 5, 2);
+    const result = find2DSets(board, 5, 2, board.isOccupied);
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
 
     expect(result.length).toBe(expectedContents.length);
@@ -237,7 +237,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
         [9, 6],
       ],
     ];
-    const result = find2DSets(board, 2, 2);
+    const result = find2DSets(board, 2, 2, board.isOccupied);
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
 
     expect(result.length).toBe(expectedContents.length);
@@ -329,7 +329,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
         [9, 1],
       ],
     ];
-    const result = find2DSets(board, 2, 3);
+    const result = find2DSets(board, 2, 3, board.isOccupied);
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
 
     expect(result.length).toBe(expectedContents.length);
@@ -408,7 +408,7 @@ describe('returns an array of all valid sets of coordinates for ship of x and y 
         [6, 9],
       ],
     ];
-    const result = find2DSets(board, 2, 5);
+    const result = find2DSets(board, 2, 5, board.isOccupied);
     expect(result.length).toBe(expectedSet.length);
     expect(result).toEqual(expect.arrayContaining(expectedSet));
   });
@@ -421,7 +421,7 @@ describe('Throws error when set is empty', () => {
   });
 
   test('object too large for board', () => {
-    expect(() => find2DSets(board, 4, 11)).toThrow('No sets found with given parameters');
+    expect(() => find2DSets(board, 4, 11, board.isOccupied)).toThrow('No sets found with given parameters');
   });
 
   test('no room for object', () => {
@@ -477,6 +477,6 @@ describe('Throws error when set is empty', () => {
       [8, 8],
     ]);
 
-    expect(() => find2DSets(board, 2, 2)).toThrow('No sets found with given parameters');
+    expect(() => find2DSets(board, 2, 2, board.isOccupied)).toThrow('No sets found with given parameters');
   });
 });

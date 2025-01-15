@@ -12,7 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   find1DSets: () => (/* binding */ find1DSets)
 /* harmony export */ });
-function find1DSets(board, length) {
+function find1DSets(board, length, exclusionCondition) {
   if (length === 1) return board.emptySquares();
   const sets = [];
   for (let i = 0; i < board.size; i++) {
@@ -23,24 +23,24 @@ function find1DSets(board, length) {
       vertical.push([i, j]);
     }
     sets.push(
-      ...findSetsFromLine(horizontal, length, board),
-      ...findSetsFromLine(vertical, length, board),
+      ...findSetsFromLine(horizontal, length, exclusionCondition),
+      ...findSetsFromLine(vertical, length, exclusionCondition),
     );
   }
   if (sets.length === 0) throw new Error('No sets found with given parameters');
   return sets;
 }
 
-function findSetsFromLine(line, length, board) {
+function findSetsFromLine(line, length, exclusionCondition) {
   let lft = 0;
   let rt = 1;
   const sets = [];
 
   while (rt < line.length) {
-    if (board.isOccupied([line[lft]])) {
+    if (exclusionCondition([line[lft]])) {
       lft = rt;
       rt += 1;
-    } else if (board.isOccupied([line[rt]])) {
+    } else if (exclusionCondition([line[rt]])) {
       lft = rt + 1;
       rt += 2;
     } else if (rt - lft + 1 === length) {
@@ -73,7 +73,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   find2DSets: () => (/* binding */ find2DSets)
 /* harmony export */ });
-function find2DSets(board, width, height) {
+function find2DSets(board, width, height, exclusionCondition) {
   const sets = [];
   for (let i = 0; i <= board.size - width; i++) {
     const rows = [];
@@ -83,8 +83,8 @@ function find2DSets(board, width, height) {
       if (width !== height) columns.push(createYComponent(j, i, width));
     }
     sets.push(
-      ...findSetsFromComponents(rows, height, board),
-      ...findSetsFromComponents(columns, height, board) // empty array if width === height
+      ...findSetsFromComponents(rows, height, exclusionCondition),
+      ...findSetsFromComponents(columns, height, exclusionCondition) // empty array if width === height
     );
   }
   if (sets.length === 0) throw new Error('No sets found with given parameters');
@@ -107,11 +107,11 @@ function createYComponent(fixed, variable, length) {
   return component;
 }
 
-function findSetsFromComponents(components, length, board) {
+function findSetsFromComponents(components, length, exclusionCondition) {
   const sets = [];
   for (let i = 0; i <= components.length - length; i++) {
     const candidateSet = components.slice(i, i + length).flat();
-    if (!board.isOccupied(candidateSet)) {
+    if (!exclusionCondition(candidateSet)) {
       sets.push(candidateSet);
     }
   }
@@ -794,6 +794,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DOMAdapter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DOMAdapter */ "./src/DOMAdapter.js");
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+
 
 
 
@@ -804,8 +806,11 @@ __webpack_require__.r(__webpack_exports__);
 function boardFactory(id) {
   let totalShips = 0;
   let shipsSunk = 0;
+  let totalHits = 0;
+  let totalSunkHits = 0;
   const placedShips = [];
   const squares = [];
+  const remainingShips = { ...(0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.getEnsemble)() };
   for (let i = 0; i < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); i++) {
     squares[i] = [];
     for (let j = 0; j < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); j++) {
@@ -843,13 +848,49 @@ function boardFactory(id) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('clearPosition', resetSetup);
   }
 
-  const isOccupied = (coords) => {
-    for (let i = 0; i < coords.length; i++) {
-      const coord = coords[i];
-      if (squares[coord[0]][coord[1]].ship) return true;
+  const isOccupied = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      if (squares[coords[0]][coords[1]].ship) return true;
     }
     return false;
   };
+
+  const isAttacked = (coords) => squares[coords[0]][coords[1]].attacked;
+
+  const containsAttack = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      const square = squares[coords[0]][coords[1]];
+      if (square.attacked) return true;
+    }
+    return false;
+  };
+
+  const containsMissOrSunkSquare = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      const square = squares[coords[0]][coords[1]];
+      if ((square.attacked && !square.ship) || square.sunk) return true;
+      // the engine uses this function for finding moves, and while it should not necessarily know
+      // whether a square contains a ship, it does know about misses (i.e. an attacked square with
+      // no ship). it also does not necessarily know all squares that contain sunk ships, but can
+      // often deduce them by marking hit squares as sunk when there are no unresolved hits
+    }
+    return false;
+  };
+
+  const numAttacksInSet = (coordsSet) => {
+    let attacks = 0;
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      const square = squares[coords[0]][coords[1]];
+      if (square.attacked) attacks++;
+    }
+    return attacks;
+  };
+
+  const hasUnresolvedHits = () => totalHits > totalSunkHits;
 
   const outOfRange = (coords) => coords.flat().some((coord) => coord < 0 || coord > (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1);
 
@@ -873,15 +914,31 @@ function boardFactory(id) {
     const { coords } = attackData;
     const square = squares[coords[0]][coords[1]];
     if (square.attacked) throw new Error('this square has already been attacked');
+    square.attacked = true;
     if (square.ship) {
       square.ship.hit();
+      totalHits++;
       if (square.ship.isSunk()) {
         shipsSunk++;
+        totalSunkHits += square.ship.length;
+        delete remainingShips[square.ship.name];
+        markSunkSquares();
         (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', { id, inst: square.ship.name });
       }
     }
-    square.attacked = true;
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', { squares, id });
+  }
+
+  function markSunkSquares() {
+    if (!hasUnresolvedHits()) {
+      for (let i = 0; i < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); i++) {
+        for (let j = 0; j < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); j++) {
+          if (squares[i][j].attacked) {
+            squares[i][j].sunk = true;
+          }
+        }
+      }
+    }
   }
 
   function allShipsSunk() {
@@ -889,12 +946,12 @@ function boardFactory(id) {
   }
 
   // find1DSets is a faster algorithm for finding sets with width or length equal to 1
-  function findSets(x, y = 1) {
+  function findSets(conditionFunction, x, y) {
     if (x === 1 || y === 1) {
       const length = x === 1 ? y : x;
-      return (0,_1DSetFinder__WEBPACK_IMPORTED_MODULE_1__.find1DSets)(this, length);
+      return (0,_1DSetFinder__WEBPACK_IMPORTED_MODULE_1__.find1DSets)(this, length, conditionFunction);
     }
-    return (0,_2DSetFinder__WEBPACK_IMPORTED_MODULE_2__.find2DSets)(this, x, y);
+    return (0,_2DSetFinder__WEBPACK_IMPORTED_MODULE_2__.find2DSets)(this, x, y, conditionFunction);
   }
 
   function emptySquares() {
@@ -912,6 +969,10 @@ function boardFactory(id) {
   return {
     findSets,
     isOccupied,
+    containsMissOrSunkSquare,
+    containsAttack,
+    isAttacked,
+    numAttacksInSet,
     placeShip,
     receiveAttack,
     allShipsSunk,
@@ -919,6 +980,8 @@ function boardFactory(id) {
     listenForPosition,
     unlistenForPosition,
     resetSetup,
+    hasUnresolvedHits,
+    remainingShips,
     placedShips,
     squares,
     id,
@@ -1053,6 +1116,85 @@ function dragMove(e) {
 function resetDraggedImage(element) {
   element.style.top = '';
   element.style.left = '';
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/engine.js":
+/*!***********************!*\
+  !*** ./src/engine.js ***!
+  \***********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   huntDistribution: () => (/* binding */ huntDistribution),
+/* harmony export */   selectMove: () => (/* binding */ selectMove),
+/* harmony export */   targetDistribution: () => (/* binding */ targetDistribution)
+/* harmony export */ });
+/* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
+/* eslint-disable no-param-reassign */
+
+
+function selectMove(distribution) {
+  const keys = Object.keys(distribution);
+  if (keys.length === 0) throw new Error('Distribution object is empty');
+  let max = -Infinity;
+  let candidateMoves = [];
+
+  keys.forEach((key) => {
+    if (distribution[key] > max) {
+      candidateMoves = [key];
+      max = distribution[key];
+    } else if (distribution[key] === max) {
+      candidateMoves.push(key);
+    }
+  });
+
+  candidateMoves = candidateMoves.map((el) => (0,_coordinates__WEBPACK_IMPORTED_MODULE_0__.indexToCoordinates)(Number(el)));
+  const index = Math.floor(Math.random() * candidateMoves.length);
+  const move = candidateMoves[index];
+  return move;
+}
+
+function huntDistribution(board) {
+  if (Object.keys(board.remainingShips).length === 0) throw new Error('There are no remaining ships to test');
+  const sets = [];
+  Object.entries(board.remainingShips).forEach((ship) => {
+    const dimensions = ship[1];
+    const set = board.findSets(board.containsAttack, ...dimensions);
+    sets.push(...set);
+  });
+  return sets.flat().reduce((freq, coords) => {
+    const key = (0,_coordinates__WEBPACK_IMPORTED_MODULE_0__.coordinatesToIndex)(coords);
+    freq[key] = (freq[key] || 0) + 1;
+    return freq;
+  }, {});
+}
+
+function targetDistribution(board) {
+  if (Object.keys(board.remainingShips).length === 0) throw new Error('There are no remaining ships to test');
+  const WEIGHT = 100;
+  const sets = [];
+  Object.entries(board.remainingShips).forEach((ship) => {
+    const dimensions = ship[1];
+    const set = board.findSets(board.containsMissOrSunkSquare, ...dimensions);
+    sets.push(...set);
+  });
+  const distribution = {};
+  sets.forEach((set) => {
+    const weightedScore = board.numAttacksInSet(set) * WEIGHT;
+    set
+      .filter((coords) => !board.isAttacked(coords))
+      .forEach((coords) => {
+        const key = (0,_coordinates__WEBPACK_IMPORTED_MODULE_0__.coordinatesToIndex)(coords);
+        distribution[key] = (distribution[key] || 0) + 1 + weightedScore;
+      });
+  });
+  return distribution;
 }
 
 
@@ -1571,11 +1713,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _engine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./engine */ "./src/engine.js");
+
 
 
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
   const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
+
   function setup() {
     homeDOMBoard.setupBoard();
     homeBoard.listenForPosition();
@@ -1592,7 +1737,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     Object.entries(ships).forEach((ship) => {
       const name = ship[0];
       const dimensions = ship[1];
-      const set = homeBoard.findSets(...dimensions);
+      const set = homeBoard.findSets(homeBoard.isOccupied, ...dimensions);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     });
@@ -1631,11 +1776,11 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
   }
 
   function attack() {
-    if (possibleMoves.length === 0) throw new Error('there are no moves left');
-    const index = Math.floor(Math.random() * possibleMoves.length);
-    const move = possibleMoves[index];
-    possibleMoves[index] = possibleMoves[possibleMoves.length - 1];
-    possibleMoves.pop();
+    const distribution = opponentBoard.hasUnresolvedHits()
+      ? (0,_engine__WEBPACK_IMPORTED_MODULE_2__.targetDistribution)(opponentBoard)
+      : (0,_engine__WEBPACK_IMPORTED_MODULE_2__.huntDistribution)(opponentBoard);
+
+    const move = (0,_engine__WEBPACK_IMPORTED_MODULE_2__.selectMove)(distribution);
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
     moveCounter.increment();
   }
@@ -1644,7 +1789,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
     Object.entries(ships).forEach((ship) => {
       const name = ship[0];
       const dimensions = ship[1];
-      const set = homeBoard.findSets(...dimensions);
+      const set = homeBoard.findSets(homeBoard.isOccupied, ...dimensions);
       const coords = set[Math.floor(Math.random() * set.length)];
       homeBoard.placeShip(coords, name);
     });
@@ -1750,7 +1895,7 @@ function shipFactory(length, name, coordinateSet) {
     }
   };
   const isSunk = () => hits === length;
-  return { hit, isSunk, name, coords };
+  return { hit, isSunk, name, coords, length };
 }
 
 

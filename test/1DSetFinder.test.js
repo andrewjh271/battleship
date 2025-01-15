@@ -160,7 +160,7 @@ describe('randomly placing  ships', () => {
     ];
 
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
-    const result = find1DSets(board, 5);
+    const result = find1DSets(board, 5, board.isOccupied);
 
     expect(result.length).toBe(expectedSet.length);
     expect(result).toEqual(expect.arrayContaining(expectedContents));
@@ -273,7 +273,7 @@ describe('randomly placing  ships', () => {
     ];
 
     const expectedContents = expectedSet.map((expected) => expect.arrayContaining(expected));
-    const result = find1DSets(board, 5);
+    const result = find1DSets(board, 5, board.isOccupied);
 
     expect(result.length).toBe(expectedSet.length);
     expect(result).toEqual(expect.arrayContaining(expectedContents));
@@ -281,11 +281,11 @@ describe('randomly placing  ships', () => {
 
   test('findSets returns an array of all valid coordinates for ship of length n', () => {
     board.placeShip([[0, 9]]);
-    expect(find1DSets(board, 2).length).toBe(178);
-    expect(find1DSets(board, 1).length).toBe(99);
+    expect(find1DSets(board, 2, board.isOccupied).length).toBe(178);
+    expect(find1DSets(board, 1, board.isOccupied).length).toBe(99);
   });
 
   test('object too large for board', () => {
-    expect(() => find1DSets(board, 11)).toThrow('No sets found with given parameters');
+    expect(() => find1DSets(board, 11, board.isOccupied)).toThrow('No sets found with given parameters');
   });
 });
