@@ -835,17 +835,15 @@ function boardFactory(id) {
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('clearPosition', resetSetup); // autoSetup() relies on adding ships to the board object, not just the DOMBoard
   }
 
-  function unlistenForPosition() {
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', boundSetPosition);
-  }
-
   function setPosition(DOMBoard) {
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', boundSetPosition);
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('clearPosition', resetSetup);
+    if (placedShips.length > 0) return; // if there are placedShips, autoSetup() has been called and the data already exists in board object
+
     const ships = (0,_DOMAdapter__WEBPACK_IMPORTED_MODULE_3__.getShipData)(DOMBoard);
     Object.entries(ships).forEach((ship) => {
       this.placeShip(ship[1], ship[0]);
     });
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('setPosition', boundSetPosition);
-    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.off)('clearPosition', resetSetup);
   }
 
   const isOccupied = (coordsSet) => {
@@ -978,7 +976,6 @@ function boardFactory(id) {
     allShipsSunk,
     emptySquares,
     listenForPosition,
-    unlistenForPosition,
     resetSetup,
     hasUnresolvedHits,
     remainingShips,
@@ -1742,8 +1739,6 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
       homeBoard.placeShip(coords, name);
     });
     homeDOMBoard.placeSetImages(homeBoard);
-    homeBoard.unlistenForPosition();
-    // ships have already been placed onto homeBoard — don't re-add them from DOMBoard
   }
 
   function isComputer() {
