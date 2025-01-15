@@ -38,17 +38,15 @@ export default function boardFactory(id) {
     on('clearPosition', resetSetup); // autoSetup() relies on adding ships to the board object, not just the DOMBoard
   }
 
-  function unlistenForPosition() {
-    off('setPosition', boundSetPosition);
-  }
-
   function setPosition(DOMBoard) {
+    off('setPosition', boundSetPosition);
+    off('clearPosition', resetSetup);
+    if (placedShips.length > 0) return; // if there are placedShips, autoSetup() has been called and the data already exists in board object
+
     const ships = getShipData(DOMBoard);
     Object.entries(ships).forEach((ship) => {
       this.placeShip(ship[1], ship[0]);
     });
-    off('setPosition', boundSetPosition);
-    off('clearPosition', resetSetup);
   }
 
   const isOccupied = (coordsSet) => {
@@ -181,7 +179,6 @@ export default function boardFactory(id) {
     allShipsSunk,
     emptySquares,
     listenForPosition,
-    unlistenForPosition,
     resetSetup,
     hasUnresolvedHits,
     remainingShips,

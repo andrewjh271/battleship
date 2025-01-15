@@ -26,8 +26,6 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
       homeBoard.placeShip(coords, name);
     });
     homeDOMBoard.placeSetImages(homeBoard);
-    homeBoard.unlistenForPosition();
-    // ships have already been placed onto homeBoard — don't re-add them from DOMBoard
   }
 
   function isComputer() {
