@@ -195,18 +195,24 @@ describe('hasUnresolvedHits', () => {
   });
 
   test('board with one sunk ship and one unresolved hit', () => {
-    board.placeShip([
-      [5, 0],
-      [5, 1],
-      [5, 2],
-    ]);
+    board.placeShip(
+      [
+        [5, 0],
+        [5, 1],
+        [5, 2],
+      ],
+      'violin'
+    );
 
-    board.placeShip([
-      [1, 7],
-      [1, 8],
-      [2, 7],
-      [2, 8],
-    ]);
+    board.placeShip(
+      [
+        [1, 7],
+        [1, 8],
+        [2, 7],
+        [2, 8],
+      ],
+      'horn'
+    );
 
     board.receiveAttack({ id, coords: [5, 0] });
     board.receiveAttack({ id, coords: [2, 8] });

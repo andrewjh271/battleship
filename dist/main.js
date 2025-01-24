@@ -802,6 +802,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _unresolvedShips__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./unresolvedShips */ "./src/unresolvedShips.js");
+/* eslint-disable no-param-reassign */
+
 
 
 
@@ -818,6 +821,7 @@ function boardFactory(id) {
   const placedShips = [];
   const squares = [];
   const remainingShips = { ...(0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.getEnsemble)() };
+  const unresolvedShips = (0,_unresolvedShips__WEBPACK_IMPORTED_MODULE_7__["default"])();
   for (let i = 0; i < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); i++) {
     squares[i] = [];
     for (let j = 0; j < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); j++) {
@@ -924,23 +928,37 @@ function boardFactory(id) {
       square.ship.hit();
       totalHits++;
       if (square.ship.isSunk()) {
-        shipsSunk++;
-        totalSunkHits += square.ship.length;
-        delete remainingShips[square.ship.name];
-        markSunkSquares();
-        (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', { id, inst: square.ship.name });
+        handleSinkEvent(this, square);
       }
     }
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', { squares, id });
   }
 
+  function handleSinkEvent(board, square) {
+    shipsSunk++;
+    totalSunkHits += square.ship.area;
+    delete remainingShips[square.ship.name];
+    (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', { id, inst: square.ship.name });
+
+    if (!board) return; // attack from DOM interaction to Observer — `this` in receieveAttack is undefined
+    // `this` is definied if called from computer — that's when marking squares is necessary for algorithm
+
+    if (hasUnresolvedHits()) {
+      square.sunkInstrument = square.ship.name;
+      square.sunk = true;
+      unresolvedShips.add(square.ship);
+      unresolvedShips.resolve(board);
+    } else {
+      unresolvedShips.clear();
+      markSunkSquares();
+    }
+  }
+
   function markSunkSquares() {
-    if (!hasUnresolvedHits()) {
-      for (let i = 0; i < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); i++) {
-        for (let j = 0; j < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); j++) {
-          if (squares[i][j].attacked) {
-            squares[i][j].sunk = true;
-          }
+    for (let i = 0; i < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); i++) {
+      for (let j = 0; j < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)(); j++) {
+        if (squares[i][j].attacked) {
+          squares[i][j].sunk = true;
         }
       }
     }
@@ -1165,7 +1183,8 @@ function selectMove(distribution) {
 }
 
 function huntDistribution(board) {
-  if (Object.keys(board.remainingShips).length === 0) throw new Error('There are no remaining ships to test');
+  if (Object.keys(board.remainingShips).length === 0)
+    throw new Error('There are no remaining ships to test');
   const sets = [];
   Object.entries(board.remainingShips).forEach((ship) => {
     const dimensions = ship[1];
@@ -1180,8 +1199,8 @@ function huntDistribution(board) {
 }
 
 function targetDistribution(board) {
-  if (Object.keys(board.remainingShips).length === 0) throw new Error('There are no remaining ships to test');
-  const WEIGHT = 100;
+  if (Object.keys(board.remainingShips).length === 0)
+    throw new Error('There are no remaining ships to test');
   const sets = [];
   Object.entries(board.remainingShips).forEach((ship) => {
     const dimensions = ship[1];
@@ -1190,7 +1209,16 @@ function targetDistribution(board) {
   });
   const distribution = {};
   sets.forEach((set) => {
-    const weightedScore = board.numAttacksInSet(set) * WEIGHT;
+    const n = board.numAttacksInSet(set);
+    const weightedScore = 15 ** n;
+
+    // 15 possible placements containing 1 hit square would be necessary to equal in weight 1 possible
+    // placement containing 2 hit squares, and so on.
+    // Designed to prioritize squares that could complete sets with the highest number of hit squares.
+    // It is not clear that this offers any improvement against random placement, but against
+    // human players it should. Against humans it is more likely that hit squares which could be part of
+    // a large ship are, in fact, part of that ship because a human player is less likely to place ships
+    // in clusters.
     set
       .filter((coords) => !board.isAttacked(coords))
       .forEach((coords) => {
@@ -1886,18 +1914,122 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ shipFactory)
 /* harmony export */ });
-function shipFactory(length, name, coordinateSet) {
+function shipFactory(area, name, coordinateSet) {
   let hits = 0;
   const coords = coordinateSet;
   const hit = () => {
-    if (hits < length) {
+    if (hits < area) {
       hits++;
     } else {
       throw new Error('You already sank this ship!');
     }
   };
-  const isSunk = () => hits === length;
-  return { hit, isSunk, name, coords, length };
+  const isSunk = () => hits === area;
+  return { hit, isSunk, name, coords, area };
+}
+
+
+/***/ }),
+
+/***/ "./src/unresolvedShips.js":
+/*!********************************!*\
+  !*** ./src/unresolvedShips.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ unresolvedShipList)
+/* harmony export */ });
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _2DSetFinder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./2DSetFinder */ "./src/2DSetFinder.js");
+/* eslint-disable no-param-reassign */
+
+
+
+function unresolvedShipList() {
+  let list = [];
+
+  function resolve(board) {
+    for (let i = 0; i < list.length; i++) {
+      const { name } = list[i];
+      const [width, height] = [...(0,_ensemble__WEBPACK_IMPORTED_MODULE_0__.getEnsemble)()[name]];
+      const invalidPlacement = makeConditionFunction(board, name);
+      const set = (0,_2DSetFinder__WEBPACK_IMPORTED_MODULE_1__.find2DSets)(board, width, height, invalidPlacement);
+      // find2DSets must be used because it can check that a set includes one square that meets a condition
+      // find1DSets looks at each square individually for conditions that would disqualify a set
+
+      if (set.length === 0) {
+        throw new Error(`No possible sets found for ${name}`);
+      } else if (set.length === 1) {
+        markSunkSquares(board, set[0]);
+        remove(name);
+        resolve(board);
+        break;
+      }
+    }
+  }
+
+  function markSunkSquares(board, set) {
+    set.forEach((coords) => {
+      board.squares[coords[0]][coords[1]].sunk = true;
+    });
+  }
+
+  function makeConditionFunction(board, name) {
+    return function conditionFunction(coordsSet) {
+      if (
+        !coordsSet.some((coords) => {
+          const square = board.squares[coords[0]][coords[1]];
+          return square.sunkInstrument === name;
+        })
+      ) {
+        return true;
+      }
+      if (
+        coordsSet.some((coords) => {
+          const square = board.squares[coords[0]][coords[1]];
+          return !square.attacked || (square.sunk && square.sunkInstrument !== name);
+        })
+      ) {
+        return true;
+      }
+
+      return false;
+    };
+  }
+
+  function add(ship) {
+    // list is ordered from largest to smallest because larger instruments
+    // are more likely to have only one possible placement
+    for (let i = 0; i < list.length; i++) {
+      if (ship.area > list[i].area) {
+        list.splice(i, 0, ship);
+        return;
+      }
+    }
+    list.push(ship);
+  }
+
+  function remove(name) {
+    for (let i = 0; i < list.length; i++) {
+      if (name === list[i].name) {
+        list.splice(i, 1);
+        return;
+      }
+    }
+    throw new Error('No instrument found to remove');
+  }
+
+  function clear() {
+    list = [];
+  }
+
+  return {
+    resolve,
+    add,
+    clear,
+  };
 }
 
 

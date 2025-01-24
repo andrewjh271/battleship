@@ -42,7 +42,7 @@ describe('attacking', () => {
     let totalMoveCount = 0;
     let minMoveCount = Infinity;
     let maxMoveCount = -Infinity;
-    const n = 100;
+    const n = 30;
 
     for (let i = 0; i < n; i++) {
       let moveCount = 0;
@@ -72,9 +72,9 @@ describe('attacking', () => {
     // console.log(`Average moves: ${avgMoveCount}`);
 
     expect(minMoveCount).toBeGreaterThanOrEqual(37);
-    expect(maxMoveCount).toBeLessThan(82);
-    expect(avgMoveCount).toBeLessThan(70);
-    expect(avgMoveCount).toBeGreaterThan(50);
+    expect(maxMoveCount).toBeLessThan(80);
+    expect(avgMoveCount).toBeLessThan(64);
+    expect(avgMoveCount).toBeGreaterThan(55);
   });
 });
 

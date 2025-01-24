@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import shipFactory from './ship';
 import { find1DSets } from './1DSetFinder';
 import { find2DSets } from './2DSetFinder';
@@ -5,6 +6,7 @@ import { getShipData } from './DOMAdapter';
 import { on, off, emit } from './observer';
 import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
+import unresolvedShipList from './unresolvedShips';
 
 export default function boardFactory(id) {
   let totalShips = 0;
@@ -14,6 +16,7 @@ export default function boardFactory(id) {
   const placedShips = [];
   const squares = [];
   const remainingShips = { ...getEnsemble() };
+  const unresolvedShips = unresolvedShipList();
   for (let i = 0; i < rowLength(); i++) {
     squares[i] = [];
     for (let j = 0; j < rowLength(); j++) {
@@ -120,23 +123,37 @@ export default function boardFactory(id) {
       square.ship.hit();
       totalHits++;
       if (square.ship.isSunk()) {
-        shipsSunk++;
-        totalSunkHits += square.ship.length;
-        delete remainingShips[square.ship.name];
-        markSunkSquares();
-        emit('sunk', { id, inst: square.ship.name });
+        handleSinkEvent(this, square);
       }
     }
     emit('boardChange', { squares, id });
   }
 
+  function handleSinkEvent(board, square) {
+    shipsSunk++;
+    totalSunkHits += square.ship.area;
+    delete remainingShips[square.ship.name];
+    emit('sunk', { id, inst: square.ship.name });
+
+    if (!board) return; // attack from DOM interaction to Observer — `this` in receieveAttack is undefined
+    // `this` is definied if called from computer — that's when marking squares is necessary for algorithm
+
+    if (hasUnresolvedHits()) {
+      square.sunkInstrument = square.ship.name;
+      square.sunk = true;
+      unresolvedShips.add(square.ship);
+      unresolvedShips.resolve(board);
+    } else {
+      unresolvedShips.clear();
+      markSunkSquares();
+    }
+  }
+
   function markSunkSquares() {
-    if (!hasUnresolvedHits()) {
-      for (let i = 0; i < rowLength(); i++) {
-        for (let j = 0; j < rowLength(); j++) {
-          if (squares[i][j].attacked) {
-            squares[i][j].sunk = true;
-          }
+    for (let i = 0; i < rowLength(); i++) {
+      for (let j = 0; j < rowLength(); j++) {
+        if (squares[i][j].attacked) {
+          squares[i][j].sunk = true;
         }
       }
     }
