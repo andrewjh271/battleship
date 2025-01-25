@@ -714,9 +714,14 @@ img[src*='piccolo'].staging-img {
   padding: 10px 1px 10px 1px;
 }
 
+.stretch-trumpet {
+  object-fit: fill;
+  padding: 6px 3px 6px 3px;
+}
+
 .stretch-violin {
   object-fit: fill;
-  padding: 12px 3px 11px 3px;
+  padding: 11px 3px 11px 3px;
 }
 
 .board.covered {

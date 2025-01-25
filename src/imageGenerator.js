@@ -40,7 +40,9 @@ function piccolo() {
 }
 
 function trumpet() {
-  return newImage('trumpet', 1, 3);
+  const image = newImage('trumpet', 1, 3);
+  image.classList.add('stretch-trumpet');
+  return image;
 }
 
 function newImage(type, width, height) {
