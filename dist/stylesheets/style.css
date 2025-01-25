@@ -376,6 +376,10 @@ button:disabled {
 .board.defense .cell:not(.attacked).sunk.highlight-placed {
   background-color: rgba(161, 0, 0, 0.9215686275);
 }
+.board.game-over .highlight-placed {
+  background-color: #b3aa92;
+  transition: 1.5s;
+}
 .board.offense {
   grid-column-start: 1;
 }

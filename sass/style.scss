@@ -411,6 +411,11 @@ button:disabled {
     }
   }
 
+  &.game-over .highlight-placed {
+    background-color: $placed;
+    transition: 1.5s;
+  }
+
   &.offense {
     grid-column-start: 1;
 
