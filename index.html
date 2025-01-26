@@ -39,7 +39,7 @@
             <option value="human">Human</option>
           </select>
         </div>
-        <div class="settings">
+        <div class="settings" title="Number of attacks per turn">
           <h3>Hits/Turn:</h3>
           <select id="move-select">
             <option value="1">1</option>
@@ -47,6 +47,13 @@
             <option value="3" selected>3</option>
             <option value="4">4</option>
             <option value="5">5</option>
+          </select>
+        </div>
+        <div class="settings" title="In stealth mode it is not indicated which squares are sunk">
+          <h3>Mode:</h3>
+          <select id="mode">
+            <option value="standard" selected>Standard</option>
+            <option value="stealth">Stealth</option>
           </select>
         </div>
 
@@ -59,7 +66,8 @@
 
       <div class="board hidden" id="board1">
         <div class="curtain invisible permanent"></div>
-        <div class="moves permanent hidden" id="moves1" title="Remaining Moves"></div>
+        <div class="broadcast permanent" data-player="Player 1"></div>
+        <div class="moves permanent invisible" id="moves1" title="Remaining Moves"></div>
         <span class="material-icons info permanent hidden" data-board="1">info</span>
         <div class="remaining-fleet permanent invisible opaque">
           <div><img src="/images/cello.png" class="fleet hidden cello" data-inst="cello" /><span></span></div>
@@ -82,7 +90,8 @@
       </div>
       <div class="board hidden" id="board2">
         <div class="curtain invisible permanent"></div>
-        <div class="moves permanent hidden" id="moves2" title="Remaining Moves"></div>
+        <div class="broadcast permanent" data-player="Player 2"></div>
+        <div class="moves permanent invisible" id="moves2" title="Remaining Moves"></div>
         <span class="material-icons info permanent hidden" data-board="2">info</span>
         <div class="remaining-fleet permanent invisible opaque">
           <div><img src="/images/cello.png" class="fleet hidden cello" data-inst="cello" /><span></span></div>

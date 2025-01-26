@@ -242,6 +242,9 @@ function DOMBoardFactory(id, ROWS) {
           img.parentElement.classList.add('sunk');
           board.cells[index].classList.add('sunk');
         }
+        if (square.sunkInstrument) {
+          board.cells[index].classList.add('final-attack');
+        }
         if (square.attacked) {
           board.cells[index].classList.add('attacked');
         }
@@ -324,6 +327,8 @@ function DOMBoardFactory(id, ROWS) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   broadcastSunkShip: () => (/* binding */ broadcastSunkShip),
+/* harmony export */   broadcastWin: () => (/* binding */ broadcastWin),
 /* harmony export */   coverBoards: () => (/* binding */ coverBoards),
 /* harmony export */   coverFleets: () => (/* binding */ coverFleets),
 /* harmony export */   resetDOM: () => (/* binding */ resetDOM),
@@ -363,6 +368,9 @@ const intro = document.querySelector('.intro-text');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
+const broadcast1 = board1.querySelector('.broadcast');
+const broadcast2 = board2.querySelector('.broadcast');
+
 function setWindowHeight() {
   document.body.style.height = `${window.innerHeight}px`;
 }
@@ -393,8 +401,12 @@ function resetDOM() {
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
+  broadcast1.classList.remove('game-over');
+  broadcast2.classList.remove('game-over');
+  broadcast1.classList.remove('active');
+  broadcast2.classList.remove('active');
   gameState.textContent = 'Attack!';
-  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
+  moveTrackers.forEach((tracker) => tracker.classList.add('invisible'));
   infoButtons.forEach((button) => {
     button.classList.add('hidden');
     button.textContent = 'info';
@@ -507,6 +519,20 @@ infoButtons.forEach((button) =>
   })
 );
 
+function broadcastSunkShip(data) {
+  const broadcast = data.id === 'board1' ? broadcast1 : broadcast2;
+  broadcast.textContent = `${broadcast.dataset.player}'s ${data.inst} has been sunk!`;
+  broadcast.classList.add('active');
+  setTimeout(() => broadcast.classList.remove('active'), 2000);
+}
+
+function broadcastWin(id) {
+  const broadcast = id === 1 ? broadcast1 : broadcast2;
+  broadcast.textContent = `${broadcast.dataset.player} Wins!`;
+  broadcast.classList.add('game-over');
+  broadcast.classList.add('active');
+}
+
 
 
 
@@ -574,6 +600,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 /* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
+/* harmony import */ var _mode__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./mode */ "./src/mode.js");
+
 
 
 
@@ -763,6 +791,9 @@ function newTemplateImage(type) {
 function newTemplateWrapper() {
   const imageWrapper = document.createElement('div');
   imageWrapper.classList.add('placed-img-wrapper');
+  if ((0,_mode__WEBPACK_IMPORTED_MODULE_6__.getMode)() === 'stealth') {
+    imageWrapper.classList.add('stealth');
+  }
   return imageWrapper;
 }
 
@@ -939,12 +970,13 @@ function boardFactory(id) {
     totalSunkHits += square.ship.area;
     delete remainingShips[square.ship.name];
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('sunk', { id, inst: square.ship.name });
+    square.sunkInstrument = square.ship.name;
 
     if (!board) return; // attack from DOM interaction to Observer — `this` in receieveAttack is undefined
     // `this` is definied if called from computer — that's when marking squares is necessary for algorithm
 
     if (hasUnresolvedHits()) {
-      square.sunkInstrument = square.ship.name;
+      // square.sunkInstrument = square.ship.name;
       square.sunk = true;
       unresolvedShips.add(square.ship);
       unresolvedShips.resolve(board);
@@ -1326,6 +1358,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 /* harmony import */ var _moveTracker__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./moveTracker */ "./src/moveTracker.js");
+/* harmony import */ var _mode__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./mode */ "./src/mode.js");
+/* eslint-disable no-return-assign */
+
 
 
 
@@ -1368,10 +1403,13 @@ let attackCount = 0;
 let attackMax = 3;
 const computerMoveTime = 700;
 
+let sinkDelay = 0; // delay computer start if last move sank a ship
+
 function beginSetup() {
   (0,_ensemble__WEBPACK_IMPORTED_MODULE_7__.setEnsemble)();
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupPanelView)();
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
+  (0,_mode__WEBPACK_IMPORTED_MODULE_9__.setMode)();
   attackMax = Number(document.getElementById('move-select').value);
   const board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
   const board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
@@ -1404,8 +1442,11 @@ function startGame() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showInfoButtons)();
   moveTracker1.reset(attackMax);
   moveTracker2.reset(attackMax);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', setSinkDelay);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.updateFleet);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.broadcastSunkShip);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('game-over', _DOMController__WEBPACK_IMPORTED_MODULE_3__.broadcastWin);
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -1415,10 +1456,10 @@ function startGame() {
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
   } else {
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.coverBoards)();
-    setTimeout( () => {
+    setTimeout(() => {
       (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
       currentPlayer.setTurn();
-    }, 2000 ) // wait for curtain to fully cover boards before changing setup-board to board1
+    }, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 
@@ -1429,9 +1470,9 @@ function playRound() {
     resetButton.disabled = true;
     setTimeout(() => {
       resetButton.disabled = false;
-    }, attackMax * computerMoveTime + 1500);
+    }, attackMax * computerMoveTime + 1800 + sinkDelay);
     setTimeout(switchMoveTracker, 500);
-    setTimeout(computerAttacks, 1000);
+    setTimeout(computerAttacks, 1000 + sinkDelay);
   } else {
     switchMoveTracker();
   }
@@ -1504,8 +1545,15 @@ function switchMoveTracker() {
   }
 }
 
+function setSinkDelay() {
+  sinkDelay = 1700;
+  setTimeout(() => sinkDelay = 0, 1000);
+}
+
 function gameOver() {
   gameState.textContent = 'Wins!';
+  const playerID = currentPlayer === player1 ? 1 : 2;
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.emit)('game-over', playerID);
   DOMBoard1.setGameOver();
   DOMBoard2.setGameOver();
 }
@@ -1632,6 +1680,32 @@ function removeWindowEvents() {
 
 /***/ }),
 
+/***/ "./src/mode.js":
+/*!*********************!*\
+  !*** ./src/mode.js ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getMode: () => (/* binding */ getMode),
+/* harmony export */   setMode: () => (/* binding */ setMode)
+/* harmony export */ });
+const modeSelect = document.querySelector('#mode');
+let mode = 'standard';
+
+function setMode() {
+  mode = modeSelect.value;
+}
+
+function getMode() {
+  return mode;
+}
+
+
+
+/***/ }),
+
 /***/ "./src/moveTracker.js":
 /*!****************************!*\
   !*** ./src/moveTracker.js ***!
@@ -1649,11 +1723,11 @@ function moveTrackerFactory(id) {
   let current = 0;
 
   function hide() {
-    tracker.classList.add('hidden');
+    tracker.classList.add('invisible');
   }
 
   function show() {
-    tracker.classList.remove('hidden');
+    tracker.classList.remove('invisible');
     tracker.moves.forEach((move) => {
       move.classList.remove('moved');
     });
