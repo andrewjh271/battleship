@@ -397,7 +397,6 @@ describe('resolve', () => {
     sunkSet.push(...unsunkSet, [6, 1]);
 
     expect(sunkSet.every((coords) => board.squares[coords[0]][coords[1]].sunk)).toBe(true);
-    expect(board.squares[6][1].sunkInstrument).toBeUndefined();
     expect(board.hasUnresolvedHits()).toBe(false);
 
     board.receiveAttack({ id, coords: [1, 4] });
@@ -439,7 +438,6 @@ describe('resolve', () => {
     sunkSet.push(...unsunkSet);
 
     expect(sunkSet.every((coords) => board.squares[coords[0]][coords[1]].sunk)).toBe(true);
-    expect(board.squares[6][4].sunkInstrument).toBeUndefined();
     expect(board.hasUnresolvedHits()).toBe(false);
   });
 });

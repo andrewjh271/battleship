@@ -58,6 +58,9 @@ export function DOMBoardFactory(id, ROWS) {
           img.parentElement.classList.add('sunk');
           board.cells[index].classList.add('sunk');
         }
+        if (square.sunkInstrument) {
+          board.cells[index].classList.add('final-attack');
+        }
         if (square.attacked) {
           board.cells[index].classList.add('attacked');
         }

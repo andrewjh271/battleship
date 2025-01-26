@@ -134,12 +134,13 @@ export default function boardFactory(id) {
     totalSunkHits += square.ship.area;
     delete remainingShips[square.ship.name];
     emit('sunk', { id, inst: square.ship.name });
+    square.sunkInstrument = square.ship.name;
 
     if (!board) return; // attack from DOM interaction to Observer — `this` in receieveAttack is undefined
     // `this` is definied if called from computer — that's when marking squares is necessary for algorithm
 
     if (hasUnresolvedHits()) {
-      square.sunkInstrument = square.ship.name;
+      // square.sunkInstrument = square.ship.name;
       square.sunk = true;
       unresolvedShips.add(square.ship);
       unresolvedShips.resolve(board);

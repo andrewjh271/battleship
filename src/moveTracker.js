@@ -5,11 +5,11 @@ export function moveTrackerFactory(id) {
   let current = 0;
 
   function hide() {
-    tracker.classList.add('hidden');
+    tracker.classList.add('invisible');
   }
 
   function show() {
-    tracker.classList.remove('hidden');
+    tracker.classList.remove('invisible');
     tracker.moves.forEach((move) => {
       move.classList.remove('moved');
     });

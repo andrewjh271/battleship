@@ -22,6 +22,9 @@ const intro = document.querySelector('.intro-text');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
+const broadcast1 = board1.querySelector('.broadcast');
+const broadcast2 = board2.querySelector('.broadcast');
+
 function setWindowHeight() {
   document.body.style.height = `${window.innerHeight}px`;
 }
@@ -52,8 +55,12 @@ function resetDOM() {
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
+  broadcast1.classList.remove('game-over');
+  broadcast2.classList.remove('game-over');
+  broadcast1.classList.remove('active');
+  broadcast2.classList.remove('active');
   gameState.textContent = 'Attack!';
-  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
+  moveTrackers.forEach((tracker) => tracker.classList.add('invisible'));
   infoButtons.forEach((button) => {
     button.classList.add('hidden');
     button.textContent = 'info';
@@ -166,6 +173,20 @@ infoButtons.forEach((button) =>
   })
 );
 
+function broadcastSunkShip(data) {
+  const broadcast = data.id === 'board1' ? broadcast1 : broadcast2;
+  broadcast.textContent = `${broadcast.dataset.player}'s ${data.inst} has been sunk!`;
+  broadcast.classList.add('active');
+  setTimeout(() => broadcast.classList.remove('active'), 2000);
+}
+
+function broadcastWin(id) {
+  const broadcast = id === 1 ? broadcast1 : broadcast2;
+  broadcast.textContent = `${broadcast.dataset.player} Wins!`;
+  broadcast.classList.add('game-over');
+  broadcast.classList.add('active');
+}
+
 export {
   showBoards,
   showSetup,
@@ -179,4 +200,6 @@ export {
   coverFleets,
   uncoverFleets,
   showInfoButtons,
+  broadcastSunkShip,
+  broadcastWin
 };

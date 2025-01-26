@@ -4,6 +4,7 @@ import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
 import { getEnsemble } from './ensemble';
 import { showSetup } from './DOMController';
+import { getMode } from './mode';
 
 const stagingArea = document.querySelector('.staging-area');
 const previewContainer = document.querySelector('.preview-container');
@@ -187,6 +188,9 @@ function newTemplateImage(type) {
 function newTemplateWrapper() {
   const imageWrapper = document.createElement('div');
   imageWrapper.classList.add('placed-img-wrapper');
+  if (getMode() === 'stealth') {
+    imageWrapper.classList.add('stealth');
+  }
   return imageWrapper;
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import boardFactory from './board';
 import { humanPlayerFactory, computerPlayerFactory } from './player';
 import { DOMBoardFactory } from './DOMBoard';
@@ -11,13 +12,16 @@ import {
   coverFleets,
   setPlayRoundView,
   setBoardSizes,
-  showInfoButtons
+  showInfoButtons,
+  broadcastSunkShip,
+  broadcastWin,
 } from './DOMController';
 import { rowLength } from './boardSize';
-import { on, removeAllEvents } from './observer';
+import { on, emit, removeAllEvents } from './observer';
 import { removeWindowEvents } from './imageGenerator';
 import { setEnsemble } from './ensemble';
 import { moveTrackerFactory } from './moveTracker';
+import { setMode } from './mode';
 
 const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
@@ -51,10 +55,13 @@ let attackCount = 0;
 let attackMax = 3;
 const computerMoveTime = 700;
 
+let sinkDelay = 0; // delay computer start if last move sank a ship
+
 function beginSetup() {
   setEnsemble();
   setSetupPanelView();
   setBoardSizes();
+  setMode();
   attackMax = Number(document.getElementById('move-select').value);
   const board1 = boardFactory('board1');
   const board2 = boardFactory('board2');
@@ -87,8 +94,11 @@ function startGame() {
   showInfoButtons();
   moveTracker1.reset(attackMax);
   moveTracker2.reset(attackMax);
+  on('sunk', setSinkDelay);
   on('sunk', updateFleet);
+  on('sunk', broadcastSunkShip);
   on('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
+  on('game-over', broadcastWin);
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -98,10 +108,10 @@ function startGame() {
     showBoards();
   } else {
     coverBoards();
-    setTimeout( () => {
+    setTimeout(() => {
       showBoards();
       currentPlayer.setTurn();
-    }, 2000 ) // wait for curtain to fully cover boards before changing setup-board to board1
+    }, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
 
@@ -112,9 +122,9 @@ function playRound() {
     resetButton.disabled = true;
     setTimeout(() => {
       resetButton.disabled = false;
-    }, attackMax * computerMoveTime + 1500);
+    }, attackMax * computerMoveTime + 1800 + sinkDelay);
     setTimeout(switchMoveTracker, 500);
-    setTimeout(computerAttacks, 1000);
+    setTimeout(computerAttacks, 1000 + sinkDelay);
   } else {
     switchMoveTracker();
   }
@@ -187,8 +197,15 @@ function switchMoveTracker() {
   }
 }
 
+function setSinkDelay() {
+  sinkDelay = 1700;
+  setTimeout(() => sinkDelay = 0, 1000);
+}
+
 function gameOver() {
   gameState.textContent = 'Wins!';
+  const playerID = currentPlayer === player1 ? 1 : 2;
+  emit('game-over', playerID);
   DOMBoard1.setGameOver();
   DOMBoard2.setGameOver();
 }
