@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { setRowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
+import sunkMessage from './sunkMessage';
 
 const controlPanel = document.querySelector('.control-panel');
 const startRoundButton = document.querySelector('.start-round');
@@ -66,6 +67,7 @@ function resetDOM() {
     button.textContent = 'info';
   });
   stagingArea.innerHTML = '';
+  stagingArea.classList.remove('small-board');
 }
 
 function showSetup(board) {
@@ -94,6 +96,9 @@ function setBoardSizes() {
   board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
   board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
   board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+  if (rowLength === 7) {
+    stagingArea.classList.add('small-board');
+  }
 }
 
 function showBoards() {
@@ -175,7 +180,7 @@ infoButtons.forEach((button) =>
 
 function broadcastSunkShip(data) {
   const broadcast = data.id === 'board1' ? broadcast1 : broadcast2;
-  broadcast.textContent = `${broadcast.dataset.player}'s ${data.inst} has been sunk!`;
+  broadcast.textContent = sunkMessage(broadcast.dataset.player, data.inst);
   broadcast.classList.add('active');
   setTimeout(() => broadcast.classList.remove('active'), 2000);
 }

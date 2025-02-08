@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { resetRotationAdjustment } from "./rotatable";
+import { resetRotationAdjustment } from './rotatable';
 
 let windowEvents = [];
 
@@ -45,6 +45,39 @@ function trumpet() {
   return image;
 }
 
+function bass() {
+  return newImage('bass', 3, 6);
+}
+function bassdrum() {
+  return newImage('bassdrum', 3, 4);
+}
+function cymbals() {
+  return newImage('cymbals', 2, 2);
+}
+function glockenspiel() {
+  return newImage('glockenspiel', 3, 2);
+}
+function harp() {
+  return newImage('harp', 3, 6);
+}
+function oboe() {
+  return newImage('oboe', 1, 3);
+}
+function snare() {
+  return newImage('snare', 2, 2);
+}
+function cabasa() {
+  return newImage('cabasa', 1, 2);
+}
+function viola() {
+  const image = newImage('viola', 1, 3);
+  image.classList.add('stretch-viola');
+  return image;
+}
+function tuba() {
+  return newImage('tuba', 2, 3);
+}
+
 function newImage(type, width, height) {
   const image = new Image();
   image.src = `./images/${type}.png`;
@@ -55,7 +88,7 @@ function newImage(type, width, height) {
   setImageSize(image);
   const boundResetImageSize = resetImageSize.bind(null, image);
   window.addEventListener('resize', boundResetImageSize);
-  windowEvents.push(boundResetImageSize)
+  windowEvents.push(boundResetImageSize);
   image.removeResizeListener = () => window.removeEventListener('resize', boundResetImageSize);
   return image;
 }
@@ -73,10 +106,31 @@ function resetImageSize(image) {
 }
 
 function removeWindowEvents() {
-  windowEvents.forEach(event => {
-    window.removeEventListener('resize', event)
-  })
+  windowEvents.forEach((event) => {
+    window.removeEventListener('resize', event);
+  });
   windowEvents = [];
 }
 
-export { clarinet, flute, trombone, violin, bassoon, cello, horn, trumpet, piccolo, removeWindowEvents };
+export {
+  clarinet,
+  flute,
+  trombone,
+  violin,
+  bassoon,
+  cello,
+  horn,
+  trumpet,
+  piccolo,
+  bass,
+  bassdrum,
+  cymbals,
+  glockenspiel,
+  cabasa,
+  harp,
+  oboe,
+  snare,
+  viola,
+  tuba,
+  removeWindowEvents,
+};

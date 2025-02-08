@@ -1,6 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { initializeDOMBoard } from './DOMInitializeBoard';
-import { setupDOMBoard, newTemplateImage, newTemplateWrapper, disableAllPreviewImages } from './DOMSetupBoard';
+import {
+  setupDOMBoard,
+  newTemplateImage,
+  newTemplateWrapper,
+  disableAllPreviewImages,
+} from './DOMSetupBoard';
 import { on, emit } from './observer';
 import { coordinatesToIndex, indexToCoordinates } from './coordinates';
 import { rowLength } from './boardSize';
@@ -106,7 +111,10 @@ export function DOMBoardFactory(id, ROWS) {
     const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
     const colSpan = set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
 
-    if (colSpan > rowSpan) {
+    if (
+      (colSpan > rowSpan && image.type !== 'glockenspiel') ||
+      (colSpan < rowSpan && image.type === 'glockenspiel')
+    ) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
     wrapper.style.gridRow = `${rowStart} / span ${rowSpan}`;

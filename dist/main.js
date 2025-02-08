@@ -290,7 +290,10 @@ function DOMBoardFactory(id, ROWS) {
     const colStart = set.reduce((min, coord) => (coord[0] < min ? coord[0] : min), 100) + 1;
     const colSpan = set.reduce((max, coord) => (coord[0] > max ? coord[0] : max), -100) + 2 - colStart;
 
-    if (colSpan > rowSpan) {
+    if (
+      (colSpan > rowSpan && image.type !== 'glockenspiel') ||
+      (colSpan < rowSpan && image.type === 'glockenspiel')
+    ) {
       image.style.transform = `translateX(${image.style.height}) rotate(90deg)`;
     }
     wrapper.style.gridRow = `${rowStart} / span ${rowSpan}`;
@@ -344,7 +347,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _sunkMessage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sunkMessage */ "./src/sunkMessage.js");
 /* eslint-disable no-param-reassign */
+
 
 
 
@@ -412,6 +417,7 @@ function resetDOM() {
     button.textContent = 'info';
   });
   stagingArea.innerHTML = '';
+  stagingArea.classList.remove('small-board');
 }
 
 function showSetup(board) {
@@ -440,6 +446,9 @@ function setBoardSizes() {
   board1.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
   board2.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`;
   board2.style.gridTemplateRows = `repeat(${rowLength}, 1fr)`;
+  if (rowLength === 7) {
+    stagingArea.classList.add('small-board');
+  }
 }
 
 function showBoards() {
@@ -521,7 +530,7 @@ infoButtons.forEach((button) =>
 
 function broadcastSunkShip(data) {
   const broadcast = data.id === 'board1' ? broadcast1 : broadcast2;
-  broadcast.textContent = `${broadcast.dataset.player}'s ${data.inst} has been sunk!`;
+  broadcast.textContent = (0,_sunkMessage__WEBPACK_IMPORTED_MODULE_2__["default"])(broadcast.dataset.player, data.inst);
   broadcast.classList.add('active');
   setTimeout(() => broadcast.classList.remove('active'), 2000);
 }
@@ -1136,6 +1145,7 @@ function dragStart(e) {
     'mouseup',
     () => {
       document.removeEventListener('mousemove', boundDragMove);
+      this.classList.remove('grabbing');
       (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEnd', this);
     },
     { once: true }
@@ -1146,6 +1156,7 @@ function dragStart(e) {
     'touchend',
     () => {
       document.removeEventListener('touchmove', boundDragMove);
+      this.classList.remove('grabbing');
       (0,_observer__WEBPACK_IMPORTED_MODULE_0__.emit)('dragEnd', this);
     },
     { once: true }
@@ -1305,6 +1316,7 @@ function setEnsemble() {
       break;
     case 'brass':
       ensemble = {
+        tuba: [2, 3],
         trombone: [1, 5],
         horn: [2, 2],
         trumpet: [1, 3],
@@ -1315,7 +1327,30 @@ function setEnsemble() {
         bassoon: [1, 4],
         flute: [1, 3],
         clarinet: [1, 3],
+        oboe: [1, 3],
         piccolo: [1, 2],
+      };
+      break;
+    case 'strings':
+      ensemble = {
+        bass: [3, 6],
+        cello: [2, 5],
+        viola: [1, 3],
+        violin: [1, 3]
+      };
+      break;
+    case 'harp':
+      ensemble = {
+        harp: [3, 6]
+      };
+      break;
+    case 'percussion':
+      ensemble = {
+        bassdrum: [3, 4],
+        glockenspiel: [3, 2],
+        cymbals: [2, 2],
+        snare: [2, 2],
+        cabasa: [2, 1],
       };
       break;
     default:
@@ -1582,15 +1617,25 @@ function reset() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bass: () => (/* binding */ bass),
+/* harmony export */   bassdrum: () => (/* binding */ bassdrum),
 /* harmony export */   bassoon: () => (/* binding */ bassoon),
+/* harmony export */   cabasa: () => (/* binding */ cabasa),
 /* harmony export */   cello: () => (/* binding */ cello),
 /* harmony export */   clarinet: () => (/* binding */ clarinet),
+/* harmony export */   cymbals: () => (/* binding */ cymbals),
 /* harmony export */   flute: () => (/* binding */ flute),
+/* harmony export */   glockenspiel: () => (/* binding */ glockenspiel),
+/* harmony export */   harp: () => (/* binding */ harp),
 /* harmony export */   horn: () => (/* binding */ horn),
+/* harmony export */   oboe: () => (/* binding */ oboe),
 /* harmony export */   piccolo: () => (/* binding */ piccolo),
 /* harmony export */   removeWindowEvents: () => (/* binding */ removeWindowEvents),
+/* harmony export */   snare: () => (/* binding */ snare),
 /* harmony export */   trombone: () => (/* binding */ trombone),
 /* harmony export */   trumpet: () => (/* binding */ trumpet),
+/* harmony export */   tuba: () => (/* binding */ tuba),
+/* harmony export */   viola: () => (/* binding */ viola),
 /* harmony export */   violin: () => (/* binding */ violin)
 /* harmony export */ });
 /* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
@@ -1641,6 +1686,39 @@ function trumpet() {
   return image;
 }
 
+function bass() {
+  return newImage('bass', 3, 6);
+}
+function bassdrum() {
+  return newImage('bassdrum', 3, 4);
+}
+function cymbals() {
+  return newImage('cymbals', 2, 2);
+}
+function glockenspiel() {
+  return newImage('glockenspiel', 3, 2);
+}
+function harp() {
+  return newImage('harp', 3, 6);
+}
+function oboe() {
+  return newImage('oboe', 1, 3);
+}
+function snare() {
+  return newImage('snare', 2, 2);
+}
+function cabasa() {
+  return newImage('cabasa', 1, 2);
+}
+function viola() {
+  const image = newImage('viola', 1, 3);
+  image.classList.add('stretch-viola');
+  return image;
+}
+function tuba() {
+  return newImage('tuba', 2, 3);
+}
+
 function newImage(type, width, height) {
   const image = new Image();
   image.src = `./images/${type}.png`;
@@ -1651,7 +1729,7 @@ function newImage(type, width, height) {
   setImageSize(image);
   const boundResetImageSize = resetImageSize.bind(null, image);
   window.addEventListener('resize', boundResetImageSize);
-  windowEvents.push(boundResetImageSize)
+  windowEvents.push(boundResetImageSize);
   image.removeResizeListener = () => window.removeEventListener('resize', boundResetImageSize);
   return image;
 }
@@ -1669,9 +1747,9 @@ function resetImageSize(image) {
 }
 
 function removeWindowEvents() {
-  windowEvents.forEach(event => {
-    window.removeEventListener('resize', event)
-  })
+  windowEvents.forEach((event) => {
+    window.removeEventListener('resize', event);
+  });
   windowEvents = [];
 }
 
@@ -2002,6 +2080,42 @@ function shipFactory(area, name, coordinateSet) {
   };
   const isSunk = () => hits === area;
   return { hit, isSunk, name, coords, area };
+}
+
+
+/***/ }),
+
+/***/ "./src/sunkMessage.js":
+/*!****************************!*\
+  !*** ./src/sunkMessage.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ message)
+/* harmony export */ });
+function message(player, inst) {
+  return `${player}'s ${instName(inst)} ${verb(inst)} been sunk!`;
+}
+
+function instName(inst) {
+  switch (inst) {
+    case 'bass':
+      return 'double bass';
+    case 'bassdrum':
+      return 'bass drum';
+    case 'horn':
+      return 'french horn';
+    case 'snare':
+      return 'snare drum';
+    default:
+      return inst;
+  }
+}
+
+function verb(inst) {
+  return inst === 'cymbals' ? 'have' : 'has';
 }
 
 

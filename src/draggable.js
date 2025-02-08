@@ -17,6 +17,7 @@ function dragStart(e) {
     'mouseup',
     () => {
       document.removeEventListener('mousemove', boundDragMove);
+      this.classList.remove('grabbing');
       emit('dragEnd', this);
     },
     { once: true }
@@ -27,6 +28,7 @@ function dragStart(e) {
     'touchend',
     () => {
       document.removeEventListener('touchmove', boundDragMove);
+      this.classList.remove('grabbing');
       emit('dragEnd', this);
     },
     { once: true }

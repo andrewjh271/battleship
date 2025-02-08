@@ -493,6 +493,8 @@ button:disabled {
   object-fit: contain;
   padding: 5px;
   transform-origin: 0 0;
+  // filter: drop-shadow(0px 0px 3px #482e03cc);
+  filter: drop-shadow(1px 5px 3px #482e03cc);
 }
 
 .placed-img-wrapper {
@@ -505,15 +507,32 @@ button:disabled {
 .defense .placed-img-wrapper {
   // hide and allow pointer events on cells
   opacity: 0;
-  z-index: 1;
+  pointer-events: none;
 }
 
 .offense .placed-img-wrapper,
 .sunk.placed-img-wrapper:not(.stealth),
 .game-over .placed-img-wrapper {
   z-index: 4;
-  opacity: 0.8;
   transition: 1.5s;
+}
+
+.offense .placed-img-wrapper {
+  opacity: 0.8;
+}
+
+.offense .placed-img-wrapper:has(img[src*='bass.png']), // avoid matching bassoon
+.offense .placed-img-wrapper:has(img[src*='tuba']),
+.offense .placed-img-wrapper:has(img[src*='bassdrum']) {
+  opacity: 0.6;
+}
+
+.sunk.placed-img-wrapper:not(.stealth) {
+  opacity: 0.5;
+}
+
+.game-over .placed-img-wrapper {
+  opacity: 0.8 !important;
 }
 
 .board-setup-container {
@@ -602,7 +621,7 @@ button:disabled {
 .preview-container {
   display: flex;
   align-items: end;
-  padding: 10px;
+  padding: 2px 10px 5px 10px;
   background-color: $neutral;
   border-bottom: 1px dashed $border;
   padding-bottom: 5px;
@@ -612,9 +631,10 @@ button:disabled {
 .remaining-fleet div,
 .preview-container div {
   // height: 100%;
-  // Safari and Chrome iPhone apps don't work with height: 100% until element has changed in some way
+  // Safari browser and Safari and Chrome iPhone apps don't work properly with height: 100%
   height: 100px;
-  max-width: 40px; // necessary for weird image width issues w/ Firefox and Safari
+  // at one point this was a fix for weird image width issues w/ Firefox and Safari, but no longer *seems* to be an issue
+  // max-width: 40px;
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -626,12 +646,16 @@ button:disabled {
   display: none;
 }
 
+.preview-container div:has(.horn) {
+  margin-left: -3px;
+}
+
 .remaining-fleet span,
 .preview-container span {
   width: 4px;
   height: 0px;
   margin-top: 9px;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   position: relative;
   box-shadow: 0px 0px 2px 2px #42ae2e;
 }
@@ -642,16 +666,26 @@ button:disabled {
 
 .remaining-fleet .trombone + span,
 .preview-container .trombone + span {
-  left: 3px;
+  left: 2px;
 }
 .remaining-fleet .bassoon + span,
 .preview-container .bassoon + span {
   right: 1px;
 }
+.remaining-fleet .tuba + span,
+.preview-container .tuba + span {
+  left: 3px;
+}
+.remaining-fleet .harp + span,
+.preview-container .harp + span {
+  right: 3px;
+}
 
 .img-preview {
-  height: 91px; // necessary for weird image width issues w/ Firefox and Safari
-  max-height: calc(100% - 9px);
+  // at one point this was a fix for weird image width issues w/ Firefox and Safari, but no longer seems to be an issue
+  // height: 91px; // necessary for weird image width issues w/ Firefox and Safari
+  max-height: calc(100% - 10px);
+  max-width: 100%;
 
   &.disabled {
     filter: grayscale(0.8) opacity(0.4);
@@ -665,24 +699,46 @@ button:disabled {
 
 .img-preview,
 .remaining-fleet img {
+  &.trombone {
+    max-height: calc(96% - 10px);
+  }
+  &.bassoon,
+  &.tuba {
+    max-height: calc(90% - 10px);
+  }
+  &.viola {
+    max-height: calc(75% - 10px);
+  }
   &.trumpet,
   &.violin,
   &.clarinet,
-  &.flute {
-    max-height: calc(60% - 9px);
+  &.flute,
+  &.oboe {
+    max-height: calc(70% - 10px);
   }
-  &.bassoon {
-    max-height: calc(80% - 9px);
+  &.cymbals,
+  &.snare {
+    max-height: calc(55% - 10px);
   }
-  &.piccolo {
-    max-height: calc(35% - 9px);
+  &.horn,
+  &.glockenspiel {
+    max-height: calc(50% - 10px);
   }
-  &.horn {
-    max-height: calc(45% - 9px);
+  &.piccolo,
+  &.cabasa {
+    max-height: calc(45% - 10px);
   }
-  &.trombone {
-    max-height: calc(96% - 9px);
-  }
+}
+
+// make cello smaller when next to bass
+.preview-container div:has(.bass:not(.hidden)) + div img.cello,
+.remaining-fleet div:has(.bass:not(.hidden)) + div img.cello {
+  max-height: calc(90% - 10px);
+}
+
+.preview-container div:has(.cabasa) {
+  margin-left: 3px;
+  margin-right: 14px;
 }
 
 .staging-area {
@@ -705,6 +761,20 @@ button:disabled {
 
   &:hover {
     cursor: grab;
+  }
+}
+
+.staging-area.small-board {
+  img[src*='bass.png'].staging-img,
+  img[src*='harp'].staging-img {
+    scale: 0.8;
+    transition: scale 0.5s;
+  }
+}
+.staging-area.small-board {
+  img[src*='bass.png'].staging-img.grabbing,
+  img[src*='harp'].staging-img.grabbing {
+    scale: 1;
   }
 }
 
@@ -750,6 +820,11 @@ img[src*='piccolo'].staging-img {
   padding: 11px 3px 11px 3px;
 }
 
+.stretch-viola {
+  object-fit: fill;
+  padding: 8px 2px 8px 2px;
+}
+
 .board.covered {
   background-color: purple;
 }
@@ -757,14 +832,13 @@ img[src*='piccolo'].staging-img {
 .remaining-fleet {
   position: absolute;
   width: calc(100% + 28px);
-  height: 120px;
+  height: 110px;
   top: calc(100% + 21px);
   left: -14px;
   display: flex;
   align-items: end;
   padding: 6px 14px;
   background-color: #41444cd9;
-  border: 1px solid #00000040;
   pointer-events: none;
   transition: opacity 2s;
 }
@@ -794,8 +868,10 @@ img[src*='piccolo'].staging-img {
 }
 
 .remaining-fleet img {
-  height: 91px; // necessary for weird image width issues w/ Firefox and Safari
-  max-height: calc(100% - 9px);
+  // at one point this was a fix for weird image width issues w/ Firefox and Safari, but no longer seems to be an issue
+  // height: 91px;
+  max-height: calc(100% - 10px);
+  max-width: 100%;
 }
 
 .remaining-fleet img.sunk {
@@ -803,18 +879,24 @@ img[src*='piccolo'].staging-img {
 }
 .remaining-fleet img.sunk.trumpet,
 .remaining-fleet img.sunk.trombone,
+.remaining-fleet img.sunk.tuba,
 .remaining-fleet img.sunk.horn {
   filter: grayscale(1) opacity(0.5);
+}
+
+.remaining-fleet div:has(.trombone),
+.remaining-fleet div:has(.trumpet),
+.remaining-fleet div:has(.tuba) {
+  margin-left: -3px;
+}
+
+.remaining-fleet div:has(.horn) {
+  margin-left: -6px;
 }
 
 @media (min-width: 851px) and (max-height: 700px) {
   .remaining-fleet {
     height: 96px;
-  }
-
-  .remaining-fleet img {
-    height: 67px; // necessary for weird image width issues w/ Firefox and Safari
-    max-height: calc(100% - 9px);
   }
 }
 
@@ -825,8 +907,8 @@ img[src*='piccolo'].staging-img {
     height: 100%;
     top: 0;
     left: 0;
-    padding-top: calc(50% - 60px);
-    padding-bottom: calc(50% - 60px);
+    padding-top: calc(50% - 45px);
+    padding-bottom: calc(50% - 45px);
     padding-left: 7px;
     background-color: #41444ceb;
     border: 0;
@@ -842,7 +924,7 @@ img[src*='piccolo'].staging-img {
     content: '';
     position: absolute;
     width: 100%;
-    height: calc(50% - 60px);
+    height: calc(50% - 45px);
     top: 0;
     left: 0;
     background-color: #ffffff70;
@@ -852,8 +934,8 @@ img[src*='piccolo'].staging-img {
     content: '';
     position: absolute;
     width: 100%;
-    height: calc(50% - 60px);
-    top: calc(50% + 60px);
+    height: calc(50% - 45px);
+    top: calc(50% + 45px);
     left: 0;
     background-color: #ffffff70;
   }
@@ -863,12 +945,6 @@ img[src*='piccolo'].staging-img {
     margin-top: 6px;
     margin-bottom: 6px;
     margin-right: 5.5%;
-  }
-
-  .remaining-fleet div:has(.trombone),
-  .remaining-fleet div:has(.trumpet),
-  .remaining-fleet div:has(.horn) {
-    margin-left: -3px;
   }
 
   .board:has(.remaining-fleet.active) div {
@@ -1159,8 +1235,7 @@ img[src*='piccolo'].staging-img {
   }
 
   .preview-container div {
-    height: 69px; // 16px - height of container
-    // height: 100%;
+    height: 74px; // height of container - 11px
   }
 
   .staging-buttons {
@@ -1217,13 +1292,11 @@ img[src*='piccolo'].staging-img {
   }
 
   .board-setup-container {
-    grid-template-rows: 90px 1fr 36px;
     grid-template-rows: 71px 1fr 36px;
   }
 
   .preview-container div {
-    height: 74px; // 16px - height of container
-    height: 100%;
+    height: 60px; // height of container - 11px
   }
 
   .control-panel .navigation,
@@ -1265,11 +1338,6 @@ img[src*='piccolo'].staging-img {
     padding-left: 3px;
   }
 
-  .remaining-fleet {
-    padding-left: 3px;
-    margin-right: 5%;
-  }
-
   .info {
     left: 118px;
     font-size: 24px;
@@ -1290,7 +1358,7 @@ img[src*='piccolo'].staging-img {
   }
 
   .preview-container div {
-    height: 64px; // 16px - height of container
+    height: 69px; // height of container - 11px
   }
 
   .attack-direction {
@@ -1299,27 +1367,6 @@ img[src*='piccolo'].staging-img {
     h3 {
       margin-top: 122px;
       letter-spacing: -5px;
-    }
-  }
-
-  .img-preview {
-    &.trumpet,
-    &.violin,
-    &.clarinet,
-    &.flute {
-      max-height: calc(74% - 9px);
-    }
-    &.bassoon {
-      max-height: calc(86% - 9px);
-    }
-    &.piccolo {
-      max-height: calc(55% - 9px);
-    }
-    &.horn {
-      max-height: calc(50% - 9px);
-    }
-    &.trombone {
-      max-height: calc(96% - 9px);
     }
   }
 }
@@ -1335,7 +1382,7 @@ img[src*='piccolo'].staging-img {
   }
 
   .preview-container div {
-    height: 61px; // 16px - height of container
+    height: 66px; // height of container - 11px
   }
 
   .remaining-fleet div {
@@ -1412,7 +1459,13 @@ img[src*='piccolo'].staging-img {
   }
 }
 
-@media (max-width: 850px) and (max-height: 950px) {
+@media (max-width: 850px) and (max-height: 1250px) {
+  .intro-text {
+    top: -10%;
+  }
+}
+
+@media (max-width: 850px) and (max-height: 1000px) {
   .intro-text {
     top: 6%;
     font-size: 21px;
