@@ -10,9 +10,11 @@ let ensemble = {
   piccolo: [1, 2],
 };
 
+let selection = 'orchestra';
+
 function setEnsemble() {
   const ensembleInput = document.querySelector('.ensemble-select');
-  const selection = ensembleInput.value;
+  selection = ensembleInput.value;
 
   switch (selection) {
     case 'chamber':
@@ -82,4 +84,8 @@ function getEnsemble() {
   return ensemble;
 }
 
-export { setEnsemble, getEnsemble };
+function getEnsembleName() {
+  return selection;
+}
+
+export { setEnsemble, getEnsemble, getEnsembleName };

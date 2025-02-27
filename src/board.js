@@ -13,6 +13,7 @@ export default function boardFactory(id) {
   let shipsSunk = 0;
   let totalHits = 0;
   let totalSunkHits = 0;
+  let maxSharedEdges = Infinity;
   const placedShips = [];
   const squares = [];
   const remainingShips = { ...getEnsemble() };
@@ -71,6 +72,71 @@ export default function boardFactory(id) {
     return false;
   };
 
+  const containsNoEdge = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      if (
+        coords[0] === 0 ||
+        coords[0] === rowLength() - 1 ||
+        coords[1] === 0 ||
+        coords[1] === rowLength() - 1
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const containsMinorityEdges = (coordsSet) => {
+    let numEdges = 0;
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      if (
+        coords[0] === 0 ||
+        coords[0] === rowLength() - 1 ||
+        coords[1] === 0 ||
+        coords[1] === rowLength() - 1
+      ) {
+        numEdges++;
+      }
+    }
+    return numEdges < coordsSet.length / 2;
+  };
+
+  const getAdjacentSquares = (origin) => {
+    const set = [
+      [origin[0] + 1, origin[1]],
+      [origin[0] - 1, origin[1]],
+      [origin[0], origin[1] + 1],
+      [origin[0], origin[1] - 1],
+    ];
+    return set.filter(
+      (adjacent) =>
+        adjacent[0] >= 0 && adjacent[0] < rowLength() && adjacent[1] >= 0 && adjacent[1] < rowLength()
+    );
+  };
+
+  const sharedEdgeCount = () => {
+    let count = 0;
+    placedShips.forEach((ship) => {
+      ship.coords.forEach((coordPair) => {
+        getAdjacentSquares(coordPair).forEach((adj) => {
+          if (squares[adj[0]][adj[1]].ship && squares[adj[0]][adj[1]].ship.name !== ship.name) {
+            count++;
+          }
+        });
+      });
+    });
+    return count / 2;
+  };
+
+  const willExceedMaxSharedEdges = (coordsSet) => {
+    placeShip(coordsSet, 'testPlacement');
+    const result = sharedEdgeCount() > maxSharedEdges;
+    unplaceLastShip();
+    return result;
+  };
+
   const containsMissOrSunkSquare = (coordsSet) => {
     for (let i = 0; i < coordsSet.length; i++) {
       const coords = coordsSet[i];
@@ -108,6 +174,18 @@ export default function boardFactory(id) {
     });
     totalShips++;
     placedShips.push(newShip);
+  }
+
+  function unplaceLastShip() {
+    const { coords } = placedShips.pop();
+    coords.forEach((coord) => {
+      delete squares[coord[0]][coord[1]].ship;
+    });
+    totalShips--;
+  }
+
+  function setMaxSharedEdges(n) {
+    maxSharedEdges = n;
   }
 
   on('attack', receiveAttack);
@@ -199,6 +277,12 @@ export default function boardFactory(id) {
     listenForPosition,
     resetSetup,
     hasUnresolvedHits,
+    containsNoEdge,
+    containsMinorityEdges,
+    getAdjacentSquares,
+    sharedEdgeCount,
+    setMaxSharedEdges,
+    willExceedMaxSharedEdges,
     remainingShips,
     placedShips,
     squares,
