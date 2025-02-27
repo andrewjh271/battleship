@@ -858,6 +858,7 @@ function boardFactory(id) {
   let shipsSunk = 0;
   let totalHits = 0;
   let totalSunkHits = 0;
+  let maxSharedEdges = Infinity;
   const placedShips = [];
   const squares = [];
   const remainingShips = { ...(0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.getEnsemble)() };
@@ -916,6 +917,71 @@ function boardFactory(id) {
     return false;
   };
 
+  const containsNoEdge = (coordsSet) => {
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      if (
+        coords[0] === 0 ||
+        coords[0] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1 ||
+        coords[1] === 0 ||
+        coords[1] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const containsMinorityEdges = (coordsSet) => {
+    let numEdges = 0;
+    for (let i = 0; i < coordsSet.length; i++) {
+      const coords = coordsSet[i];
+      if (
+        coords[0] === 0 ||
+        coords[0] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1 ||
+        coords[1] === 0 ||
+        coords[1] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1
+      ) {
+        numEdges++;
+      }
+    }
+    return numEdges < coordsSet.length / 2;
+  };
+
+  const getAdjacentSquares = (origin) => {
+    const set = [
+      [origin[0] + 1, origin[1]],
+      [origin[0] - 1, origin[1]],
+      [origin[0], origin[1] + 1],
+      [origin[0], origin[1] - 1],
+    ];
+    return set.filter(
+      (adjacent) =>
+        adjacent[0] >= 0 && adjacent[0] < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() && adjacent[1] >= 0 && adjacent[1] < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)()
+    );
+  };
+
+  const sharedEdgeCount = () => {
+    let count = 0;
+    placedShips.forEach((ship) => {
+      ship.coords.forEach((coordPair) => {
+        getAdjacentSquares(coordPair).forEach((adj) => {
+          if (squares[adj[0]][adj[1]].ship && squares[adj[0]][adj[1]].ship.name !== ship.name) {
+            count++;
+          }
+        });
+      });
+    });
+    return count / 2;
+  };
+
+  const willExceedMaxSharedEdges = (coordsSet) => {
+    placeShip(coordsSet, 'testPlacement');
+    const result = sharedEdgeCount() > maxSharedEdges;
+    unplaceLastShip();
+    return result;
+  };
+
   const containsMissOrSunkSquare = (coordsSet) => {
     for (let i = 0; i < coordsSet.length; i++) {
       const coords = coordsSet[i];
@@ -953,6 +1019,18 @@ function boardFactory(id) {
     });
     totalShips++;
     placedShips.push(newShip);
+  }
+
+  function unplaceLastShip() {
+    const { coords } = placedShips.pop();
+    coords.forEach((coord) => {
+      delete squares[coord[0]][coord[1]].ship;
+    });
+    totalShips--;
+  }
+
+  function setMaxSharedEdges(n) {
+    maxSharedEdges = n;
   }
 
   (0,_observer__WEBPACK_IMPORTED_MODULE_4__.on)('attack', receiveAttack);
@@ -1044,6 +1122,12 @@ function boardFactory(id) {
     listenForPosition,
     resetSetup,
     hasUnresolvedHits,
+    containsNoEdge,
+    containsMinorityEdges,
+    getAdjacentSquares,
+    sharedEdgeCount,
+    setMaxSharedEdges,
+    willExceedMaxSharedEdges,
     remainingShips,
     placedShips,
     squares,
@@ -1286,6 +1370,7 @@ function targetDistribution(board) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   getEnsemble: () => (/* binding */ getEnsemble),
+/* harmony export */   getEnsembleName: () => (/* binding */ getEnsembleName),
 /* harmony export */   setEnsemble: () => (/* binding */ setEnsemble)
 /* harmony export */ });
 let ensemble = {
@@ -1300,9 +1385,11 @@ let ensemble = {
   piccolo: [1, 2],
 };
 
+let selection = 'orchestra';
+
 function setEnsemble() {
   const ensembleInput = document.querySelector('.ensemble-select');
-  const selection = ensembleInput.value;
+  selection = ensembleInput.value;
 
   switch (selection) {
     case 'chamber':
@@ -1370,6 +1457,10 @@ function setEnsemble() {
 
 function getEnsemble() {
   return ensemble;
+}
+
+function getEnsembleName() {
+  return selection;
 }
 
 
@@ -1900,12 +1991,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 /* harmony import */ var _engine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./engine */ "./src/engine.js");
+/* harmony import */ var _shipPlacement__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shipPlacement */ "./src/shipPlacement.js");
+/* harmony import */ var _2DSetFinder__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./2DSetFinder */ "./src/2DSetFinder.js");
+
+
 
 
 
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
   const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
+
+  const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
+  const ens = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsembleName)();
 
   function setup() {
     homeDOMBoard.setupBoard();
@@ -1918,7 +2016,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     homeDOMBoard.setOffense();
   }
 
-  function autoSetup() {
+  function autoSetupSimple() {
     homeBoard.resetSetup();
     Object.entries(ships).forEach((ship) => {
       const name = ship[0];
@@ -1928,6 +2026,61 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
       homeBoard.placeShip(coords, name);
     });
     homeDOMBoard.placeSetImages(homeBoard);
+  }
+
+  function autoSetup() {
+    if (
+      ens === 'harp' ||
+      (size === 7 && (ens === 'orchestra' || ens === 'strings' || ens === 'percussion'))
+    ) {
+      autoSetupSimple();
+      return;
+    }
+
+    try {
+      homeBoard.resetSetup();
+      const max = (0,_shipPlacement__WEBPACK_IMPORTED_MODULE_3__.getMaxAdjacentSquares)((0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)());
+      homeBoard.setMaxSharedEdges(max);
+      let conditionFunction;
+
+      Object.entries(ships).forEach((ship) => {
+        const name = ship[0];
+        const [width, height] = ship[1];
+        const random = Math.random();
+        if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
+          conditionFunction = composeFunction(
+            homeBoard.isOccupied,
+            homeBoard.containsNoEdge,
+            homeBoard.willExceedMaxSharedEdges
+          );
+        } else if (random <= 0.4) {
+          conditionFunction = composeFunction(
+            homeBoard.isOccupied,
+            homeBoard.containsMinorityEdges,
+            homeBoard.willExceedMaxSharedEdges
+          );
+        } else {
+          conditionFunction = composeFunction(homeBoard.isOccupied, homeBoard.willExceedMaxSharedEdges);
+        }
+
+        const set = (0,_2DSetFinder__WEBPACK_IMPORTED_MODULE_4__.find2DSets)(homeBoard, width, height, conditionFunction);
+        const coords = set[Math.floor(Math.random() * set.length)];
+        homeBoard.placeShip(coords, name);
+      });
+      homeDOMBoard.placeSetImages(homeBoard);
+    } catch {
+      console.log('setup failed... trying again');
+      autoSetup();
+    }
+  }
+
+  function composeFunction(...functions) {
+    return function conditionFunctions(coordsSet) {
+      for (let i = 0; i < functions.length; i++) {
+        if (functions[i](coordsSet)) return true;
+      }
+      return false;
+    };
   }
 
   function isComputer() {
@@ -1948,6 +2101,7 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCounter) {
   const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
   const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
+  const ens = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsembleName)();
   const possibleMoves = [];
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
@@ -1969,7 +2123,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
     moveCounter.increment();
   }
 
-  function setup() {
+  function setupSimple() {
     Object.entries(ships).forEach((ship) => {
       const name = ship[0];
       const dimensions = ship[1];
@@ -1978,6 +2132,61 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
       homeBoard.placeShip(coords, name);
     });
     homeDOMBoard.placeSetImages(homeBoard);
+  }
+
+  function setup() {
+    if (
+      ens === 'harp' ||
+      (size === 7 && (ens === 'orchestra' || ens === 'strings' || ens === 'percussion'))
+    ) {
+      setupSimple();
+      return;
+    }
+
+    try {
+      homeBoard.resetSetup();
+      const max = (0,_shipPlacement__WEBPACK_IMPORTED_MODULE_3__.getMaxAdjacentSquares)((0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)());
+      homeBoard.setMaxSharedEdges(max);
+      let conditionFunction;
+
+      Object.entries(ships).forEach((ship) => {
+        const name = ship[0];
+        const [width, height] = ship[1];
+        const random = Math.random();
+        if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
+          conditionFunction = composeFunction(
+            homeBoard.isOccupied,
+            homeBoard.containsNoEdge,
+            homeBoard.willExceedMaxSharedEdges
+          );
+        } else if (random <= 0.4) {
+          conditionFunction = composeFunction(
+            homeBoard.isOccupied,
+            homeBoard.containsMinorityEdges,
+            homeBoard.willExceedMaxSharedEdges
+          );
+        } else {
+          conditionFunction = composeFunction(homeBoard.isOccupied, homeBoard.willExceedMaxSharedEdges);
+        }
+
+        const set = (0,_2DSetFinder__WEBPACK_IMPORTED_MODULE_4__.find2DSets)(homeBoard, width, height, conditionFunction);
+        const coords = set[Math.floor(Math.random() * set.length)];
+        homeBoard.placeShip(coords, name);
+      });
+      homeDOMBoard.placeSetImages(homeBoard);
+    } catch {
+      console.log('setup failed... trying again');
+      setup();
+    }
+  }
+
+  function composeFunction(...functions) {
+    return function conditionFunctions(coordsSet) {
+      for (let i = 0; i < functions.length; i++) {
+        if (functions[i](coordsSet)) return true;
+      }
+      return false;
+    };
   }
 
   function setTurn() {
@@ -2081,6 +2290,83 @@ function shipFactory(area, name, coordinateSet) {
   const isSunk = () => hits === area;
   return { hit, isSunk, name, coords, area };
 }
+
+
+/***/ }),
+
+/***/ "./src/shipPlacement.js":
+/*!******************************!*\
+  !*** ./src/shipPlacement.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getMaxAdjacentSquares: () => (/* binding */ getMaxAdjacentSquares)
+/* harmony export */ });
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+
+
+const boardSizes = {
+  '7': 'small',
+  '10': 'standard',
+  '13': 'large'
+}
+
+const probabilities = {
+  'chamber': {
+    'small': [.35, .3, .2, .1, .05],
+    'standard': [.9, .1],
+    'large': [.95, .05]
+  },
+  'orchestra': {
+    'small': [-Infinity],
+    'standard': [.75, .1, .1, .5],
+    'large': [.95, .05]
+  },
+  'strings': {
+    'small': [-Infinity],
+    'standard': [.9, 1],
+    'large': [.95, .05]
+  },
+  'woodwinds': {
+    'small': [.7, .2, .1],
+    'standard': [.9, .1],
+    'large': [.95, .05]
+  },
+  'brass': {
+    'small': [.8, .2],
+    'standard': [.9, .1],
+    'large': [.95, .05]
+  },
+  'percussion': {
+    'small': [-Infinity],
+    'standard': [.9, 1],
+    'large': [.95, .05]
+  },
+  'harp': {
+    'small': [-Infinity],
+    'standard': [-Infinity],
+    'large': [-Infinity],
+  }
+}
+
+function getMaxAdjacentSquares(size) {
+  const arr = probabilities[(0,_ensemble__WEBPACK_IMPORTED_MODULE_0__.getEnsembleName)()][boardSizes[size]];
+
+  const random = Math.random();
+  let maxAdjacent;
+  let cumulativeProbability = 0;
+  for (let i = 0; i < arr.length; i++) {
+    cumulativeProbability += arr[i];
+    if (random <= cumulativeProbability) {
+      maxAdjacent = i;
+      break;
+    }
+  }
+  return maxAdjacent === undefined ? Infinity : maxAdjacent;
+}
+
 
 
 /***/ }),
