@@ -7,6 +7,7 @@ import { on, off, emit } from './observer';
 import { rowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 import unresolvedShipList from './unresolvedShips';
+import { getAdjacentSquares } from './shipPlacement';
 
 export default function boardFactory(id) {
   let totalShips = 0;
@@ -70,50 +71,6 @@ export default function boardFactory(id) {
       if (square.attacked) return true;
     }
     return false;
-  };
-
-  const containsNoEdge = (coordsSet) => {
-    for (let i = 0; i < coordsSet.length; i++) {
-      const coords = coordsSet[i];
-      if (
-        coords[0] === 0 ||
-        coords[0] === rowLength() - 1 ||
-        coords[1] === 0 ||
-        coords[1] === rowLength() - 1
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const containsMinorityEdges = (coordsSet) => {
-    let numEdges = 0;
-    for (let i = 0; i < coordsSet.length; i++) {
-      const coords = coordsSet[i];
-      if (
-        coords[0] === 0 ||
-        coords[0] === rowLength() - 1 ||
-        coords[1] === 0 ||
-        coords[1] === rowLength() - 1
-      ) {
-        numEdges++;
-      }
-    }
-    return numEdges < coordsSet.length / 2;
-  };
-
-  const getAdjacentSquares = (origin) => {
-    const set = [
-      [origin[0] + 1, origin[1]],
-      [origin[0] - 1, origin[1]],
-      [origin[0], origin[1] + 1],
-      [origin[0], origin[1] - 1],
-    ];
-    return set.filter(
-      (adjacent) =>
-        adjacent[0] >= 0 && adjacent[0] < rowLength() && adjacent[1] >= 0 && adjacent[1] < rowLength()
-    );
   };
 
   const sharedEdgeCount = () => {
@@ -215,10 +172,9 @@ export default function boardFactory(id) {
     square.sunkInstrument = square.ship.name;
 
     if (!board) return; // attack from DOM interaction to Observer — `this` in receieveAttack is undefined
-    // `this` is definied if called from computer — that's when marking squares is necessary for algorithm
+    // `this` is defined if called from computer — that's when marking squares is necessary for algorithm
 
     if (hasUnresolvedHits()) {
-      // square.sunkInstrument = square.ship.name;
       square.sunk = true;
       unresolvedShips.add(square.ship);
       unresolvedShips.resolve(board);
@@ -277,9 +233,6 @@ export default function boardFactory(id) {
     listenForPosition,
     resetSetup,
     hasUnresolvedHits,
-    containsNoEdge,
-    containsMinorityEdges,
-    getAdjacentSquares,
     sharedEdgeCount,
     setMaxSharedEdges,
     willExceedMaxSharedEdges,

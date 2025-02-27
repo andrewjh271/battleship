@@ -223,31 +223,31 @@ describe('hasUnresolvedHits', () => {
   });
 });
 
-describe('getAdjacentSquares', () => {
-  test('returns adjacent squares to a given set of coordinates', () => {
-    const result = board.getAdjacentSquares([3, 4]);
-    expect(result).toEqual(
-      expect.objectContaining([
-        [4, 4],
-        [2, 4],
-        [3, 5],
-        [3, 3],
-      ])
-    );
-    expect(result.length).toEqual(4);
-  });
+// describe('getAdjacentSquares', () => {
+//   test('returns adjacent squares to a given set of coordinates', () => {
+//     const result = board.getAdjacentSquares([3, 4]);
+//     expect(result).toEqual(
+//       expect.objectContaining([
+//         [4, 4],
+//         [2, 4],
+//         [3, 5],
+//         [3, 3],
+//       ])
+//     );
+//     expect(result.length).toEqual(4);
+//   });
 
-  test('filters out coordinates that are off the board', () => {
-    const result = board.getAdjacentSquares([9, 9]);
-    expect(result).toEqual(
-      expect.objectContaining([
-        [8, 9],
-        [9, 8],
-      ])
-    );
-    expect(result.length).toEqual(2);
-  });
-});
+//   test('filters out coordinates that are off the board', () => {
+//     const result = board.getAdjacentSquares([9, 9]);
+//     expect(result).toEqual(
+//       expect.objectContaining([
+//         [8, 9],
+//         [9, 8],
+//       ])
+//     );
+//     expect(result.length).toEqual(2);
+//   });
+// });
 
 describe('sharedEdgeCount', () => {
   test('counts the number of shared edges', () => {

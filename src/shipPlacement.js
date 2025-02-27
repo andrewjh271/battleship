@@ -1,4 +1,5 @@
 import { getEnsembleName } from "./ensemble";
+import { rowLength } from "./boardSize";
 
 const boardSizes = {
   '7': 'small',
@@ -60,4 +61,48 @@ function getMaxAdjacentSquares(size) {
   return maxAdjacent === undefined ? Infinity : maxAdjacent;
 }
 
-export { getMaxAdjacentSquares }
+const containsNoEdge = (coordsSet) => {
+  for (let i = 0; i < coordsSet.length; i++) {
+    const coords = coordsSet[i];
+    if (
+      coords[0] === 0 ||
+      coords[0] === rowLength() - 1 ||
+      coords[1] === 0 ||
+      coords[1] === rowLength() - 1
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const containsMinorityEdges = (coordsSet) => {
+  let numEdges = 0;
+  for (let i = 0; i < coordsSet.length; i++) {
+    const coords = coordsSet[i];
+    if (
+      coords[0] === 0 ||
+      coords[0] === rowLength() - 1 ||
+      coords[1] === 0 ||
+      coords[1] === rowLength() - 1
+    ) {
+      numEdges++;
+    }
+  }
+  return numEdges < coordsSet.length / 2;
+};
+
+const getAdjacentSquares = (origin) => {
+  const set = [
+    [origin[0] + 1, origin[1]],
+    [origin[0] - 1, origin[1]],
+    [origin[0], origin[1] + 1],
+    [origin[0], origin[1] - 1],
+  ];
+  return set.filter(
+    (adjacent) =>
+      adjacent[0] >= 0 && adjacent[0] < rowLength() && adjacent[1] >= 0 && adjacent[1] < rowLength()
+  );
+};
+
+export { getMaxAdjacentSquares, containsNoEdge, containsMinorityEdges, getAdjacentSquares }

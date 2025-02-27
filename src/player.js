@@ -1,7 +1,7 @@
 import { rowLength } from './boardSize';
 import { getEnsemble, getEnsembleName } from './ensemble';
 import { huntDistribution, targetDistribution, selectMove } from './engine';
-import { getMaxAdjacentSquares } from './shipPlacement';
+import { containsNoEdge, containsMinorityEdges, getMaxAdjacentSquares } from './shipPlacement';
 import { find2DSets } from './2DSetFinder';
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
@@ -55,13 +55,13 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
         if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsNoEdge,
+            containsNoEdge,
             homeBoard.willExceedMaxSharedEdges
           );
         } else if (random <= 0.4) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsMinorityEdges,
+            containsMinorityEdges,
             homeBoard.willExceedMaxSharedEdges
           );
         } else {
@@ -74,7 +74,6 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
       });
       homeDOMBoard.placeSetImages(homeBoard);
     } catch {
-      console.log('setup failed... trying again');
       autoSetup();
     }
   }
@@ -161,13 +160,13 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
         if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsNoEdge,
+            containsNoEdge,
             homeBoard.willExceedMaxSharedEdges
           );
         } else if (random <= 0.4) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsMinorityEdges,
+            containsMinorityEdges,
             homeBoard.willExceedMaxSharedEdges
           );
         } else {
