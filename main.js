@@ -843,7 +843,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 /* harmony import */ var _unresolvedShips__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./unresolvedShips */ "./src/unresolvedShips.js");
+/* harmony import */ var _shipPlacement__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./shipPlacement */ "./src/shipPlacement.js");
 /* eslint-disable no-param-reassign */
+
 
 
 
@@ -917,55 +919,11 @@ function boardFactory(id) {
     return false;
   };
 
-  const containsNoEdge = (coordsSet) => {
-    for (let i = 0; i < coordsSet.length; i++) {
-      const coords = coordsSet[i];
-      if (
-        coords[0] === 0 ||
-        coords[0] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1 ||
-        coords[1] === 0 ||
-        coords[1] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const containsMinorityEdges = (coordsSet) => {
-    let numEdges = 0;
-    for (let i = 0; i < coordsSet.length; i++) {
-      const coords = coordsSet[i];
-      if (
-        coords[0] === 0 ||
-        coords[0] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1 ||
-        coords[1] === 0 ||
-        coords[1] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() - 1
-      ) {
-        numEdges++;
-      }
-    }
-    return numEdges < coordsSet.length / 2;
-  };
-
-  const getAdjacentSquares = (origin) => {
-    const set = [
-      [origin[0] + 1, origin[1]],
-      [origin[0] - 1, origin[1]],
-      [origin[0], origin[1] + 1],
-      [origin[0], origin[1] - 1],
-    ];
-    return set.filter(
-      (adjacent) =>
-        adjacent[0] >= 0 && adjacent[0] < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)() && adjacent[1] >= 0 && adjacent[1] < (0,_boardSize__WEBPACK_IMPORTED_MODULE_5__.rowLength)()
-    );
-  };
-
   const sharedEdgeCount = () => {
     let count = 0;
     placedShips.forEach((ship) => {
       ship.coords.forEach((coordPair) => {
-        getAdjacentSquares(coordPair).forEach((adj) => {
+        (0,_shipPlacement__WEBPACK_IMPORTED_MODULE_8__.getAdjacentSquares)(coordPair).forEach((adj) => {
           if (squares[adj[0]][adj[1]].ship && squares[adj[0]][adj[1]].ship.name !== ship.name) {
             count++;
           }
@@ -1060,10 +1018,9 @@ function boardFactory(id) {
     square.sunkInstrument = square.ship.name;
 
     if (!board) return; // attack from DOM interaction to Observer — `this` in receieveAttack is undefined
-    // `this` is definied if called from computer — that's when marking squares is necessary for algorithm
+    // `this` is defined if called from computer — that's when marking squares is necessary for algorithm
 
     if (hasUnresolvedHits()) {
-      // square.sunkInstrument = square.ship.name;
       square.sunk = true;
       unresolvedShips.add(square.ship);
       unresolvedShips.resolve(board);
@@ -1122,9 +1079,6 @@ function boardFactory(id) {
     listenForPosition,
     resetSetup,
     hasUnresolvedHits,
-    containsNoEdge,
-    containsMinorityEdges,
-    getAdjacentSquares,
     sharedEdgeCount,
     setMaxSharedEdges,
     willExceedMaxSharedEdges,
@@ -2050,13 +2004,13 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
         if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsNoEdge,
+            _shipPlacement__WEBPACK_IMPORTED_MODULE_3__.containsNoEdge,
             homeBoard.willExceedMaxSharedEdges
           );
         } else if (random <= 0.4) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsMinorityEdges,
+            _shipPlacement__WEBPACK_IMPORTED_MODULE_3__.containsMinorityEdges,
             homeBoard.willExceedMaxSharedEdges
           );
         } else {
@@ -2069,7 +2023,6 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
       });
       homeDOMBoard.placeSetImages(homeBoard);
     } catch {
-      console.log('setup failed... trying again');
       autoSetup();
     }
   }
@@ -2156,13 +2109,13 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
         if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsNoEdge,
+            _shipPlacement__WEBPACK_IMPORTED_MODULE_3__.containsNoEdge,
             homeBoard.willExceedMaxSharedEdges
           );
         } else if (random <= 0.4) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
-            homeBoard.containsMinorityEdges,
+            _shipPlacement__WEBPACK_IMPORTED_MODULE_3__.containsMinorityEdges,
             homeBoard.willExceedMaxSharedEdges
           );
         } else {
@@ -2302,9 +2255,14 @@ function shipFactory(area, name, coordinateSet) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   containsMinorityEdges: () => (/* binding */ containsMinorityEdges),
+/* harmony export */   containsNoEdge: () => (/* binding */ containsNoEdge),
+/* harmony export */   getAdjacentSquares: () => (/* binding */ getAdjacentSquares),
 /* harmony export */   getMaxAdjacentSquares: () => (/* binding */ getMaxAdjacentSquares)
 /* harmony export */ });
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
+
 
 
 const boardSizes = {
@@ -2366,6 +2324,50 @@ function getMaxAdjacentSquares(size) {
   }
   return maxAdjacent === undefined ? Infinity : maxAdjacent;
 }
+
+const containsNoEdge = (coordsSet) => {
+  for (let i = 0; i < coordsSet.length; i++) {
+    const coords = coordsSet[i];
+    if (
+      coords[0] === 0 ||
+      coords[0] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)() - 1 ||
+      coords[1] === 0 ||
+      coords[1] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)() - 1
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const containsMinorityEdges = (coordsSet) => {
+  let numEdges = 0;
+  for (let i = 0; i < coordsSet.length; i++) {
+    const coords = coordsSet[i];
+    if (
+      coords[0] === 0 ||
+      coords[0] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)() - 1 ||
+      coords[1] === 0 ||
+      coords[1] === (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)() - 1
+    ) {
+      numEdges++;
+    }
+  }
+  return numEdges < coordsSet.length / 2;
+};
+
+const getAdjacentSquares = (origin) => {
+  const set = [
+    [origin[0] + 1, origin[1]],
+    [origin[0] - 1, origin[1]],
+    [origin[0], origin[1] + 1],
+    [origin[0], origin[1] - 1],
+  ];
+  return set.filter(
+    (adjacent) =>
+      adjacent[0] >= 0 && adjacent[0] < (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)() && adjacent[1] >= 0 && adjacent[1] < (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)()
+  );
+};
 
 
 
