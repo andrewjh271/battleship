@@ -1953,21 +1953,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
+function playerFactory(homeBoard, opponentBoard, homeDOMBoard) {
   const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
-
   const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
   const ens = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsembleName)();
 
-  function setup() {
-    homeDOMBoard.setupBoard();
-    homeBoard.listenForPosition();
-  }
-
-  function setTurn() {
-    opponentDOMBoard.setDefense();
-    opponentDOMBoard.enable();
-    homeDOMBoard.setOffense();
+  function sunkAllShips() {
+    return opponentBoard.allShipsSunk();
   }
 
   function autoSetupSimple() {
@@ -2036,34 +2028,47 @@ function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMB
     };
   }
 
+  return { sunkAllShips, autoSetup };
+}
+
+function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
+  const prototype = playerFactory(homeBoard, opponentBoard, homeDOMBoard);
+
   function isComputer() {
     return false;
   }
 
-  function sunkAllShips() {
-    return opponentBoard.allShipsSunk();
+  function setup() {
+    homeDOMBoard.setupBoard();
+    homeBoard.listenForPosition();
+  }
+
+  function setTurn() {
+    opponentDOMBoard.setDefense();
+    opponentDOMBoard.enable();
+    homeDOMBoard.setOffense();
   }
 
   function incrementMoveCounter() {
     moveCounter.increment();
   }
 
-  return { isComputer, setup, autoSetup, setTurn, sunkAllShips, incrementMoveCounter };
+  return { ...prototype, isComputer, setup, setTurn, incrementMoveCounter };
 }
 
 function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCounter) {
-  const ships = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsemble)();
-  const size = (0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)();
-  const ens = (0,_ensemble__WEBPACK_IMPORTED_MODULE_1__.getEnsembleName)();
-  const possibleMoves = [];
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      possibleMoves.push([i, j]);
-    }
-  }
+  const { sunkAllShips, autoSetup } = playerFactory(homeBoard, opponentBoard, homeDOMBoard);
 
   function isComputer() {
     return true;
+  }
+
+  function setup() {
+    autoSetup();
+  }
+
+  function setTurn() {
+    homeDOMBoard.disable();
   }
 
   function attack() {
@@ -2076,81 +2081,7 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
     moveCounter.increment();
   }
 
-  function setupSimple() {
-    Object.entries(ships).forEach((ship) => {
-      const name = ship[0];
-      const dimensions = ship[1];
-      const set = homeBoard.findSets(homeBoard.isOccupied, ...dimensions);
-      const coords = set[Math.floor(Math.random() * set.length)];
-      homeBoard.placeShip(coords, name);
-    });
-    homeDOMBoard.placeSetImages(homeBoard);
-  }
-
-  function setup() {
-    if (
-      ens === 'harp' ||
-      (size === 7 && (ens === 'orchestra' || ens === 'strings' || ens === 'percussion'))
-    ) {
-      setupSimple();
-      return;
-    }
-
-    try {
-      homeBoard.resetSetup();
-      const max = (0,_shipPlacement__WEBPACK_IMPORTED_MODULE_3__.getMaxAdjacentSquares)((0,_boardSize__WEBPACK_IMPORTED_MODULE_0__.rowLength)());
-      homeBoard.setMaxSharedEdges(max);
-      let conditionFunction;
-
-      Object.entries(ships).forEach((ship) => {
-        const name = ship[0];
-        const [width, height] = ship[1];
-        const random = Math.random();
-        if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
-          conditionFunction = composeFunction(
-            homeBoard.isOccupied,
-            _shipPlacement__WEBPACK_IMPORTED_MODULE_3__.containsNoEdge,
-            homeBoard.willExceedMaxSharedEdges
-          );
-        } else if (random <= 0.4) {
-          conditionFunction = composeFunction(
-            homeBoard.isOccupied,
-            _shipPlacement__WEBPACK_IMPORTED_MODULE_3__.containsMinorityEdges,
-            homeBoard.willExceedMaxSharedEdges
-          );
-        } else {
-          conditionFunction = composeFunction(homeBoard.isOccupied, homeBoard.willExceedMaxSharedEdges);
-        }
-
-        const set = (0,_2DSetFinder__WEBPACK_IMPORTED_MODULE_4__.find2DSets)(homeBoard, width, height, conditionFunction);
-        const coords = set[Math.floor(Math.random() * set.length)];
-        homeBoard.placeShip(coords, name);
-      });
-      homeDOMBoard.placeSetImages(homeBoard);
-    } catch {
-      console.log('setup failed... trying again');
-      setup();
-    }
-  }
-
-  function composeFunction(...functions) {
-    return function conditionFunctions(coordsSet) {
-      for (let i = 0; i < functions.length; i++) {
-        if (functions[i](coordsSet)) return true;
-      }
-      return false;
-    };
-  }
-
-  function setTurn() {
-    homeDOMBoard.disable();
-  }
-
-  function sunkAllShips() {
-    return opponentBoard.allShipsSunk();
-  }
-
-  return { attack, setup, isComputer, setTurn, sunkAllShips };
+  return { sunkAllShips, isComputer, setup, setTurn, attack };
 }
 
 
