@@ -1,5 +1,98 @@
 import boardFactory from '../src/board';
-import { huntDistribution, targetDistribution, selectMove } from '../src/engine';
+import { setRowLength } from '../src/boardSize';
+import { huntDistribution, targetDistribution, selectMove, getAverage, isEdge } from '../src/engine';
+
+describe('getAverage', () => {
+  test('returns the average score from a given distribution', () => {
+    const dist = {
+      0: 2,
+      1: 4,
+      2: 5,
+      3: 6,
+      4: 7,
+      9: 2,
+      10: 4,
+      11: 8,
+      12: 10,
+      13: 2,
+    };
+    expect(getAverage(dist)).toBe(5);
+  });
+});
+
+describe('isEdge', () => {
+  describe('small board size', () => {
+    beforeAll(() => setRowLength(7));
+    afterAll(() => setRowLength(10));
+
+    test('returns true given an index on top row', () => {
+      expect(isEdge(4)).toBe(true);
+    });
+
+    test('returns true given an index on right column', () => {
+      expect(isEdge(20)).toBe(true);
+    });
+
+    test('returns true given an index on left column', () => {
+      expect(isEdge(28)).toBe(true);
+    });
+
+    test('returns true given an index on bottom row', () => {
+      expect(isEdge(45)).toBe(true);
+    });
+
+    test('returns false for an index not on an edge', () => {
+      expect(isEdge(33)).toBe(false);
+    });
+  });
+
+  describe('standard board size', () => {
+    test('returns true given an index on top row', () => {
+      expect(isEdge(4)).toBe(true);
+    });
+
+    test('returns true given an index on right column', () => {
+      expect(isEdge(29)).toBe(true);
+    });
+
+    test('returns true given an index on left column', () => {
+      expect(isEdge(20)).toBe(true);
+    });
+
+    test('returns true given an index on bottom row', () => {
+      expect(isEdge(92)).toBe(true);
+    });
+
+    test('returns false for an index not on an edge', () => {
+      expect(isEdge(33)).toBe(false);
+    });
+  });
+
+  describe('large board size', () => {
+    beforeAll(() => setRowLength(13));
+    afterAll(() => setRowLength(10));
+
+    test('returns true given an index on top row', () => {
+      expect(isEdge(10)).toBe(true);
+    });
+
+    test('returns true given an index on right column', () => {
+      expect(isEdge(64)).toBe(true);
+    });
+
+    test('returns true given an index on left column', () => {
+      expect(isEdge(117)).toBe(true);
+    });
+
+    test('returns true given an index on bottom row', () => {
+      expect(isEdge(160)).toBe(true);
+    });
+
+    test('returns false for an index not on an edge', () => {
+      expect(isEdge(100)).toBe(false);
+    });
+  });
+});
 
 describe('huntDistribution on a clear board', () => {
   test('distribution for 2x5 object', () => {
@@ -111,7 +204,7 @@ describe('huntDistribution on a clear board', () => {
       99: 2,
     };
 
-    const result = huntDistribution(opponentBoard);
+    const result = huntDistribution(opponentBoard, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -225,7 +318,7 @@ describe('huntDistribution on a clear board', () => {
       99: 2,
     };
 
-    const result = huntDistribution(opponentBoard);
+    const result = huntDistribution(opponentBoard, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -339,7 +432,7 @@ describe('huntDistribution on a clear board', () => {
       99: 1,
     };
 
-    const result = huntDistribution(opponentBoard);
+    const result = huntDistribution(opponentBoard, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -455,7 +548,7 @@ describe('huntDistribution on a clear board', () => {
       99: 5,
     };
 
-    const result = huntDistribution(opponentBoard);
+    const result = huntDistribution(opponentBoard, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -586,7 +679,7 @@ describe('huntDistribution on a board with sunk ships', () => {
       99: 1,
     };
 
-    const result = huntDistribution(board);
+    const result = huntDistribution(board, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -699,7 +792,7 @@ describe('huntDistribution on a board with sunk ships and attacks', () => {
       89: 1,
     };
 
-    const result = huntDistribution(board);
+    const result = huntDistribution(board, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -761,7 +854,7 @@ describe('huntDistribution on a board with sunk ships and attacks', () => {
       98: 1,
     };
 
-    const result = huntDistribution(board);
+    const result = huntDistribution(board, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -820,7 +913,7 @@ describe('huntDistribution on a board with sunk ships and attacks', () => {
       98: 1,
     };
 
-    const result = huntDistribution(board);
+    const result = huntDistribution(board, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });
@@ -890,7 +983,7 @@ describe('huntDistribution on a board with sunk ships and attacks', () => {
       98: 2,
     };
 
-    const result = huntDistribution(board);
+    const result = huntDistribution(board, true);
     expect(result.length).toBe(expectedDistribution.length);
     expect(result).toEqual(expect.objectContaining(expectedDistribution));
   });

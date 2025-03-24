@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { coordinatesToIndex, indexToCoordinates } from './coordinates';
+import { rowLength } from './boardSize';
 
 function selectMove(distribution) {
   const keys = Object.keys(distribution);
@@ -22,7 +23,7 @@ function selectMove(distribution) {
   return move;
 }
 
-function huntDistribution(board) {
+function huntDistribution(board, unweighted) {
   if (Object.keys(board.remainingShips).length === 0)
     throw new Error('There are no remaining ships to test');
   const sets = [];
@@ -31,11 +32,40 @@ function huntDistribution(board) {
     const set = board.findSets(board.containsAttack, ...dimensions);
     sets.push(...set);
   });
-  return sets.flat().reduce((freq, coords) => {
+  const distribution = sets.flat().reduce((freq, coords) => {
     const key = coordinatesToIndex(coords);
     freq[key] = (freq[key] || 0) + 1;
     return freq;
   }, {});
+  return unweighted ? distribution : weightEdges(distribution);
+}
+
+function weightEdges(distribution) {
+  const keys = Object.keys(distribution);
+  if (keys.length === 0) throw new Error('Distribution object is empty');
+
+  const avg = getAverage(distribution);
+  const weight = Math.floor(Math.random() * avg * 1.6);
+  const weightedDistribution = {};
+
+  keys.forEach((key) => {
+    weightedDistribution[key] = distribution[key] + (isEdge(key) ? weight : 0);
+  });
+  return weightedDistribution;
+}
+
+function getAverage(distribution) {
+  const keys = Object.keys(distribution);
+  let total = 0;
+  keys.forEach((key) => {
+    total += distribution[key];
+  });
+  return total / keys.length;
+}
+
+function isEdge(index) {
+  const coords = indexToCoordinates(index);
+  return coords.some((coord) => coord === 0 || coord === rowLength() - 1);
 }
 
 function targetDistribution(board) {
@@ -69,4 +99,4 @@ function targetDistribution(board) {
   return distribution;
 }
 
-export { selectMove, huntDistribution, targetDistribution };
+export { selectMove, huntDistribution, targetDistribution, getAverage, isEdge };
