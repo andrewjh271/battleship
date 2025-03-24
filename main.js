@@ -1234,12 +1234,16 @@ function resetDraggedImage(element) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getAverage: () => (/* binding */ getAverage),
 /* harmony export */   huntDistribution: () => (/* binding */ huntDistribution),
+/* harmony export */   isEdge: () => (/* binding */ isEdge),
 /* harmony export */   selectMove: () => (/* binding */ selectMove),
 /* harmony export */   targetDistribution: () => (/* binding */ targetDistribution)
 /* harmony export */ });
 /* harmony import */ var _coordinates__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./coordinates */ "./src/coordinates.js");
+/* harmony import */ var _boardSize__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./boardSize */ "./src/boardSize.js");
 /* eslint-disable no-param-reassign */
+
 
 
 function selectMove(distribution) {
@@ -1263,7 +1267,7 @@ function selectMove(distribution) {
   return move;
 }
 
-function huntDistribution(board) {
+function huntDistribution(board, unweighted) {
   if (Object.keys(board.remainingShips).length === 0)
     throw new Error('There are no remaining ships to test');
   const sets = [];
@@ -1272,11 +1276,40 @@ function huntDistribution(board) {
     const set = board.findSets(board.containsAttack, ...dimensions);
     sets.push(...set);
   });
-  return sets.flat().reduce((freq, coords) => {
+  const distribution = sets.flat().reduce((freq, coords) => {
     const key = (0,_coordinates__WEBPACK_IMPORTED_MODULE_0__.coordinatesToIndex)(coords);
     freq[key] = (freq[key] || 0) + 1;
     return freq;
   }, {});
+  return unweighted ? distribution : weightEdges(distribution);
+}
+
+function weightEdges(distribution) {
+  const keys = Object.keys(distribution);
+  if (keys.length === 0) throw new Error('Distribution object is empty');
+
+  const avg = getAverage(distribution);
+  const weight = Math.floor(Math.random() * avg * 1.6);
+  const weightedDistribution = {};
+
+  keys.forEach((key) => {
+    weightedDistribution[key] = distribution[key] + (isEdge(key) ? weight : 0);
+  });
+  return weightedDistribution;
+}
+
+function getAverage(distribution) {
+  const keys = Object.keys(distribution);
+  let total = 0;
+  keys.forEach((key) => {
+    total += distribution[key];
+  });
+  return total / keys.length;
+}
+
+function isEdge(index) {
+  const coords = (0,_coordinates__WEBPACK_IMPORTED_MODULE_0__.indexToCoordinates)(index);
+  return coords.some((coord) => coord === 0 || coord === (0,_boardSize__WEBPACK_IMPORTED_MODULE_1__.rowLength)() - 1);
 }
 
 function targetDistribution(board) {
