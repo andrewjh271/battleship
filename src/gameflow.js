@@ -198,7 +198,7 @@ function switchMoveTracker() {
 }
 
 function setSinkDelay() {
-  sinkDelay = 1700;
+  sinkDelay = 700;
   setTimeout(() => sinkDelay = 0, 1000);
 }
 

@@ -318,16 +318,22 @@ button:disabled {
   content: 'Intermission...';
 }
 #board1:has(.curtain.invisible)::before {
-  content: "Player 1's Board";
+  content: "Player 1";
 }
 #board2::before {
   content: 'Intermission...';
 }
 #board2:has(.curtain.invisible)::before {
-  content: "Player 2's Board";
+  content: "Player 2";
 }
 .board-setup-container:has(.invisible)::before {
-  content: 'Position Instruments';
+  content: 'Instrument Selection';
+}
+.container:has(.board-setup-container:not(.hidden)) #board1::before {
+  content: "Player 1 Setup";
+}
+.container:has(.board-setup-container:not(.hidden)) #board2::before {
+  content: "Player 2 Setup";
 }
 
 .defense::before {
