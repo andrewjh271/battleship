@@ -623,11 +623,13 @@ const previewContainer = document.querySelector('.preview-container');
 const previews = document.querySelectorAll('.img-preview');
 const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
-const autoSetupButton = document.querySelector('.random');
+const autoSetupButtonSimple = document.querySelector('.random');
+const autoSetupButton = document.querySelector('.random-enhanced');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 clearButton.addEventListener('click', clearPlacedImages);
 autoSetupButton.addEventListener('click', removeStagedImage);
+autoSetupButtonSimple.addEventListener('click', removeStagedImage);
 
 let remainingInstruments;
 let currentBoard;
@@ -1503,7 +1505,8 @@ startRoundButton.addEventListener('click', playRound);
 const moveTracker1 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_8__.moveTrackerFactory)('moves1');
 const moveTracker2 = (0,_moveTracker__WEBPACK_IMPORTED_MODULE_8__.moveTrackerFactory)('moves2');
 
-const autoSetupButton = document.querySelector('.random');
+const autoSetupButtonSimple = document.querySelector('.random');
+const autoSetupButton = document.querySelector('.random-enhanced');
 
 let player1;
 let player2;
@@ -1534,17 +1537,20 @@ function beginSetup() {
       ? (0,_player__WEBPACK_IMPORTED_MODULE_1__.computerPlayerFactory)(board2, board1, DOMBoard2, moveTracker2)
       : (player2 = (0,_player__WEBPACK_IMPORTED_MODULE_1__.humanPlayerFactory)(board2, board1, DOMBoard2, DOMBoard1, moveTracker2));
   player1.setup();
+  autoSetupButtonSimple.addEventListener('click', player1.autoSetupSimple);
   autoSetupButton.addEventListener('click', player1.autoSetup);
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
 
 function finishSetup() {
+  autoSetupButtonSimple.removeEventListener('click', player1.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player1.autoSetup);
   player2.setup();
   if (player2.isComputer()) {
     startGame();
   } else {
     controlPanel.classList.add('two-player');
+    autoSetupButtonSimple.addEventListener('click', player2.autoSetupSimple);
     autoSetupButton.addEventListener('click', player2.autoSetup);
     setBoardButton.addEventListener('click', startGame, { once: true });
   }
@@ -1680,7 +1686,9 @@ function reset() {
   DOMBoard2.unlistenForAttack();
   setBoardButton.removeEventListener('click', finishSetup, { once: true });
   setBoardButton.removeEventListener('click', startGame, { once: true });
+  autoSetupButtonSimple.removeEventListener('click', player1.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player1.autoSetup);
+  autoSetupButtonSimple.removeEventListener('click', player2.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player2.autoSetup);
 }
 
@@ -2061,7 +2069,7 @@ function playerFactory(homeBoard, opponentBoard, homeDOMBoard) {
     };
   }
 
-  return { sunkAllShips, autoSetup };
+  return { sunkAllShips, autoSetup, autoSetupSimple };
 }
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
