@@ -406,6 +406,7 @@ function resetDOM() {
   fleet.forEach((instrument) => instrument.classList.remove('sunk'));
   attackDirection.classList.add('invisible');
   attackDirection.classList.remove('player2');
+  attackDirection.classList.remove('computer');
   broadcast1.classList.remove('game-over');
   broadcast2.classList.remove('game-over');
   broadcast1.classList.remove('active');
