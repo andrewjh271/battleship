@@ -1189,7 +1189,7 @@ img[src*=piccolo].staging-img {
   .info {
     display: block;
     position: absolute;
-    left: 130px;
+    left: 74px;
     top: -50px;
     font-size: 25px;
     color: #053778;
@@ -1260,7 +1260,7 @@ img[src*=piccolo].staging-img {
     padding-left: 3px;
   }
   .info {
-    left: 118px;
+    left: 62px;
     font-size: 24px;
   }
   .moves {
