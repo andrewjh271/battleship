@@ -332,7 +332,7 @@ button:disabled {
 .container:has(.board-setup-container:not(.hidden)) #board1::before {
   content: "Player 1 Setup";
 }
-.container:has(.board-setup-container:not(.hidden)) #board2::before {
+.container:has(.board-setup-container:not(.hidden)) #board2:has(.curtain.invisible)::before {
   content: "Player 2 Setup";
 }
 
