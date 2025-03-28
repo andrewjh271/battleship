@@ -42,7 +42,8 @@ startRoundButton.addEventListener('click', playRound);
 const moveTracker1 = moveTrackerFactory('moves1');
 const moveTracker2 = moveTrackerFactory('moves2');
 
-const autoSetupButton = document.querySelector('.random');
+const autoSetupButtonSimple = document.querySelector('.random');
+const autoSetupButton = document.querySelector('.random-enhanced');
 
 let player1;
 let player2;
@@ -73,17 +74,20 @@ function beginSetup() {
       ? computerPlayerFactory(board2, board1, DOMBoard2, moveTracker2)
       : (player2 = humanPlayerFactory(board2, board1, DOMBoard2, DOMBoard1, moveTracker2));
   player1.setup();
+  autoSetupButtonSimple.addEventListener('click', player1.autoSetupSimple);
   autoSetupButton.addEventListener('click', player1.autoSetup);
   setBoardButton.addEventListener('click', finishSetup, { once: true });
 }
 
 function finishSetup() {
+  autoSetupButtonSimple.removeEventListener('click', player1.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player1.autoSetup);
   player2.setup();
   if (player2.isComputer()) {
     startGame();
   } else {
     controlPanel.classList.add('two-player');
+    autoSetupButtonSimple.addEventListener('click', player2.autoSetupSimple);
     autoSetupButton.addEventListener('click', player2.autoSetup);
     setBoardButton.addEventListener('click', startGame, { once: true });
   }
@@ -219,6 +223,8 @@ function reset() {
   DOMBoard2.unlistenForAttack();
   setBoardButton.removeEventListener('click', finishSetup, { once: true });
   setBoardButton.removeEventListener('click', startGame, { once: true });
+  autoSetupButtonSimple.removeEventListener('click', player1.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player1.autoSetup);
+  autoSetupButtonSimple.removeEventListener('click', player2.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player2.autoSetup);
 }

@@ -11,11 +11,13 @@ const previewContainer = document.querySelector('.preview-container');
 const previews = document.querySelectorAll('.img-preview');
 const setBoardButton = document.querySelector('.set-board');
 const clearButton = document.querySelector('.clear');
-const autoSetupButton = document.querySelector('.random');
+const autoSetupButtonSimple = document.querySelector('.random');
+const autoSetupButton = document.querySelector('.random-enhanced');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 clearButton.addEventListener('click', clearPlacedImages);
 autoSetupButton.addEventListener('click', removeStagedImage);
+autoSetupButtonSimple.addEventListener('click', removeStagedImage);
 
 let remainingInstruments;
 let currentBoard;

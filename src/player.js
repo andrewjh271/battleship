@@ -79,7 +79,7 @@ function playerFactory(homeBoard, opponentBoard, homeDOMBoard) {
     };
   }
 
-  return { sunkAllShips, autoSetup };
+  return { sunkAllShips, autoSetup, autoSetupSimple };
 }
 
 function humanPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, opponentDOMBoard, moveCounter) {
