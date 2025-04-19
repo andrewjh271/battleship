@@ -19,7 +19,9 @@ const gameState = document.querySelector('.game-state');
 const switchButton = document.querySelector('.switch-turns');
 const curtains = document.querySelectorAll('.curtain');
 const infoButtons = document.querySelectorAll('.info');
+const statsButton = document.querySelector('.inst-stats > span');
 const intro = document.querySelector('.intro-text');
+const statsPanel = document.querySelector('.stats-panel');
 
 const moveTrackers = document.querySelectorAll('.moves');
 
@@ -69,6 +71,8 @@ function resetDOM() {
   });
   stagingArea.innerHTML = '';
   stagingArea.classList.remove('small-board');
+  statsButton.textContent = 'info';
+  statsPanel.classList.remove('active');
 }
 
 function showSetup(board) {
@@ -178,6 +182,16 @@ infoButtons.forEach((button) =>
     targetFleetContainer.classList.toggle('active');
   })
 );
+
+statsButton.addEventListener('click', () => {
+  if (statsButton.textContent === 'info') {
+    statsButton.textContent = 'cancel';
+    statsPanel.classList.add('active');
+  } else {
+    statsButton.textContent = 'info';
+    statsPanel.classList.remove('active');
+  }
+});
 
 function broadcastSunkShip(data) {
   const broadcast = data.id === 'board1' ? broadcast1 : broadcast2;
