@@ -1,4 +1,5 @@
 import * as imageGenerator from './imageGenerator';
+import * as statsPopulator from './statsPopulator';
 import { on, emit } from './observer';
 import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
@@ -15,9 +16,12 @@ const autoSetupButtonSimple = document.querySelector('.random');
 const autoSetupButton = document.querySelector('.random-enhanced');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
+previews.forEach((preview) => preview.addEventListener('click', activateStatsPanel));
 clearButton.addEventListener('click', clearPlacedImages);
 autoSetupButton.addEventListener('click', removeStagedImage);
 autoSetupButtonSimple.addEventListener('click', removeStagedImage);
+autoSetupButton.addEventListener('click', statsPopulator.resetStatsPanel);
+autoSetupButtonSimple.addEventListener('click', statsPopulator.resetStatsPanel);
 
 let remainingInstruments;
 let currentBoard;
@@ -30,6 +34,11 @@ function setupDOMBoard(board) {
   setBoardButton.addEventListener('click', () => emit('setPosition', currentBoard), { once: true });
   on('dragEvent', highlightHoveredCells);
   on('dragEnd', handleRelease);
+}
+
+function activateStatsPanel() {
+  statsPopulator.enableStatsButton();
+  statsPopulator[this.dataset.inst]();
 }
 
 function showStagedImage() {
@@ -61,6 +70,7 @@ function clearPlacedImages() {
   });
   previews.forEach((preview) => preview.classList.remove('disabled'));
   removeStagedImage();
+  statsPopulator.resetStatsPanel();
   remainingInstruments = Object.keys(getEnsemble());
   setBoardButton.disabled = true;
   emit('clearPosition');
@@ -130,6 +140,7 @@ function handleRelease(element) {
   ).length;
   if (validArea === element.area) {
     placeImage(element);
+    statsPopulator.resetStatsPanel();
     element.removeResizeListener();
     element.remove();
     updateHighlights();

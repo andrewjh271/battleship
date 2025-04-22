@@ -122,7 +122,6 @@ button:disabled {
 
   select {
     width: 100%;
-    padding: 5px 8px 5px 5px;
   }
 
   h3 {
@@ -824,8 +823,9 @@ button:disabled {
   grid-row: 2 / 3;
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.3fr;
   grid-template-rows: minmax(22px, 20%) 1fr;
+  grid-template-rows: max(22px, 17%) 1fr;
   background-color: #c0ced9;
   opacity: 0;
   transition: 1s;
@@ -959,10 +959,15 @@ button:disabled {
   padding: 5px;
   z-index: 2;
   animation: flash 1.4s ease-in-out infinite alternate;
+  transition: opacity 1s;
 
   &:hover {
     cursor: grab;
   }
+}
+
+.board-setup-container:has(.stats-panel.active) .staging-img {
+  opacity: 0;
 }
 
 .staging-area.small-board {
