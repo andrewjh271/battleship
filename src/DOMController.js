@@ -140,7 +140,7 @@ function coverBoards() {
     startRoundButton.disabled = false;
   }, 2000);
   switchButton.disabled = true;
-  moveTrackers.forEach((tracker) => tracker.classList.add('hidden'));
+  moveTrackers.forEach((tracker) => tracker.classList.add('invisible'));
   fleetContainers.forEach((container) => container.classList.remove('active'));
   infoButtons.forEach((button) => {
     button.textContent = 'info';
