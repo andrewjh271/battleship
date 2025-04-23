@@ -392,15 +392,16 @@ button:disabled {
   grid-template-rows: repeat(10, 1fr);
   grid-row-start: 2;
   z-index: 1;
+  background-color: #5c3b19;
+  grid-gap: 1px;
 
   .cell {
     background-color: $neutral;
-    border: 0.5px solid #45280f;
 
     &.attacked {
       background-color: #90c1fff5;
       pointer-events: none;
-      animation: swell 1.5s ease-in-out 1;
+      animation: swell 1s ease-in-out 1;
 
       &.highlight-placed {
         background-color: $attacked;
@@ -424,7 +425,6 @@ button:disabled {
 
   .highlight-placed {
     background-color: $placed;
-    z-index: 2;
   }
 
   &.defense {
@@ -488,20 +488,16 @@ button:disabled {
   0% {
     transform: scale(1);
     background-color: var(--start-color);
-    z-index: 3;
   }
-  30% {
+  50% {
     transform: scale(1.2);
     background-color: #3d0a43;
   }
-  55% {
+  100% {
+    transform: scale(1);
     background-color: var(--end-color);
   }
-  60% {
-    transform: scale(1);
-  }
 }
-// 60% so that z-index remains 3 through the end of scaling animation
 
 @keyframes long-swell {
   0% {
@@ -526,12 +522,10 @@ button:disabled {
   object-fit: contain;
   padding: 5px;
   transform-origin: 0 0;
-  // filter: drop-shadow(0px 0px 3px #482e03cc);
   filter: drop-shadow(1px 5px 3px #482e03cc);
 }
 
 .placed-img-wrapper {
-  border: 0.5px solid black;
   overflow: hidden;
   z-index: 4;
   opacity: 0.8;
