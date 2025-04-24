@@ -60,7 +60,7 @@ button:disabled {
 .container {
   height: 100%;
   display: grid;
-  column-gap: 40px;
+  column-gap: 68px;
   align-items: center;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 100px 1fr 100px;
@@ -79,7 +79,6 @@ button:disabled {
 @media (min-width: 851px) and (max-height: 790px) {
   .container {
     grid-template-rows: auto 1fr 88px;
-    column-gap: 55px;
   }
 }
 @media (min-width: 851px) and (max-height: 640px) {
@@ -295,12 +294,12 @@ button:disabled {
 .broadcast {
   content: "Intermission...";
   position: absolute;
-  transform: translate(-14px, -70px);
+  transform: translate(-11px, -70px);
   color: #053778;
   text-shadow: 0px 1px 0px #ffffff;
   background-color: rgba(226, 226, 226, 0.5490196078);
   padding: 7px;
-  width: calc(100% + 28px);
+  width: calc(100% + 22px);
   font-family: "Tangerine", cursive;
   font-size: 31px;
   pointer-events: none;
@@ -363,9 +362,9 @@ button:disabled {
 .board {
   position: relative;
   margin: 30px;
-  border: 14px solid rgba(160, 111, 53, 0.8196078431);
-  width: 80%;
-  max-width: 540px;
+  outline: 11px solid rgba(160, 111, 53, 0.768627451);
+  width: 72%;
+  max-width: 500px;
   justify-self: center;
   aspect-ratio: 1;
   display: inline-grid;
@@ -530,9 +529,9 @@ button:disabled {
   grid-template-columns: 1fr;
   grid-row-start: 2;
   margin: 30px;
-  border: 14px solid rgba(160, 111, 53, 0.8196078431);
-  width: 80%;
-  max-width: 540px;
+  outline: 11px solid rgba(160, 111, 53, 0.768627451);
+  width: 72%;
+  max-width: 500px;
   justify-self: center;
   aspect-ratio: 1;
 }
@@ -548,17 +547,17 @@ button:disabled {
   .board::before,
   .board-setup-container::before,
   .broadcast {
-    transform: translate(-14px, -56px);
+    transform: translate(-11px, -56px);
     padding: 5px 5px 5px 11px;
     font-size: 25px;
   }
   .board {
     grid-row-start: 3;
-    max-width: 400px;
+    max-width: 372px;
   }
   .board-setup-container {
     grid-row-start: 4;
-    max-width: 400px;
+    max-width: 372px;
   }
   .board.defense {
     grid-column-start: 1;
@@ -568,15 +567,15 @@ button:disabled {
 @media (max-width: 850px) and (max-height: 1000px) and (min-height: 901px) {
   .board,
   .board-setup-container {
-    width: 322px;
-    height: 322px;
+    width: 294px;
+    height: 294px;
   }
 }
 @media (max-width: 1050px) and (min-width: 1020px) and (max-height: 700px) {
   .board,
   .board-setup-container {
-    width: 390px;
-    height: 390px;
+    width: 362px;
+    height: 362px;
   }
 }
 .staging-buttons {
@@ -617,7 +616,7 @@ button:disabled {
   align-items: end;
   padding: 2px 10px 5px 10px;
   background-color: #fffbf1;
-  border-bottom: 1px dashed rgba(160, 111, 53, 0.8196078431);
+  border-bottom: 1px dashed rgba(160, 111, 53, 0.768627451);
   padding-bottom: 5px;
   overflow: hidden;
 }
@@ -1297,7 +1296,9 @@ img[src*=piccolo].staging-img {
 }
 @media (max-width: 440px) {
   .attack-direction img.small {
+    position: relative;
     rotate: 3deg;
+    right: 2px;
   }
   .attack-direction.computer img.small {
     rotate: -3deg;
@@ -1394,10 +1395,10 @@ img[src*=piccolo].staging-img {
   }
   .board,
   .board-setup-container {
-    max-width: 320px;
+    max-width: 292px;
   }
   .staging-buttons {
-    padding: 0;
+    padding: 0 2px 0 2px;
   }
   .staging-buttons .material-icons,
   .staging-buttons .material-icons-outlined {
@@ -1410,22 +1411,25 @@ img[src*=piccolo].staging-img {
 @media (max-width: 850px) and (max-height: 810px) {
   .board,
   .board-setup-container {
-    max-width: 275px;
+    max-width: 247px;
   }
   .board::before {
     padding-left: 3px;
+    padding: 4px 4px 4px 11px;
+    font-size: 23px;
   }
   .info {
     left: 62px;
-    font-size: 24px;
+    font-size: 22px;
   }
   .moves {
     right: -10px;
+    top: -48px;
   }
   .move {
     margin-left: 3px;
-    height: 19px;
-    width: 19px;
+    height: 17px;
+    width: 17px;
   }
   .board-setup-container {
     grid-template-rows: 80px 1fr auto;
@@ -1444,7 +1448,11 @@ img[src*=piccolo].staging-img {
 @media (max-width: 850px) and (max-height: 720px) {
   .board,
   .board-setup-container {
-    max-width: 247px;
+    max-width: 229px;
+  }
+  .board::before,
+  .board-setup-container::before {
+    transform: translate(-11px, -48px);
   }
   .board-setup-container {
     grid-template-rows: 77px 1fr auto;
@@ -1460,7 +1468,7 @@ img[src*=piccolo].staging-img {
   }
   .moves {
     right: -10px;
-    top: -46px;
+    top: -39px;
   }
   .move {
     height: 16px;
@@ -1469,7 +1477,7 @@ img[src*=piccolo].staging-img {
   }
   .info {
     font-size: 20px;
-    top: -48px;
+    top: -41px;
   }
   .staging-buttons .material-icons,
   .staging-buttons .material-icons-outlined {
