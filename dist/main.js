@@ -2852,7 +2852,11 @@ function populateStatsPanel(instTitle, instLink, statsData, notesData) {
 
   notesData.forEach((note) => {
     const listItem = document.createElement('li');
-    listItem.textContent = note;
+    const noteMarker = document.createElement('span');
+    noteMarker.textContent = '▴';
+    listItem.appendChild(noteMarker);
+    const noteText = document.createTextNode(` ${note}`);
+    listItem.appendChild(noteText);
     notesList.appendChild(listItem);
   });
 
