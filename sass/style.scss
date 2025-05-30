@@ -597,8 +597,12 @@ button:disabled {
   .board-setup-container::before,
   .broadcast {
     transform: translate(-11px, -56px);
-    padding: 5px 5px 5px 11px;
+    padding: 5px 5px 5px 10px;
     font-size: 25px;
+  }
+
+  .broadcast {
+    padding-left: 9px;
   }
 
   .board {
@@ -1596,10 +1600,15 @@ img[src*='piccolo'].staging-img {
     max-width: 247px;
   }
 
-  .board::before {
-    padding-left: 3px;
-    padding: 4px 4px 4px 11px;
-    font-size: 23px;
+  .board::before,
+  .board-setup-container::before,
+  .broadcast {
+    padding: 4px 4px 4px 9px;
+    font-size: 22px;
+  }
+
+  .broadcast {
+    padding-left: 7px;
   }
 
   .info {
@@ -1608,7 +1617,6 @@ img[src*='piccolo'].staging-img {
   }
 
   .moves {
-    right: -10px;
     top: -48px;
   }
 
@@ -1643,7 +1651,8 @@ img[src*='piccolo'].staging-img {
   }
 
   .board::before,
-  .board-setup-container::before {
+  .board-setup-container::before,
+  .broadcast {
     transform: translate(-11px, -48px);
   }
 
@@ -1664,7 +1673,6 @@ img[src*='piccolo'].staging-img {
   }
 
   .moves {
-    right: -10px;
     top: -39px;
   }
 

@@ -550,8 +550,11 @@ button:disabled {
   .board-setup-container::before,
   .broadcast {
     transform: translate(-11px, -56px);
-    padding: 5px 5px 5px 11px;
+    padding: 5px 5px 5px 10px;
     font-size: 25px;
+  }
+  .broadcast {
+    padding-left: 9px;
   }
   .board {
     grid-row-start: 3;
@@ -1434,17 +1437,20 @@ img[src*=piccolo].staging-img {
   .board-setup-container {
     max-width: 247px;
   }
-  .board::before {
-    padding-left: 3px;
-    padding: 4px 4px 4px 11px;
-    font-size: 23px;
+  .board::before,
+  .board-setup-container::before,
+  .broadcast {
+    padding: 4px 4px 4px 9px;
+    font-size: 22px;
+  }
+  .broadcast {
+    padding-left: 7px;
   }
   .info {
     left: 62px;
     font-size: 22px;
   }
   .moves {
-    right: -10px;
     top: -48px;
   }
   .move {
@@ -1472,7 +1478,8 @@ img[src*=piccolo].staging-img {
     max-width: 229px;
   }
   .board::before,
-  .board-setup-container::before {
+  .board-setup-container::before,
+  .broadcast {
     transform: translate(-11px, -48px);
   }
   .board-setup-container {
@@ -1488,7 +1495,6 @@ img[src*=piccolo].staging-img {
     grid-template-columns: 1fr min(247px, 80%) 1fr;
   }
   .moves {
-    right: -10px;
     top: -39px;
   }
   .move {
