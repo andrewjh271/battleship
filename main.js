@@ -330,6 +330,7 @@ function DOMBoardFactory(id, ROWS) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   addResetGlow: () => (/* binding */ addResetGlow),
 /* harmony export */   broadcastSunkShip: () => (/* binding */ broadcastSunkShip),
 /* harmony export */   broadcastWin: () => (/* binding */ broadcastWin),
 /* harmony export */   coverBoards: () => (/* binding */ coverBoards),
@@ -357,6 +358,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const controlPanel = document.querySelector('.control-panel');
 const startRoundButton = document.querySelector('.start-round');
+const resetButton = document.querySelector('.reset');
 
 const setupContainer = document.querySelector('.board-setup-container');
 const stagingArea = document.querySelector('.staging-area');
@@ -421,6 +423,7 @@ function resetDOM() {
   });
   stagingArea.innerHTML = '';
   stagingArea.classList.remove('small-board');
+  resetButton.classList.remove('glow');
   (0,_statsPopulator__WEBPACK_IMPORTED_MODULE_3__.resetStatsPanel)();
 }
 
@@ -544,6 +547,10 @@ function broadcastWin(id) {
   broadcast.textContent = `${broadcast.dataset.player} Wins!`;
   broadcast.classList.add('game-over');
   broadcast.classList.add('active');
+}
+
+function addResetGlow() {
+  resetButton.classList.add('glow');
 }
 
 
@@ -1582,6 +1589,7 @@ function startGame() {
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('sunk', _DOMController__WEBPACK_IMPORTED_MODULE_3__.broadcastSunkShip);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('game-over', _DOMController__WEBPACK_IMPORTED_MODULE_3__.broadcastWin);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('game-over', _DOMController__WEBPACK_IMPORTED_MODULE_3__.addResetGlow);
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -1682,7 +1690,7 @@ function switchMoveTracker() {
 
 function setSinkDelay() {
   sinkDelay = 700;
-  setTimeout(() => sinkDelay = 0, 1000);
+  setTimeout(() => (sinkDelay = 0), 1000);
 }
 
 function gameOver() {
