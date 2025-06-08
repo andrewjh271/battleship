@@ -6,6 +6,7 @@ import { resetStatsPanel } from './statsPopulator';
 
 const controlPanel = document.querySelector('.control-panel');
 const startRoundButton = document.querySelector('.start-round');
+const resetButton = document.querySelector('.reset');
 
 const setupContainer = document.querySelector('.board-setup-container');
 const stagingArea = document.querySelector('.staging-area');
@@ -70,6 +71,7 @@ function resetDOM() {
   });
   stagingArea.innerHTML = '';
   stagingArea.classList.remove('small-board');
+  resetButton.classList.remove('glow');
   resetStatsPanel();
 }
 
@@ -195,6 +197,10 @@ function broadcastWin(id) {
   broadcast.classList.add('active');
 }
 
+function addResetGlow() {
+  resetButton.classList.add('glow');
+}
+
 export {
   showBoards,
   showSetup,
@@ -210,4 +216,5 @@ export {
   showInfoButtons,
   broadcastSunkShip,
   broadcastWin,
+  addResetGlow
 };

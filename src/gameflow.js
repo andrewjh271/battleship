@@ -15,6 +15,7 @@ import {
   showInfoButtons,
   broadcastSunkShip,
   broadcastWin,
+  addResetGlow,
 } from './DOMController';
 import { rowLength } from './boardSize';
 import { on, emit, removeAllEvents } from './observer';
@@ -103,6 +104,7 @@ function startGame() {
   on('sunk', broadcastSunkShip);
   on('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   on('game-over', broadcastWin);
+  on('game-over', addResetGlow);
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -203,7 +205,7 @@ function switchMoveTracker() {
 
 function setSinkDelay() {
   sinkDelay = 700;
-  setTimeout(() => sinkDelay = 0, 1000);
+  setTimeout(() => (sinkDelay = 0), 1000);
 }
 
 function gameOver() {
