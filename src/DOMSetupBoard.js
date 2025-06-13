@@ -1,5 +1,6 @@
 import * as imageGenerator from './imageGenerator';
 import * as statsPopulator from './statsPopulator';
+import * as audioSamples from './audioSamples';
 import { on, emit } from './observer';
 import { dragStart, resetDraggedImage } from './draggable';
 import { setStagedImage, adjustForRotation } from './rotatable';
@@ -17,11 +18,14 @@ const autoSetupButton = document.querySelector('.random-enhanced');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 previews.forEach((preview) => preview.addEventListener('click', activateStatsPanel));
+previews.forEach((preview) => preview.addEventListener('click', activateAudioButton));
 clearButton.addEventListener('click', clearPlacedImages);
 autoSetupButton.addEventListener('click', removeStagedImage);
 autoSetupButtonSimple.addEventListener('click', removeStagedImage);
 autoSetupButton.addEventListener('click', statsPopulator.resetStatsPanel);
 autoSetupButtonSimple.addEventListener('click', statsPopulator.resetStatsPanel);
+autoSetupButton.addEventListener('click', audioSamples.disableAudioButton);
+autoSetupButtonSimple.addEventListener('click', audioSamples.disableAudioButton);
 
 let remainingInstruments;
 let currentBoard;
@@ -39,6 +43,11 @@ function setupDOMBoard(board) {
 function activateStatsPanel() {
   statsPopulator.enableStatsButton();
   statsPopulator[this.dataset.inst]();
+}
+
+function activateAudioButton() {
+  audioSamples.enableAudioButton();
+  audioSamples.setAudio(this.dataset.inst);
 }
 
 function showStagedImage() {
@@ -71,6 +80,7 @@ function clearPlacedImages() {
   previews.forEach((preview) => preview.classList.remove('disabled'));
   removeStagedImage();
   statsPopulator.resetStatsPanel();
+  audioSamples.disableAudioButton();
   remainingInstruments = Object.keys(getEnsemble());
   setBoardButton.disabled = true;
   emit('clearPosition');
@@ -141,6 +151,7 @@ function handleRelease(element) {
   if (validArea === element.area) {
     placeImage(element);
     statsPopulator.resetStatsPanel();
+    audioSamples.disableAudioButton();
     element.removeResizeListener();
     element.remove();
     updateHighlights();

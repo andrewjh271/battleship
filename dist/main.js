@@ -350,7 +350,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 /* harmony import */ var _sunkMessage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sunkMessage */ "./src/sunkMessage.js");
 /* harmony import */ var _statsPopulator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./statsPopulator */ "./src/statsPopulator.js");
+/* harmony import */ var _audioSamples__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./audioSamples */ "./src/audioSamples.js");
 /* eslint-disable no-param-reassign */
+
 
 
 
@@ -425,6 +427,7 @@ function resetDOM() {
   stagingArea.classList.remove('small-board');
   resetButton.classList.remove('glow');
   (0,_statsPopulator__WEBPACK_IMPORTED_MODULE_3__.resetStatsPanel)();
+  (0,_audioSamples__WEBPACK_IMPORTED_MODULE_4__.disableAudioButton)();
 }
 
 function showSetup(board) {
@@ -616,12 +619,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _imageGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./imageGenerator */ "./src/imageGenerator.js");
 /* harmony import */ var _statsPopulator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./statsPopulator */ "./src/statsPopulator.js");
-/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
-/* harmony import */ var _draggable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./draggable */ "./src/draggable.js");
-/* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
-/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
-/* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
-/* harmony import */ var _mode__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./mode */ "./src/mode.js");
+/* harmony import */ var _audioSamples__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./audioSamples */ "./src/audioSamples.js");
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+/* harmony import */ var _draggable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./draggable */ "./src/draggable.js");
+/* harmony import */ var _rotatable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./rotatable */ "./src/rotatable.js");
+/* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
+/* harmony import */ var _DOMController__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./DOMController */ "./src/DOMController.js");
+/* harmony import */ var _mode__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./mode */ "./src/mode.js");
+
 
 
 
@@ -641,23 +646,26 @@ const autoSetupButton = document.querySelector('.random-enhanced');
 
 previews.forEach((preview) => preview.addEventListener('click', showStagedImage));
 previews.forEach((preview) => preview.addEventListener('click', activateStatsPanel));
+previews.forEach((preview) => preview.addEventListener('click', activateAudioButton));
 clearButton.addEventListener('click', clearPlacedImages);
 autoSetupButton.addEventListener('click', removeStagedImage);
 autoSetupButtonSimple.addEventListener('click', removeStagedImage);
 autoSetupButton.addEventListener('click', _statsPopulator__WEBPACK_IMPORTED_MODULE_1__.resetStatsPanel);
 autoSetupButtonSimple.addEventListener('click', _statsPopulator__WEBPACK_IMPORTED_MODULE_1__.resetStatsPanel);
+autoSetupButton.addEventListener('click', _audioSamples__WEBPACK_IMPORTED_MODULE_2__.disableAudioButton);
+autoSetupButtonSimple.addEventListener('click', _audioSamples__WEBPACK_IMPORTED_MODULE_2__.disableAudioButton);
 
 let remainingInstruments;
 let currentBoard;
 function setupDOMBoard(board) {
   setBoardButton.disabled = true;
-  remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_5__.getEnsemble)());
+  remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.getEnsemble)());
   enablePreviewImages();
   currentBoard = board;
-  (0,_DOMController__WEBPACK_IMPORTED_MODULE_6__.showSetup)(currentBoard);
-  setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('setPosition', currentBoard), { once: true });
-  (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEvent', highlightHoveredCells);
-  (0,_observer__WEBPACK_IMPORTED_MODULE_2__.on)('dragEnd', handleRelease);
+  (0,_DOMController__WEBPACK_IMPORTED_MODULE_7__.showSetup)(currentBoard);
+  setBoardButton.addEventListener('click', () => (0,_observer__WEBPACK_IMPORTED_MODULE_3__.emit)('setPosition', currentBoard), { once: true });
+  (0,_observer__WEBPACK_IMPORTED_MODULE_3__.on)('dragEvent', highlightHoveredCells);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_3__.on)('dragEnd', handleRelease);
 }
 
 function activateStatsPanel() {
@@ -665,14 +673,19 @@ function activateStatsPanel() {
   _statsPopulator__WEBPACK_IMPORTED_MODULE_1__[this.dataset.inst]();
 }
 
+function activateAudioButton() {
+  _audioSamples__WEBPACK_IMPORTED_MODULE_2__.enableAudioButton();
+  _audioSamples__WEBPACK_IMPORTED_MODULE_2__.setAudio(this.dataset.inst);
+}
+
 function showStagedImage() {
   const image = _imageGenerator__WEBPACK_IMPORTED_MODULE_0__[this.dataset.inst]();
   image.classList.add('staging-img');
-  image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_3__.dragStart);
-  image.addEventListener('touchstart', _draggable__WEBPACK_IMPORTED_MODULE_3__.dragStart);
+  image.addEventListener('mousedown', _draggable__WEBPACK_IMPORTED_MODULE_4__.dragStart);
+  image.addEventListener('touchstart', _draggable__WEBPACK_IMPORTED_MODULE_4__.dragStart);
   removeStagedImage();
   stagingArea.appendChild(image);
-  (0,_rotatable__WEBPACK_IMPORTED_MODULE_4__.setStagedImage)(image); // for rotation
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_5__.setStagedImage)(image); // for rotation
 }
 
 function removeStagedImage() {
@@ -695,9 +708,10 @@ function clearPlacedImages() {
   previews.forEach((preview) => preview.classList.remove('disabled'));
   removeStagedImage();
   _statsPopulator__WEBPACK_IMPORTED_MODULE_1__.resetStatsPanel();
-  remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_5__.getEnsemble)());
+  _audioSamples__WEBPACK_IMPORTED_MODULE_2__.disableAudioButton();
+  remainingInstruments = Object.keys((0,_ensemble__WEBPACK_IMPORTED_MODULE_6__.getEnsemble)());
   setBoardButton.disabled = true;
-  (0,_observer__WEBPACK_IMPORTED_MODULE_2__.emit)('clearPosition');
+  (0,_observer__WEBPACK_IMPORTED_MODULE_3__.emit)('clearPosition');
 }
 
 let cellsToHighlight = [];
@@ -765,11 +779,12 @@ function handleRelease(element) {
   if (validArea === element.area) {
     placeImage(element);
     _statsPopulator__WEBPACK_IMPORTED_MODULE_1__.resetStatsPanel();
+    _audioSamples__WEBPACK_IMPORTED_MODULE_2__.disableAudioButton();
     element.removeResizeListener();
     element.remove();
     updateHighlights();
   } else {
-    (0,_draggable__WEBPACK_IMPORTED_MODULE_3__.resetDraggedImage)(element);
+    (0,_draggable__WEBPACK_IMPORTED_MODULE_4__.resetDraggedImage)(element);
     removeDraggedHighlights();
   }
 }
@@ -781,7 +796,7 @@ function placeImage(element) {
     cell.classList.contains('highlight-hovered')
   );
 
-  (0,_rotatable__WEBPACK_IMPORTED_MODULE_4__.adjustForRotation)(element, image);
+  (0,_rotatable__WEBPACK_IMPORTED_MODULE_5__.adjustForRotation)(element, image);
   imageWrapper.style.gridRow = `${Math.floor(startingCell / currentBoard.numRows) + 1} / span ${
     element.spanY
   }`;
@@ -825,7 +840,7 @@ function newTemplateImage(type) {
 function newTemplateWrapper() {
   const imageWrapper = document.createElement('div');
   imageWrapper.classList.add('placed-img-wrapper');
-  if ((0,_mode__WEBPACK_IMPORTED_MODULE_7__.getMode)() === 'stealth') {
+  if ((0,_mode__WEBPACK_IMPORTED_MODULE_8__.getMode)() === 'stealth') {
     imageWrapper.classList.add('stealth');
   }
   return imageWrapper;
@@ -843,6 +858,96 @@ function updateHighlights() {
       cell.classList.add('highlight-placed');
     }
   });
+}
+
+
+
+
+/***/ }),
+
+/***/ "./src/audioSamples.js":
+/*!*****************************!*\
+  !*** ./src/audioSamples.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   disableAudioButton: () => (/* binding */ disableAudioButton),
+/* harmony export */   enableAudioButton: () => (/* binding */ enableAudioButton),
+/* harmony export */   setAudio: () => (/* binding */ setAudio)
+/* harmony export */ });
+let currentAudio;
+const audioButton = document.querySelector('.inst-sample');
+const audioButtonIcon = audioButton.querySelector('span');
+
+audioButton.addEventListener('click', handleAudio);
+
+function disableAudioButton() {
+  if (!currentAudio || currentAudio.paused) {
+    audioButton.disabled = true;
+    audioButton.removeAttribute('data-inst');
+  } else {
+    currentAudio.addEventListener('ended', () => {
+      audioButton.disabled = true;
+      audioButton.removeAttribute('data-inst');
+    });
+  }
+}
+
+function enableAudioButton() {
+  audioButton.disabled = false;
+}
+
+function setAudio(inst) {
+  audioButton.setAttribute('data-inst', inst);
+}
+
+function handleAudio() {
+  if (audioButtonIcon.textContent === 'music_note') {
+    playAudio();
+  } else {
+    stopAudio();
+  }
+}
+
+function playAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  const inst = audioButton.getAttribute('data-inst');
+  if (!inst) {
+    console.warn('No instrument selected for audio playback.');
+    return;
+  }
+  currentAudio = new Audio(`./audio/${inst}.mp3`);
+  currentAudio.play().catch((error) => {
+    console.error('Error playing audio:', error);
+  });
+  audioButtonIcon.textContent = 'stop_circle';
+  currentAudio.addEventListener('ended', () => {
+    audioButtonIcon.textContent = 'music_note';
+  });
+}
+
+function stopAudio() {
+  if (currentAudio) {
+    // Smoother fade out
+    const fadeStep = 0.008;
+    const fadeInterval = 1;
+    const fadeOut = setInterval(() => {
+      if (currentAudio.volume > fadeStep) {
+        currentAudio.volume = Math.max(0, currentAudio.volume - fadeStep);
+      } else {
+        clearInterval(fadeOut);
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio.volume = 1.0; // Reset for next play
+        audioButtonIcon.textContent = 'music_note';
+      }
+    }, fadeInterval);
+  }
 }
 
 

@@ -3,6 +3,7 @@ import { setRowLength } from './boardSize';
 import { getEnsemble } from './ensemble';
 import sunkMessage from './sunkMessage';
 import { resetStatsPanel } from './statsPopulator';
+import { disableAudioButton } from './audioSamples';
 
 const controlPanel = document.querySelector('.control-panel');
 const startRoundButton = document.querySelector('.start-round');
@@ -73,6 +74,7 @@ function resetDOM() {
   stagingArea.classList.remove('small-board');
   resetButton.classList.remove('glow');
   resetStatsPanel();
+  disableAudioButton();
 }
 
 function showSetup(board) {
