@@ -55,6 +55,17 @@ select:focus {
   outline: none;
 }
 
+@media (hover: none) {
+  select {
+    opacity: 0.9;
+  }
+  select:hover {
+    opacity: 0.9;
+  }
+  select:focus {
+    opacity: 0.9;
+  }
+}
 button:disabled {
   pointer-events: none;
 }
