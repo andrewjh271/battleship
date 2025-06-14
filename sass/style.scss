@@ -348,6 +348,18 @@ button:disabled {
   pointer-events: none;
 }
 
+.board-setup-container::after {
+  content: '';
+  position: absolute;
+  width: var(--audio-progress, 0%);
+  height: 3px;
+  bottom: -3px;
+  background: linear-gradient(90deg, rgb(71, 0, 223) 15%, rgb(15, 146, 231) 87%);
+  opacity: var(--audio-progress-opacity, 0);
+  transition: width 0.2s linear, opacity 0.5s;
+  pointer-events: none;
+}
+
 .broadcast {
   text-shadow: none;
 }

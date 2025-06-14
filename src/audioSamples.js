@@ -1,6 +1,8 @@
 let currentAudio;
+let progressRAF;
 const audioButton = document.querySelector('.inst-sample');
 const audioButtonIcon = audioButton.querySelector('span');
+const boardSetup = document.querySelector('.board-setup-container');
 
 audioButton.addEventListener('click', handleAudio);
 
@@ -43,17 +45,44 @@ function playAudio() {
     return;
   }
   currentAudio = new Audio(`./audio/${inst}.mp3`);
+
+  boardSetup.style.setProperty('--audio-progress', '0%');
+  boardSetup.style.setProperty('--audio-progress-opacity', '1');
+
+  function updateProgressBar() {
+    if (currentAudio.duration) {
+      const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
+      boardSetup.style.setProperty('--audio-progress', `${percent}%`);
+    }
+    progressRAF = requestAnimationFrame(updateProgressBar);
+  }
+
+  progressRAF = requestAnimationFrame(updateProgressBar);
+
+  currentAudio.addEventListener('pause', () => {
+    cancelAnimationFrame(progressRAF);
+  });
+
+  currentAudio.addEventListener('ended', () => {
+    cancelAnimationFrame(progressRAF);
+    audioButtonIcon.textContent = 'music_note';
+    setTimeout(() => boardSetup.style.setProperty('--audio-progress-opacity', '0'), 800);
+    setTimeout(() => boardSetup.style.setProperty('--audio-progress', '0%'), 1200);
+  });
+
   currentAudio.play().catch((error) => {
     console.error('Error playing audio:', error);
+    boardSetup.style.setProperty('--audio-progress-opacity', '0');
+    boardSetup.style.setProperty('--audio-progress', '0%');
   });
   audioButtonIcon.textContent = 'stop_circle';
-  currentAudio.addEventListener('ended', () => {
-    audioButtonIcon.textContent = 'music_note';
-  });
 }
 
 function stopAudio() {
   if (currentAudio) {
+    boardSetup.style.setProperty('--audio-progress-opacity', '0');
+    boardSetup.style.setProperty('--audio-progress', '0%');
+    cancelAnimationFrame(progressRAF);
     // Smoother fade out
     const fadeStep = 0.008;
     const fadeInterval = 1;
