@@ -634,7 +634,6 @@ button:disabled {
 
 .inst-stats .material-icons-outlined {
   position: relative;
-  left: 0.08ch;
   background: linear-gradient(90deg, rgb(53, 72, 38) 15%, rgb(46, 147, 71) 87%);
   color: transparent;
   background-clip: text;
