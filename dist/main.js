@@ -962,6 +962,16 @@ function stopAudio() {
     boardSetup.style.setProperty('--audio-progress-opacity', '0');
     boardSetup.style.setProperty('--audio-progress', '0%');
     cancelAnimationFrame(progressRAF);
+
+    if (isIOS()) {
+      // iOS: skip fade b/c of volume property limitation; just pause and reset
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio.volume = 1.0;
+      audioButtonIcon.textContent = 'music_note';
+      return;
+    }
+
     // Smoother fade out
     const fadeStep = 0.008;
     const fadeInterval = 1;
@@ -977,6 +987,10 @@ function stopAudio() {
       }
     }, fadeInterval);
   }
+}
+
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
 
