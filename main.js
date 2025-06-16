@@ -361,6 +361,8 @@ __webpack_require__.r(__webpack_exports__);
 const controlPanel = document.querySelector('.control-panel');
 const startRoundButton = document.querySelector('.start-round');
 const resetButton = document.querySelector('.reset');
+const settingsButton = document.querySelector('.settings-toggle .gear');
+const settingsPanel = document.querySelector('.settings-panel');
 
 const setupContainer = document.querySelector('.board-setup-container');
 const stagingArea = document.querySelector('.staging-area');
@@ -381,6 +383,10 @@ const moveTrackers = document.querySelectorAll('.moves');
 
 const broadcast1 = board1.querySelector('.broadcast');
 const broadcast2 = board2.querySelector('.broadcast');
+
+settingsButton.addEventListener('click', () => {
+  settingsPanel.classList.toggle('open');
+})
 
 function setWindowHeight() {
   document.body.style.height = `${window.innerHeight}px`;

@@ -1,4 +1,83 @@
 @charset "UTF-8";
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 65px;
+  height: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.switch:hover {
+  cursor: pointer;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4589b7;
+  transition: 0.4s;
+  font-size: 24px;
+}
+
+.slider:before {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  position: absolute;
+  height: 100%;
+  width: 50%;
+  transition: 0.6s;
+  content: "music_off";
+  color: #c1c1c1;
+  background-color: #263635;
+  padding-top: 4px;
+  padding-left: 4px;
+}
+
+input:checked + .slider:before {
+  transform: translateX(100%);
+  content: "music_note";
+  color: #00551e;
+  background-color: #f2f2f2;
+}
+
+.music-toggle .slider:before {
+  content: "music_off";
+}
+
+.music-toggle input:checked + .slider:before {
+  content: "music_note";
+}
+
+.sound-toggle .slider:before {
+  content: "volume_off";
+}
+
+.sound-toggle input:checked + .slider:before {
+  content: "volume_up";
+}
+
+@media (max-width: 850px) {
+  .switch {
+    height: 26px;
+    width: 56px;
+  }
+  .slider:before {
+    font-size: 20px;
+  }
+}
 *,
 *:before,
 *:after {
@@ -100,15 +179,19 @@ button:disabled {
   }
 }
 .control-panel {
+  grid-row: 1/2;
+  grid-column: 1/3;
   width: 100%;
   justify-self: center;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  grid-column: span 2;
   background-color: rgba(160, 112, 53, 0.5960784314);
   align-self: stretch;
   z-index: 1;
+}
+.control-panel button {
+  transition: opacity 0.5s;
 }
 .control-panel div,
 .control-panel button {
@@ -168,7 +251,7 @@ button:disabled {
 }
 @media (max-width: 850px) {
   .control-panel {
-    grid-column: span 1;
+    grid-column: 1/2;
   }
   .control-panel.preferences {
     align-self: start;
@@ -220,7 +303,7 @@ button:disabled {
 }
 
 @media (max-width: 850px) {
-  .control-panel button.reset {
+  .control-panel .reset {
     font-size: 18px;
   }
 }
@@ -298,6 +381,100 @@ button:disabled {
   display: block;
 }
 
+.control-panel.preferences + .settings-panel {
+  display: none;
+}
+
+.settings-panel {
+  position: relative;
+  grid-row: 1/2;
+  grid-column: 1/3;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+.settings-panel .material-icons {
+  top: 0;
+  font-size: 30px;
+  transition: color 0.3s, rotate 1s;
+  color: #f2f2f2;
+}
+@media (hover: hover) {
+  .settings-panel .material-icons:hover {
+    cursor: pointer;
+    color: #c8d0ac;
+  }
+}
+.settings-panel .settings-toggle {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  top: 0;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-right: 1px solid rgba(148, 173, 148, 0);
+  font-size: 30px;
+  transition: background-color 1s;
+}
+.settings-panel ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 2;
+  height: 100px;
+  width: 0;
+  overflow: hidden;
+  padding-left: 0;
+  white-space: nowrap;
+  background-color: rgba(79, 95, 47, 0.9098039216);
+  opacity: 0.5;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
+}
+.settings-panel ul li {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding-left: 10px;
+  padding-right: 12px;
+  border-right: 1px solid #94ad94;
+  color: #223a14;
+  opacity: 0.85;
+  transition: color 0.2s;
+}
+.settings-panel ul li:last-child {
+  border-right: none;
+}
+.settings-panel.open ul {
+  width: 271px;
+  opacity: 1;
+}
+.settings-panel.open .settings-toggle {
+  background-color: rgba(79, 95, 47, 0.9098039216);
+  border-right: 1px solid #94ad94;
+  transition: background-color 0.5s;
+}
+.settings-panel.open .gear {
+  rotate: 180deg;
+}
+
+@media (max-width: 850px) {
+  .settings-panel {
+    grid-column: 1/2;
+    height: 100%;
+  }
+  .settings-panel .about,
+  .settings-panel .settings-toggle .material-icons {
+    font-size: 24px;
+  }
+  .settings-panel ul {
+    height: 100%;
+  }
+  .settings-panel.open ul {
+    width: 245px;
+  }
+}
 .curtain {
   position: absolute;
   width: 100%;
@@ -1480,6 +1657,10 @@ img[src*=piccolo].staging-img {
   .broadcast {
     padding: 4px 4px 4px 9px;
     font-size: 22px;
+  }
+  .control-panel .navigation,
+  .control-panel .reset {
+    font-size: 15px;
   }
   .broadcast {
     padding-left: 7px;

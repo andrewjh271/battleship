@@ -68,6 +68,27 @@
         <button class="start-round navigation" disabled>Start Next Round</button>
       </div>
 
+      <div class="settings-panel">
+        <div class="settings-toggle">
+          <span class="material-icons gear" title="Settings">settings</span>
+        </div>
+        <ul>
+          <li>
+            <label class="switch music-toggle" title="Music On/Off">
+              <input name='music-toggle' type="checkbox" checked />
+              <span class="slider"></span>
+            </label>
+          </li>
+          <li>
+            <label class="switch sound-toggle" title="Sound Effects On/Off">
+              <input name='sound-toggle' type="checkbox" checked />
+              <span class="slider"></span>
+            </label>
+          </li>
+          <li><span class="material-icons about" title="About">info</span></li>
+        </ul>
+      </div>
+
       <div class="board hidden" id="board1">
         <div class="curtain invisible permanent"></div>
         <div class="broadcast permanent" data-player="Player 1"></div>
