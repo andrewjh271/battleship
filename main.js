@@ -871,6 +871,47 @@ function updateHighlights() {
 
 /***/ }),
 
+/***/ "./src/audioEffects.js":
+/*!*****************************!*\
+  !*** ./src/audioEffects.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
+
+
+const soundToggle = document.querySelector('input[name="sound-toggle"]');
+
+(0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('hit', playHit);
+(0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('miss', playMiss);
+(0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('sunk', playExplosion);
+
+function playHit() {
+  if (!soundToggle.checked) return;
+
+  const audio = new Audio('./audio/Sound Effects/hit1.mp3');
+  audio.play();
+}
+
+function playMiss() {
+  if (!soundToggle.checked) return;
+
+  const audio = new Audio('./audio/Sound Effects/miss.mp3');
+  audio.play();
+}
+
+function playExplosion() {
+  if (!soundToggle.checked) return;
+
+  const randomIndex = Math.floor(Math.random() * 4) + 1;
+  const audio = new Audio(`./audio/Sound Effects/explosion${randomIndex}.mp3`);
+  audio.play();
+}
+
+
+/***/ }),
+
 /***/ "./src/audioSamples.js":
 /*!*****************************!*\
   !*** ./src/audioSamples.js ***!
@@ -1184,7 +1225,11 @@ function boardFactory(id) {
       totalHits++;
       if (square.ship.isSunk()) {
         handleSinkEvent(this, square);
+      } else {
+        (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('hit');
       }
+    } else {
+      (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('miss');
     }
     (0,_observer__WEBPACK_IMPORTED_MODULE_4__.emit)('boardChange', { squares, id });
   }
@@ -3258,6 +3303,7 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _gameflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameflow */ "./src/gameflow.js");
+/* harmony import */ var _audioEffects__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./audioEffects */ "./src/audioEffects.js");
 
 
 /******/ })()
