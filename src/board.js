@@ -159,7 +159,11 @@ export default function boardFactory(id) {
       totalHits++;
       if (square.ship.isSunk()) {
         handleSinkEvent(this, square);
+      } else {
+        emit('hit');
       }
+    } else {
+      emit('miss');
     }
     emit('boardChange', { squares, id });
   }

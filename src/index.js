@@ -1,1 +1,2 @@
 import './gameflow';
+import './audioEffects';
