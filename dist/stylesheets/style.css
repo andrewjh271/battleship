@@ -71,11 +71,65 @@ input:checked + .slider:before {
 
 @media (max-width: 850px) {
   .switch {
-    height: 26px;
-    width: 56px;
+    height: 20px;
+    width: 52px;
   }
   .slider:before {
-    font-size: 20px;
+    font-size: 16px;
+    padding-top: 3px;
+    padding-left: 5px;
+  }
+}
+.volume-label {
+  display: flex;
+  position: absolute;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 8px;
+}
+
+.volume-slider {
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #f2f2f2;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+@media (hover: hover) {
+  .volume-slider {
+    opacity: 0.7;
+  }
+  .volume-slider:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+/* The slider handle (webkit: Chrome, Opera, Safari, Edge; moz: Firefox) */
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 6px;
+  height: 6px;
+  background: #4589b7;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 6px;
+  height: 6px;
+  background: #4589b7;
+  cursor: pointer;
+}
+
+@media (max-width: 850px) {
+  .volume-label {
+    margin-top: 5px;
+  }
+  .volume-slider {
+    height: 3px;
   }
 }
 *,
@@ -467,7 +521,7 @@ button:disabled {
     height: 100%;
   }
   .settings-panel.open ul {
-    width: 245px;
+    width: 236px;
   }
 }
 .curtain {
@@ -6328,6 +6382,10 @@ img[src*=piccolo].staging-img {
 
 .broadcast.game-over {
   background-color: #3a57a1;
+}
+
+.sound-control {
+  position: relative;
 }
 
 /*# sourceMappingURL=style.css.map */
