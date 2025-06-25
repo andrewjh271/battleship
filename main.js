@@ -884,8 +884,13 @@ __webpack_require__.r(__webpack_exports__);
 const soundToggle = document.querySelector('input[name="sound-toggle"]');
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+// Create a GainNode for volume control
+const sfxGain = audioContext.createGain();
+sfxGain.gain.value = .7; // Default volume
+sfxGain.connect(audioContext.destination);
+
 const audioFiles = {
-  hit: './audio/Sound Effects/hit1.mp3',
+  hit: './audio/Sound Effects/hit.mp3',
   miss: './audio/Sound Effects/miss.mp3',
   explosion1: './audio/Sound Effects/explosion1.mp3',
   explosion2: './audio/Sound Effects/explosion2.mp3',
@@ -912,7 +917,7 @@ function playBuffer(buffer) {
   if (audioContext.state === 'suspended') audioContext.resume();
   const source = audioContext.createBufferSource();
   source.buffer = buffer;
-  source.connect(audioContext.destination);
+  source.connect(sfxGain); // Connect to gain node instead of destination
   source.start(0);
 }
 
@@ -933,6 +938,13 @@ function playExplosion() {
 (0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('hit', playHit);
 (0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('miss', playMiss);
 (0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('sunk', playExplosion);
+
+const sfxSlider = document.getElementById('sfx-volume');
+if (sfxSlider) {
+  sfxSlider.addEventListener('input', (e) => {
+    sfxGain.gain.value = parseFloat(e.target.value);
+  });
+}
 
 
 /***/ }),
