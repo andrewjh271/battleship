@@ -878,6 +878,9 @@ function updateHighlights() {
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   subscribeToEvents: () => (/* binding */ subscribeToEvents)
+/* harmony export */ });
 /* harmony import */ var _observer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observer */ "./src/observer.js");
 
 
@@ -886,7 +889,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 // Create a GainNode for volume control
 const sfxGain = audioContext.createGain();
-sfxGain.gain.value = .7; // Default volume
+sfxGain.gain.value = 0.7; // Default volume
 sfxGain.connect(audioContext.destination);
 
 const audioFiles = {
@@ -900,6 +903,12 @@ const audioFiles = {
 
 const audioBuffers = {};
 
+function subscribeToEvents() {
+  (0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('hit', playHit);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('miss', playMiss);
+  (0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('sunk', playExplosion);
+}
+
 async function loadAudioBuffer(name, url) {
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
@@ -907,9 +916,7 @@ async function loadAudioBuffer(name, url) {
 }
 
 // Preload all sounds
-Promise.all(
-  Object.entries(audioFiles).map(([name, url]) => loadAudioBuffer(name, url))
-);
+Promise.all(Object.entries(audioFiles).map(([name, url]) => loadAudioBuffer(name, url)));
 
 function playBuffer(buffer) {
   if (!soundToggle.checked) return;
@@ -935,16 +942,14 @@ function playExplosion() {
   if (buffer) playBuffer(buffer);
 }
 
-(0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('hit', playHit);
-(0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('miss', playMiss);
-(0,_observer__WEBPACK_IMPORTED_MODULE_0__.on)('sunk', playExplosion);
-
 const sfxSlider = document.getElementById('sfx-volume');
 if (sfxSlider) {
   sfxSlider.addEventListener('input', (e) => {
     sfxGain.gain.value = parseFloat(e.target.value);
   });
 }
+
+
 
 
 /***/ }),
@@ -1733,7 +1738,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ensemble__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ensemble */ "./src/ensemble.js");
 /* harmony import */ var _moveTracker__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./moveTracker */ "./src/moveTracker.js");
 /* harmony import */ var _mode__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./mode */ "./src/mode.js");
+/* harmony import */ var _audioEffects__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./audioEffects */ "./src/audioEffects.js");
 /* eslint-disable no-return-assign */
+
 
 
 
@@ -1826,6 +1833,7 @@ function startGame() {
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('game-over', _DOMController__WEBPACK_IMPORTED_MODULE_3__.broadcastWin);
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('game-over', _DOMController__WEBPACK_IMPORTED_MODULE_3__.addResetGlow);
+  (0,_audioEffects__WEBPACK_IMPORTED_MODULE_10__.subscribeToEvents)();
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -3340,7 +3348,6 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _gameflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./gameflow */ "./src/gameflow.js");
-/* harmony import */ var _audioEffects__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./audioEffects */ "./src/audioEffects.js");
 
 
 /******/ })()

@@ -5,7 +5,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 // Create a GainNode for volume control
 const sfxGain = audioContext.createGain();
-sfxGain.gain.value = .7; // Default volume
+sfxGain.gain.value = 0.7; // Default volume
 sfxGain.connect(audioContext.destination);
 
 const audioFiles = {
@@ -19,6 +19,12 @@ const audioFiles = {
 
 const audioBuffers = {};
 
+function subscribeToEvents() {
+  on('hit', playHit);
+  on('miss', playMiss);
+  on('sunk', playExplosion);
+}
+
 async function loadAudioBuffer(name, url) {
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
@@ -26,9 +32,7 @@ async function loadAudioBuffer(name, url) {
 }
 
 // Preload all sounds
-Promise.all(
-  Object.entries(audioFiles).map(([name, url]) => loadAudioBuffer(name, url))
-);
+Promise.all(Object.entries(audioFiles).map(([name, url]) => loadAudioBuffer(name, url)));
 
 function playBuffer(buffer) {
   if (!soundToggle.checked) return;
@@ -54,13 +58,11 @@ function playExplosion() {
   if (buffer) playBuffer(buffer);
 }
 
-on('hit', playHit);
-on('miss', playMiss);
-on('sunk', playExplosion);
-
 const sfxSlider = document.getElementById('sfx-volume');
 if (sfxSlider) {
   sfxSlider.addEventListener('input', (e) => {
     sfxGain.gain.value = parseFloat(e.target.value);
   });
 }
+
+export { subscribeToEvents };

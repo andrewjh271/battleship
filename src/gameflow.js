@@ -23,6 +23,7 @@ import { removeWindowEvents } from './imageGenerator';
 import { setEnsemble } from './ensemble';
 import { moveTrackerFactory } from './moveTracker';
 import { setMode } from './mode';
+import { subscribeToEvents as setupSfxSubscriptions } from './audioEffects';
 
 const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
@@ -105,6 +106,7 @@ function startGame() {
   on('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   on('game-over', broadcastWin);
   on('game-over', addResetGlow);
+  setupSfxSubscriptions();
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
