@@ -24,6 +24,7 @@ import { setEnsemble } from './ensemble';
 import { moveTrackerFactory } from './moveTracker';
 import { setMode } from './mode';
 import { subscribeToEvents as setupSfxSubscriptions } from './audioEffects';
+import { startMusic, stopMusic, removeInstrument, resetRemovedInstruments } from './music';
 
 const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
@@ -103,10 +104,12 @@ function startGame() {
   on('sunk', setSinkDelay);
   on('sunk', updateFleet);
   on('sunk', broadcastSunkShip);
+  on('sunk', removeInstrument);
   on('attack', postAttackContinuation); // must be after 'attack' subscription from board.js; (computer attack does not emit this event)
   on('game-over', broadcastWin);
   on('game-over', addResetGlow);
   setupSfxSubscriptions();
+  startMusic();
   DOMBoard1.listenForAttack();
   DOMBoard2.listenForAttack();
   currentPlayer = player1;
@@ -231,4 +234,6 @@ function reset() {
   autoSetupButton.removeEventListener('click', player1.autoSetup);
   autoSetupButtonSimple.removeEventListener('click', player2.autoSetupSimple);
   autoSetupButton.removeEventListener('click', player2.autoSetup);
+  stopMusic();
+  resetRemovedInstruments();
 }
