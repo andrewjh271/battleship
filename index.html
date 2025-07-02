@@ -74,10 +74,15 @@
         </div>
         <ul>
           <li>
-            <label class="switch music-toggle" title="Music On/Off">
-              <input name='music-toggle' type="checkbox" checked />
-              <span class="slider"></span>
-            </label>
+            <div class="sound-control">
+              <label class="switch music-toggle" title="Music On/Off">
+                <input name='music-toggle' type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+              <label class="volume-label">
+                <input type="range" min="0" max="1" step="0.01" value=".9" class="volume-slider" id="music-volume">
+              </label>
+            </div>
           </li>
           <li>
             <div class="sound-control">
