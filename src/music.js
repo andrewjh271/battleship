@@ -1,6 +1,8 @@
+/* eslint-disable no-param-reassign */
 import { getEnsemble, getEnsembleName } from './ensemble';
 
 const musicToggle = document.querySelector('input[name="music-toggle"]');
+const ENSEMBLES_WITH_PERCUSSION = ['brass', 'strings', 'chamber'];
 
 let path;
 let instruments;
@@ -33,7 +35,7 @@ function setPath() {
 function setInstruments() {
   instruments = Object.keys(getEnsemble());
 
-  if (getEnsembleName() === 'brass') {
+  if (ENSEMBLES_WITH_PERCUSSION.includes(getEnsembleName())) {
     instruments.push('percussion');
   }
 }
@@ -82,22 +84,26 @@ function removeInstrument(data) {
   removedInstruments.add(key);
   const entry = musicSources[key];
   if (entry) {
-    entry.gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.4);
-    setTimeout(() => {
-      entry.source.stop();
+    const fadeTime = 0.4;
+    const stopAt = audioContext.currentTime + fadeTime;
+    entry.gain.gain.linearRampToValueAtTime(0.0001, stopAt);
+    entry.source.stop(stopAt);
+    entry.source.onended = () => {
       entry.gain.disconnect();
       delete musicSources[key];
-    }, 400);
+    };
   }
 }
 
 function stopMusic() {
   Object.values(musicSources).forEach(({ source, gain }) => {
-    gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.4);
-    setTimeout(() => {
-      source.stop();
+    const fadeTime = .5;
+    const stopAt = audioContext.currentTime + fadeTime;
+    gain.gain.linearRampToValueAtTime(0.0001, stopAt);
+    source.stop(stopAt);
+    source.onended = () => {
       gain.disconnect();
-    }, 400);
+    };
   });
   musicSources = {};
 }
