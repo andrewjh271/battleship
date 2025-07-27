@@ -7,11 +7,11 @@ function bass() {
   const instLink = 'https://www.youtube.com/watch?v=nUUVSxZ4ohI';
 
   const statsData = [
-    { label: 'Strength', value: 90 },
-    { label: 'Dexterity', value: 45 },
-    { label: 'Intellect', value: 79 },
+    { label: 'Dexterity', value: 77 },
+    { label: 'Intellect', value: 84 },
     { label: 'Charisma', value: 88 },
-    { label: 'Vitality', value: 94 },
+    { label: 'Strength', value: 90 },
+    { label: 'Balance', value: 94 },
   ];
 
   const notesData = [
@@ -30,8 +30,8 @@ function cello() {
   const statsData = [
     { label: 'Dexterity', value: 90 },
     { label: 'Intellect', value: 93 },
-    { label: 'Charisma', value: 95 },
-    { label: 'Stamina', value: 97 },
+    { label: 'Charisma', value: 96 },
+    { label: 'Stamina', value: 95 },
     { label: 'Balance', value: 94 },
   ];
 
@@ -50,11 +50,11 @@ function viola() {
   const instLink = 'https://www.youtube.com/watch?v=XierDLeUiYg';
 
   const statsData = [
-    { label: 'Properity', value: 82 },
-    { label: 'Dexterity', value: 84 },
+    { label: 'Dexterity', value: 87 },
     { label: 'Intellect', value: 94 },
     { label: 'Charisma', value: 92 },
     { label: 'Stamina', value: 90 },
+    { label: 'Balance', value: 89 },
   ];
 
   const notesData = [
@@ -71,11 +71,11 @@ function violin() {
   const instLink = 'https://www.youtube.com/watch?v=zgaQFLUdUL0';
 
   const statsData = [
-    { label: 'Strength', value: 95 },
     { label: 'Dexterity', value: 97 },
     { label: 'Intellect', value: 87 },
-    { label: 'Charisma', value: 77 },
-    { label: 'Stamina', value: 90 },
+    { label: 'Charisma', value: 84 },
+    { label: 'Stamina', value: 91 },
+    { label: 'Strength', value: 93 },
   ];
 
   const notesData = [
@@ -92,15 +92,15 @@ function bassoon() {
   const instLink = 'https://www.youtube.com/watch?v=-kmy-hm3ai4';
 
   const statsData = [
-    { label: 'Strength', value: 86 },
-    { label: 'Guile', value: 84 },
-    { label: 'Vitality', value: 80 },
-    { label: 'Charisma', value: 91 },
-    { label: 'Stamina', value: 72 },
+    { label: 'Dexterity', value: 86 },
+    { label: 'Guile', value: 81 },
+    { label: 'Charisma', value: 94 },
+    { label: 'Stamina', value: 84 },
+    { label: 'Strength', value: 87 },
   ];
 
   const notesData = [
-    'Evolved from the dulcian in the 16th century, with its modern form developing in the early 18th century.',
+    'Evolved from the dulcian in the 16th and 17th centuries',
     'Features a conical bore that doubles back on itself, contributing to its rich, warm tone and extensive range',
     'Traditionally made from maple wood',
   ];
@@ -112,17 +112,17 @@ function clarinet() {
   const instTitle = 'Clarinet';
   const instLink = 'https://www.youtube.com/watch?v=nENXs6n_ITI';
   const statsData = [
-    { label: 'Prosperity', value: 82 },
-    { label: 'Dexterity', value: 92 },
-    { label: 'Intellect', value: 82 },
-    { label: 'Charisma', value: 88 },
-    { label: 'Luck', value: 91 },
+    { label: 'Dexterity', value: 93 },
+    { label: 'Intellect', value: 85 },
+    { label: 'Charisma', value: 91 },
+    { label: 'Luck', value: 92 },
+    { label: 'Balance', value: 88 },
   ];
 
   const notesData = [
     'The modern clarinet was developed around 1700 in Nuremberg, Germany',
     'Prominent in jazz, klezmer, and various folk traditions',
-    'The clarinet family ranges from the high-pitched E♭ clarinet to the deep contrabass clarinet.',
+    'The clarinet family ranges from the high-pitched E♭ clarinet to the low, deep contrabass clarinet',
   ];
 
   populateStatsPanel(instTitle, instLink, statsData, notesData);
@@ -133,16 +133,16 @@ function oboe() {
   const instLink = 'https://www.youtube.com/watch?v=QNBsgfh4UMY';
 
   const statsData = [
-    { label: 'Willpower', value: 90 },
-    { label: 'Dexterity', value: 80 },
-    { label: 'Intellect', value: 87 },
-    { label: 'Charisma', value: 84 },
+    { label: 'Dexterity', value: 87 },
+    { label: 'Intellect', value: 88 },
+    { label: 'Charisma', value: 86 },
+    { label: 'Willpower', value: 94 },
     { label: 'Quirkiness', value: 95 },
   ];
 
   const notesData = [
     'A professional oboist will spend approxiimately 30% of their life making reeds',
-    'An orchestra tunes to an A played by the principal oboist',
+    'Orchestras tune to an A played by the principal oboist',
     'The term "oboe" is derived from the French word "hautbois," meaning "high wood," reflecting its pitch and wooden construction',
   ];
 
@@ -154,11 +154,11 @@ function flute() {
   const instLink = 'https://www.youtube.com/watch?v=MTqOckjkkeE';
 
   const statsData = [
+    { label: 'Dexterity', value: 97 },
+    { label: 'Intellect', value: 90 },
+    { label: 'Stealth', value: 92 },
     { label: 'Strength', value: 85 },
-    { label: 'Dexterity', value: 98 },
-    { label: 'Intellect', value: 89 },
-    { label: 'Balance', value: 92 },
-    { label: 'Stealth', value: 90 },
+    { label: 'Balance', value: 88 },
   ];
 
   const notesData = [
@@ -174,11 +174,11 @@ function piccolo() {
   const instLink = 'https://www.youtube.com/watch?v=ivQpiJos1Sw';
 
   const statsData = [
-    { label: 'Strength', value: 82 },
-    { label: 'Dexterity', value: 92 },
-    { label: 'Intellect', value: 84 },
-    { label: 'Charisma', value: 90 },
+    { label: 'Dexterity', value: 94 },
+    { label: 'Intellect', value: 86 },
     { label: 'Stealth', value: 100 },
+    { label: 'Strength', value: 84 },
+    { label: 'Charisma', value: 90 },
   ];
 
   const notesData = [
@@ -195,11 +195,11 @@ function tuba() {
   const instLink = 'https://www.youtube.com/watch?v=PzH4XAv9ZCQ';
 
   const statsData = [
+    { label: 'Dexterity', value: 72 },
     { label: 'Strength', value: 88 },
-    { label: 'Dexterity', value: 51 },
-    { label: 'Luck', value: 87 },
-    { label: 'Prosperity', value: 90 },
-    { label: 'Balance', value: 93 },
+    { label: 'Charisma', value: 92 },
+    { label: 'Balance', value: 95 },
+    { label: 'Luck', value: 88 },
   ];
 
   const notesData = [
@@ -215,15 +215,16 @@ function trombone() {
   const instTitle = 'Trombone';
   const instLink = 'https://www.youtube.com/watch?v=9MNS9LKcDII';
   const statsData = [
+    { label: 'Dexterity', value: 80 },
     { label: 'Strength', value: 92 },
-    { label: 'Dexterity', value: 64 },
-    { label: 'Willpower', value: 85 },
-    { label: 'Charisma', value: 88 },
+    { label: 'Charisma', value: 86 },
+    { label: 'Balance', value: 89 },
     { label: 'Slidy-ness', value: 100 },
   ];
   const notesData = [
-    'Employs a telescoping slide to change pitch, allowing for smooth glissandos and microtonal variations',
+    'Employs a telescoping slide to change pitch, allowing for smooth glissandos',
     'Used in a wide range of musical genres, including classical, jazz, funk, ska, and salsa',
+    'Orchestras also feature the bigger and lower-pitched bass trombone'
   ];
   populateStatsPanel(instTitle, instLink, statsData, notesData);
 }
@@ -233,11 +234,11 @@ function trumpet() {
   const instLink = 'https://www.youtube.com/watch?v=QcIp7K2UFgE';
 
   const statsData = [
-    { label: 'Strength', value: 94 },
     { label: 'Volume', value: 97 },
-    { label: 'Stamina', value: 70 },
+    { label: 'Strength', value: 94 },
     { label: 'Charisma', value: 88 },
-    { label: 'Luck', value: 86 },
+    { label: 'Stamina', value: 79 },
+    { label: 'Luck', value: 85 },
   ];
 
   const notesData = [
@@ -253,11 +254,11 @@ function horn() {
   const instLink = 'https://www.youtube.com/watch?v=cK0UFgnrIqY';
 
   const statsData = [
-    { label: 'Strength', value: 83 },
-    { label: 'Intellect', value: 89 },
-    { label: 'Charisma', value: 92 },
-    { label: 'Stamina', value: 65 },
-    { label: 'Properity', value: 87 },
+    { label: 'Dexterity', value: 85 },
+    { label: 'Strength', value: 89 },
+    { label: 'Intellect', value: 90 },
+    { label: 'Charisma', value: 95 },
+    { label: 'Stamina', value: 77 },
   ];
 
   const notesData = [
@@ -273,17 +274,16 @@ function bassdrum() {
   const instTitle = 'Bass Drum';
   const instLink = 'https://youtu.be/-lJctvybAJ8?si=PeagTj475s9LsQU4&t=354';
   const statsData = [
+    { label: 'Dexterity', value: 60 },
     { label: 'Strength', value: 96 },
-    { label: 'Dexterity', value: 40 },
+    { label: 'Charisma', value: 77 },
     { label: 'Willpower', value: 94 },
-    { label: 'Charisma', value: 70 },
     { label: 'Stealth', value: 25 },
   ];
   const notesData = [
-    'Its low, booming sound serves as a rhythmic for the orchestra',
+    'Its low, booming sound serves as a rhythmic anchor for the orchestra',
     'Traces its roots to the Turkish davul, used as early as the 14th century',
     'Became a central component of the modern drum kit in the early 1900s',
-    'Comes in various sizes',
   ];
   populateStatsPanel(instTitle, instLink, statsData, notesData);
 }
@@ -293,15 +293,15 @@ function cymbals() {
   const instLink = 'https://youtu.be/-lJctvybAJ8?si=G8lMEujNxs-7x1jf&t=649';
 
   const statsData = [
-    { label: 'Strength', value: 98 },
-    { label: 'Vitality', value: 93 },
-    { label: 'Intellect', value: 81 },
-    { label: 'Stamina', value: 90 },
+    { label: 'Volume', value: 97 },
+    { label: 'Strength', value: 95 },
     { label: 'Charisma', value: 84 },
+    { label: 'Stamina', value: 90 },
+    { label: 'Intellect', value: 81 },
   ];
 
   const notesData = [
-    'Evidence has been discovered of cymbals in Assyrian military bands around 1100 BCE',
+    'The earliest evidence of cymbals dates back to 3000 BCE in ancient Mesopotamia and Egypt',
     'Come in various types, including crash, ride, hi-hat, splash, and china',
     'Most are made from bronze alloys, typically 80-90% copper and 10-20% tin',
   ];
@@ -313,10 +313,10 @@ function glockenspiel() {
   const instTitle = 'Glockenspiel';
   const instLink = 'https://youtu.be/-lJctvybAJ8?si=dTdxtj1MA-l9Qc3K&t=293';
   const statsData = [
+    { label: 'Dexterity', value: 90 },
+    { label: 'Strength', value: 85 },
     { label: 'Charisma', value: 94 },
-    { label: 'Dexterity', value: 88 },
     { label: 'Intellect', value: 91 },
-    { label: 'Finesse', value: 90 },
     { label: 'Silly name', value: 100 },
   ];
 
@@ -332,11 +332,11 @@ function cabasa() {
   const instLink = 'https://www.youtube.com/watch?v=weMXR0xtEXA';
 
   const statsData = [
+    { label: 'Balance', value: 90 },
+    { label: 'Strength', value: 74 },
     { label: 'Charisma', value: 94 },
-    { label: 'Stamina', value: 92 },
-    { label: 'Intellect', value: 82 },
-    { label: 'Prosperity', value: 87 },
-    { label: 'Balance', value: 85 },
+    { label: 'Intellect', value: 87 },
+    { label: 'Stamina', value: 91 },
   ];
 
   const notesData = [
@@ -353,11 +353,11 @@ function snare() {
   const instLink = 'https://youtu.be/-lJctvybAJ8?si=0djRp8gH7EWfwSwf&t=537';
 
   const statsData = [
-    { label: 'Strength', value: 90 },
-    { label: 'Dexterity', value: 89 },
-    { label: 'Willpower', value: 94 },
-    { label: 'Charisma', value: 81 },
-    { label: 'Stamina', value: 92 },
+    { label: 'Dexterity', value: 94 },
+    { label: 'Strength', value: 92 },
+    { label: 'Charisma', value: 82 },
+    { label: 'Intellect', value: 88 },
+    { label: 'Stamina', value: 95 },
   ];
 
   const notesData = [
@@ -373,11 +373,11 @@ function harp() {
   const instLink = 'https://www.youtube.com/watch?v=P2Xdb1ljd3g';
 
   const statsData = [
-    { label: 'Dexterity', value: 84 },
-    { label: 'Intellect', value: 88 },
+    { label: 'Dexterity', value: 91 },
+    { label: 'Intellect', value: 89 },
     { label: 'Charisma', value: 94 },
     { label: 'Etherealness', value: 100 },
-    { label: 'Luck', value: 95 },
+    { label: 'Luck', value: 87 },
   ];
 
   const notesData = [
