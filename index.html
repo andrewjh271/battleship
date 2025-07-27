@@ -44,7 +44,7 @@
           </select>
         </div>
         <div class="settings" title="Number of attacks per turn">
-          <h3>Hits/Turn:</h3>
+          <h3>Capacity:</h3>
           <select id="move-select">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -53,7 +53,7 @@
             <option value="5">5</option>
           </select>
         </div>
-        <div class="settings" title="In stealth mode it is not indicated which squares are sunk">
+        <div class="settings" title="Choose whether sunk ships are revealed on the board">
           <h3>Mode:</h3>
           <select id="mode">
             <option value="standard" selected>Standard</option>
@@ -79,7 +79,7 @@
                 <input name='music-toggle' type="checkbox" checked />
                 <span class="slider"></span>
               </label>
-              <label class="volume-label">
+              <label class="volume-label" title="Music Volume">
                 <input type="range" min="0" max="1" step="0.01" value=".9" class="volume-slider" id="music-volume">
               </label>
             </div>
@@ -90,7 +90,7 @@
                 <input name='sound-toggle' type="checkbox" checked />
                 <span class="slider"></span>
               </label>
-              <label class="volume-label">
+              <label class="volume-label" title="Sound Effects Volume">
                 <input type="range" min="0" max="1" step="0.01" value=".7" class="volume-slider" id="sfx-volume">
               </label>
             </div>
@@ -204,10 +204,10 @@
             </button>
           </div>
           <div>
-            <button class="random" title="Random Setup">
+            <button class="random" title="Pure Random Setup">
               <span class="material-icons">auto_fix_normal</span>
             </button>
-            <button class="random-enhanced" title="Enhanced Random Setup">
+            <button class="random-enhanced" title="Refined Random Setup">
               <span class="material-icons">auto_fix_high</span>
             </button>
             <button class="rotate" title="Rotate">
