@@ -9,18 +9,19 @@ const boardSizes = {
 
 const probabilities = {
   'chamber': {
+    // 35% chance no shared edges allowed, 65% chance 1 shared edge allowed, etc.
     'small': [.35, .3, .2, .1, .05],
     'standard': [.9, .1],
     'large': [.95, .05]
   },
   'orchestra': {
     'small': [-Infinity],
-    'standard': [.75, .1, .1, .5],
+    'standard': [.75, .1, .1, .05],
     'large': [.95, .05]
   },
   'strings': {
     'small': [-Infinity],
-    'standard': [.9, 1],
+    'standard': [.9, .1],
     'large': [.95, .05]
   },
   'woodwinds': {
@@ -35,7 +36,7 @@ const probabilities = {
   },
   'percussion': {
     'small': [-Infinity],
-    'standard': [.9, 1],
+    'standard': [.9, .1],
     'large': [.95, .05]
   },
   'harp': {
