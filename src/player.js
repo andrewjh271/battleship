@@ -123,9 +123,10 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
   }
 
   function attack() {
+    const unweighted = Math.random() < .66;
     const distribution = opponentBoard.hasUnresolvedHits()
       ? targetDistribution(opponentBoard)
-      : huntDistribution(opponentBoard);
+      : huntDistribution(opponentBoard, unweighted);
 
     const move = selectMove(distribution);
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });

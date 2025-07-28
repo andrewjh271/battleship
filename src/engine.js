@@ -45,7 +45,7 @@ function weightEdges(distribution) {
   if (keys.length === 0) throw new Error('Distribution object is empty');
 
   const avg = getAverage(distribution);
-  const weight = Math.floor(Math.random() * avg * 1.6);
+  const weight = Math.floor(Math.random() * avg * 1.5);
   const weightedDistribution = {};
 
   keys.forEach((key) => {
