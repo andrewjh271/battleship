@@ -2219,6 +2219,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const musicToggle = document.querySelector('input[name="music-toggle"]');
 const ENSEMBLES_WITH_PERCUSSION = ['brass', 'strings', 'chamber'];
+const boardSetupContainer = document.querySelector('.board-setup-container');
 
 let path;
 let instruments;
@@ -2232,6 +2233,9 @@ musicGain.gain.value = 1;
 musicGain.connect(audioContext.destination);
 
 musicToggle.addEventListener('change', async () => {
+  // only start/stop music if in gameplay mode
+  if (!boardSetupContainer.classList.contains('hidden')) return;
+
   if (musicToggle.checked) {
     await startMusic();
   } else {
