@@ -44,13 +44,13 @@ function playerFactory(homeBoard, opponentBoard, homeDOMBoard) {
         const name = ship[0];
         const [width, height] = ship[1];
         const random = Math.random();
-        if (random <= 0.2 || (max < 2 && ens === 'chamber' && size === 7)) {
+        if (random <= 0.1 || (max < 2 && ens === 'chamber' && size === 7)) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
             containsNoEdge,
             homeBoard.willExceedMaxSharedEdges
           );
-        } else if (random <= 0.4) {
+        } else if (random <= 0.15) {
           conditionFunction = composeFunction(
             homeBoard.isOccupied,
             containsMinorityEdges,
