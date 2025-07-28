@@ -1555,7 +1555,7 @@ function weightEdges(distribution) {
   if (keys.length === 0) throw new Error('Distribution object is empty');
 
   const avg = getAverage(distribution);
-  const weight = Math.floor(Math.random() * avg * 1.6);
+  const weight = Math.floor(Math.random() * avg * 1.5);
   const weightedDistribution = {};
 
   keys.forEach((key) => {
@@ -2520,9 +2520,10 @@ function computerPlayerFactory(homeBoard, opponentBoard, homeDOMBoard, moveCount
   }
 
   function attack() {
+    const unweighted = Math.random() < .66;
     const distribution = opponentBoard.hasUnresolvedHits()
       ? (0,_engine__WEBPACK_IMPORTED_MODULE_2__.targetDistribution)(opponentBoard)
-      : (0,_engine__WEBPACK_IMPORTED_MODULE_2__.huntDistribution)(opponentBoard);
+      : (0,_engine__WEBPACK_IMPORTED_MODULE_2__.huntDistribution)(opponentBoard, unweighted);
 
     const move = (0,_engine__WEBPACK_IMPORTED_MODULE_2__.selectMove)(distribution);
     opponentBoard.receiveAttack({ id: opponentBoard.id, coords: move });
