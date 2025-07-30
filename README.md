@@ -36,7 +36,7 @@ Players command ensembles of orchestral instruments instead of naval fleets. As 
 
 - Play against a **human player** or the **AI**.
 
-### Hits Per Turn
+### Capacity
 
 - Choose between 1 and 5 attacks per turn.
 
