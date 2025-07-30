@@ -2081,7 +2081,7 @@ function tuba() {
 
 function newImage(type, width, height) {
   const image = new Image();
-  image.src = `./images/${type}.png`;
+  image.src = `images/${type}.png`;
   image.spanX = width;
   image.spanY = height;
   image.area = width * height;
@@ -2249,7 +2249,7 @@ musicSlider.addEventListener('input', (e) => {
 });
 
 function setPath() {
-  path = `./audio/music/${(0,_ensemble__WEBPACK_IMPORTED_MODULE_0__.getEnsembleName)()}`;
+  path = `audio/music/${(0,_ensemble__WEBPACK_IMPORTED_MODULE_0__.getEnsembleName)()}`;
 }
 
 function setInstruments() {
