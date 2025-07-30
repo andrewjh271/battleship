@@ -80,7 +80,7 @@ function tuba() {
 
 function newImage(type, width, height) {
   const image = new Image();
-  image.src = `./images/${type}.png`;
+  image.src = `images/${type}.png`;
   image.spanX = width;
   image.spanY = height;
   image.area = width * height;
