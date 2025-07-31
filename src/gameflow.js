@@ -24,7 +24,13 @@ import { setEnsemble } from './ensemble';
 import { moveTrackerFactory } from './moveTracker';
 import { setMode } from './mode';
 import { subscribeToEvents as setupSfxSubscriptions } from './audioEffects';
-import { startMusic, stopMusic, removeInstrument, resetRemovedInstruments } from './music';
+import {
+  startMusic,
+  stopMusic,
+  removeInstrument,
+  resetRemovedInstruments,
+  preloadMusicBuffers,
+} from './music';
 
 const controlPanel = document.querySelector('.control-panel');
 const startButton = document.querySelector('.start-game');
@@ -66,6 +72,7 @@ function beginSetup() {
   setSetupPanelView();
   setBoardSizes();
   setMode();
+  preloadMusicBuffers();
   attackMax = Number(document.getElementById('move-select').value);
   const board1 = boardFactory('board1');
   const board2 = boardFactory('board2');

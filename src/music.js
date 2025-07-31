@@ -53,16 +53,16 @@ async function loadMusicBuffer(url) {
   return buffer;
 }
 
-async function startMusic() {
-  if (!musicToggle.checked) return;
-
+async function preloadMusicBuffers() {
   setPath();
   setInstruments();
-  stopMusic();
-
-  // Load all buffers in parallel
   const urls = instruments.map((key) => `${path}/${key}.mp3`);
   await Promise.all(urls.map(loadMusicBuffer));
+}
+
+async function startMusic() {
+  if (!musicToggle.checked) return;
+  stopMusic();
 
   // Start all at the same time, except removed instruments
   const now = audioContext.currentTime;
@@ -101,7 +101,7 @@ function removeInstrument(data) {
 
 function stopMusic() {
   Object.values(musicSources).forEach(({ source, gain }) => {
-    const fadeTime = .5;
+    const fadeTime = 0.5;
     const stopAt = audioContext.currentTime + fadeTime;
     gain.gain.linearRampToValueAtTime(0.0001, stopAt);
     source.stop(stopAt);
@@ -116,4 +116,4 @@ function resetRemovedInstruments() {
   removedInstruments.clear();
 }
 
-export { startMusic, stopMusic, removeInstrument, resetRemovedInstruments };
+export { startMusic, stopMusic, removeInstrument, resetRemovedInstruments, preloadMusicBuffers };
