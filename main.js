@@ -2223,6 +2223,13 @@ const musicToggle = document.querySelector('input[name="music-toggle"]');
 const ENSEMBLES_WITH_PERCUSSION = ['brass', 'strings', 'chamber'];
 const boardSetupContainer = document.querySelector('.board-setup-container');
 
+// used to force audio from WebAudio API to play in the media category of iPhone
+// instead of ringer category so that it will play when ringer is on silent
+// (if the HTML5 audio element is playing simultaneously, both are played as media)
+const silentAudio = new Audio('./audio/silence.mp3');
+silentAudio.loop = true;
+silentAudio.preload = 'auto';
+
 let path;
 let instruments;
 const musicBuffers = {};
@@ -2279,6 +2286,8 @@ async function preloadMusicBuffers() {
 }
 
 async function startMusic() {
+  silentAudio.play(); // play even if music is off so that sound effects can still work
+
   if (!musicToggle.checked) return;
   stopMusic();
 
@@ -2318,6 +2327,8 @@ function removeInstrument(data) {
 }
 
 function stopMusic() {
+  silentAudio.pause();
+
   Object.values(musicSources).forEach(({ source, gain }) => {
     const fadeTime = 0.5;
     const stopAt = audioContext.currentTime + fadeTime;
