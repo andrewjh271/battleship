@@ -1794,6 +1794,7 @@ function beginSetup() {
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setSetupPanelView)();
   (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.setBoardSizes)();
   (0,_mode__WEBPACK_IMPORTED_MODULE_9__.setMode)();
+  (0,_music__WEBPACK_IMPORTED_MODULE_11__.preloadMusicBuffers)();
   attackMax = Number(document.getElementById('move-select').value);
   const board1 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board1');
   const board2 = (0,_board__WEBPACK_IMPORTED_MODULE_0__["default"])('board2');
@@ -2208,6 +2209,7 @@ function moveTrackerFactory(id) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   preloadMusicBuffers: () => (/* binding */ preloadMusicBuffers),
 /* harmony export */   removeInstrument: () => (/* binding */ removeInstrument),
 /* harmony export */   resetRemovedInstruments: () => (/* binding */ resetRemovedInstruments),
 /* harmony export */   startMusic: () => (/* binding */ startMusic),
@@ -2269,16 +2271,16 @@ async function loadMusicBuffer(url) {
   return buffer;
 }
 
-async function startMusic() {
-  if (!musicToggle.checked) return;
-
+async function preloadMusicBuffers() {
   setPath();
   setInstruments();
-  stopMusic();
-
-  // Load all buffers in parallel
   const urls = instruments.map((key) => `${path}/${key}.mp3`);
   await Promise.all(urls.map(loadMusicBuffer));
+}
+
+async function startMusic() {
+  if (!musicToggle.checked) return;
+  stopMusic();
 
   // Start all at the same time, except removed instruments
   const now = audioContext.currentTime;
@@ -2317,7 +2319,7 @@ function removeInstrument(data) {
 
 function stopMusic() {
   Object.values(musicSources).forEach(({ source, gain }) => {
-    const fadeTime = .5;
+    const fadeTime = 0.5;
     const stopAt = audioContext.currentTime + fadeTime;
     gain.gain.linearRampToValueAtTime(0.0001, stopAt);
     source.stop(stopAt);
