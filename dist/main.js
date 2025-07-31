@@ -2249,7 +2249,7 @@ musicSlider.addEventListener('input', (e) => {
 });
 
 function setPath() {
-  path = `audio/music/${(0,_ensemble__WEBPACK_IMPORTED_MODULE_0__.getEnsembleName)()}`;
+  path = `./audio/Music/${(0,_ensemble__WEBPACK_IMPORTED_MODULE_0__.getEnsembleName)()}`;
 }
 
 function setInstruments() {

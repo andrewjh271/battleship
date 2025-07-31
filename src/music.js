@@ -33,7 +33,7 @@ musicSlider.addEventListener('input', (e) => {
 });
 
 function setPath() {
-  path = `audio/music/${getEnsembleName()}`;
+  path = `./audio/Music/${getEnsembleName()}`;
 }
 
 function setInstruments() {
