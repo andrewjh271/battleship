@@ -808,14 +808,16 @@ button:disabled {
 .inst-stats .material-icons-outlined {
   position: relative;
   background: linear-gradient(90deg, rgb(53 72 38) 15%, rgb(46 147 71) 87%);
-  color: transparent;
+  -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .inst-sample .material-icons {
   background: linear-gradient(90deg, rgba(71, 0, 223, 1) 15%, rgba(15, 146, 231, 1) 87%);
-  color: transparent;
+  -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .random-enhanced .material-icons {
@@ -831,8 +833,9 @@ button:disabled {
     #f9a825,
     #ff5722
   );
-  color: transparent;
+  -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .preview-container {
