@@ -53,11 +53,16 @@ function setInstruments() {
 
 async function loadMusicBuffer(url) {
   if (musicBuffers[url]) return musicBuffers[url];
-  const response = await fetch(url);
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = await audioContext.decodeAudioData(arrayBuffer);
-  musicBuffers[url] = buffer;
-  return buffer;
+  try {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = await audioContext.decodeAudioData(arrayBuffer);
+    musicBuffers[url] = buffer;
+    return buffer;
+  } catch (error) {
+    console.error(`Error loading or decoding ${url}:`, error);
+    throw error;
+  }
 }
 
 async function preloadMusicBuffers() {
@@ -67,7 +72,11 @@ async function preloadMusicBuffers() {
   setPath();
   setInstruments();
   const urls = instruments.map((key) => `${path}/${key}.mp3`);
-  await Promise.all(urls.map(loadMusicBuffer));
+  try {
+    await Promise.all(urls.map(loadMusicBuffer));
+  } catch (error) {
+    console.error('Error preloading music buffers:', error);
+  }
 }
 
 function clearMusicBuffers() {
