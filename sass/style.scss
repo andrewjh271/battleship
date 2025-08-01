@@ -1221,6 +1221,11 @@ img[src*='piccolo'].staging-img {
   padding: 8px 2px 8px 2px;
 }
 
+.stretch-cello {
+  object-fit: fill;
+  padding: 4px 3px 4px 3px;
+}
+
 .board.covered {
   background-color: purple;
 }

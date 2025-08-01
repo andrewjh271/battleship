@@ -28,7 +28,9 @@ function bassoon() {
 }
 
 function cello() {
-  return newImage('cello', 2, 5);
+  const image = newImage('cello', 2, 5);
+  image.classList.add('stretch-cello');
+  return image;
 }
 
 function horn() {
