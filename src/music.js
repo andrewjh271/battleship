@@ -61,17 +61,29 @@ async function loadMusicBuffer(url) {
 }
 
 async function preloadMusicBuffers() {
+  if (path === `./audio/Music/${getEnsembleName()}`) return;
+
+  clearMusicBuffers();
   setPath();
   setInstruments();
   const urls = instruments.map((key) => `${path}/${key}.mp3`);
   await Promise.all(urls.map(loadMusicBuffer));
 }
 
+function clearMusicBuffers() {
+  Object.keys(musicBuffers).forEach((key) => {
+    delete musicBuffers[key];
+  });
+}
+
 async function startMusic() {
   silentAudio.play(); // play even if music is off so that sound effects can still work
 
   if (!musicToggle.checked) return;
+  
   stopMusic();
+  const urls = instruments.map((key) => `${path}/${key}.mp3`);
+  await Promise.all(urls.map(loadMusicBuffer)); // ensures code does not continue if preloading hasn't finished
 
   // Start all at the same time, except removed instruments
   const now = audioContext.currentTime;
