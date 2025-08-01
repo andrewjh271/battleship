@@ -910,22 +910,34 @@ function subscribeToEvents() {
 }
 
 async function loadAudioBuffer(name, url) {
-  const response = await fetch(url);
-  const arrayBuffer = await response.arrayBuffer();
-  audioBuffers[name] = await audioContext.decodeAudioData(arrayBuffer);
+  try {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    audioBuffers[name] = await audioContext.decodeAudioData(arrayBuffer);
+  } catch (error) {
+    console.error(`Error loading or decoding sound effect "${name}" from "${url}":`, error);
+  }
 }
 
-// Preload all sounds
-Promise.all(Object.entries(audioFiles).map(([name, url]) => loadAudioBuffer(name, url)));
+// Preload all sounds with error handling
+Promise.all(
+  Object.entries(audioFiles).map(([name, url]) => loadAudioBuffer(name, url))
+).catch(error => {
+  console.error('Error preloading sound effects:', error);
+});
 
 function playBuffer(buffer) {
   if (!soundToggle.checked) return;
-  // iOS: resume context if needed
-  if (audioContext.state === 'suspended') audioContext.resume();
-  const source = audioContext.createBufferSource();
-  source.buffer = buffer;
-  source.connect(sfxGain); // Connect to gain node instead of destination
-  source.start(0);
+  try {
+    // iOS: resume context if needed
+    if (audioContext.state === 'suspended') audioContext.resume();
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(sfxGain); // Connect to gain node instead of destination
+    source.start(0);
+  } catch (error) {
+    console.error('Error playing sound effect:', error);
+  }
 }
 
 function playHit() {
@@ -945,7 +957,11 @@ function playExplosion() {
 const sfxSlider = document.getElementById('sfx-volume');
 if (sfxSlider) {
   sfxSlider.addEventListener('input', (e) => {
-    sfxGain.gain.value = parseFloat(e.target.value);
+    try {
+      sfxGain.gain.value = parseFloat(e.target.value);
+    } catch (error) {
+      console.error('Error setting SFX volume:', error);
+    }
   });
 }
 
@@ -2271,11 +2287,16 @@ function setInstruments() {
 
 async function loadMusicBuffer(url) {
   if (musicBuffers[url]) return musicBuffers[url];
-  const response = await fetch(url);
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = await audioContext.decodeAudioData(arrayBuffer);
-  musicBuffers[url] = buffer;
-  return buffer;
+  try {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = await audioContext.decodeAudioData(arrayBuffer);
+    musicBuffers[url] = buffer;
+    return buffer;
+  } catch (error) {
+    console.error(`Error loading or decoding ${url}:`, error);
+    throw error;
+  }
 }
 
 async function preloadMusicBuffers() {
@@ -2285,7 +2306,11 @@ async function preloadMusicBuffers() {
   setPath();
   setInstruments();
   const urls = instruments.map((key) => `${path}/${key}.mp3`);
-  await Promise.all(urls.map(loadMusicBuffer));
+  try {
+    await Promise.all(urls.map(loadMusicBuffer));
+  } catch (error) {
+    console.error('Error preloading music buffers:', error);
+  }
 }
 
 function clearMusicBuffers() {
