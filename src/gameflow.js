@@ -117,18 +117,20 @@ function startGame() {
   on('game-over', addResetGlow);
   setupSfxSubscriptions();
   startMusic();
-  DOMBoard1.listenForAttack();
-  DOMBoard2.listenForAttack();
   currentPlayer = player1;
   moveTracker1.show();
   if (player2.isComputer()) {
     playRound();
     showBoards();
+    DOMBoard1.listenForAttack();
+    DOMBoard2.listenForAttack();
   } else {
     coverBoards();
     setTimeout(() => {
       showBoards();
       currentPlayer.setTurn();
+      DOMBoard1.listenForAttack();
+      DOMBoard2.listenForAttack();
     }, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }

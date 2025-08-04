@@ -1855,18 +1855,20 @@ function startGame() {
   (0,_observer__WEBPACK_IMPORTED_MODULE_5__.on)('game-over', _DOMController__WEBPACK_IMPORTED_MODULE_3__.addResetGlow);
   (0,_audioEffects__WEBPACK_IMPORTED_MODULE_10__.subscribeToEvents)();
   (0,_music__WEBPACK_IMPORTED_MODULE_11__.startMusic)();
-  DOMBoard1.listenForAttack();
-  DOMBoard2.listenForAttack();
   currentPlayer = player1;
   moveTracker1.show();
   if (player2.isComputer()) {
     playRound();
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
+    DOMBoard1.listenForAttack();
+    DOMBoard2.listenForAttack();
   } else {
     (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.coverBoards)();
     setTimeout(() => {
       (0,_DOMController__WEBPACK_IMPORTED_MODULE_3__.showBoards)();
       currentPlayer.setTurn();
+      DOMBoard1.listenForAttack();
+      DOMBoard2.listenForAttack();
     }, 2000); // wait for curtain to fully cover boards before changing setup-board to board1
   }
 }
