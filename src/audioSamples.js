@@ -111,7 +111,10 @@ function stopAudio() {
 }
 
 function isIOS() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.userAgent.includes('Macintosh') && 'ontouchend' in document)
+  );
 }
 
 export { disableAudioButton, enableAudioButton, setAudio };
