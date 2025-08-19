@@ -34,7 +34,7 @@ Players command ensembles of orchestral instruments instead of naval fleets. As 
 
 ### Opponent
 
-- Play against a **human player** or the **AI**.
+- Play against a human player or the AI.
 
 ### Capacity
 
@@ -46,7 +46,7 @@ Players command ensembles of orchestral instruments instead of naval fleets. As 
 
 - **Stealth Mode**: Sunk ships are *not* revealed on the board.
 
-Note: The AI is never explicitly given the location of ships. However, it is immediately notified when a ship has been sunk (along with the name of the ship), allowing it to infer that the most recent hit was responsible for sinking that specific hit. The AI uses additional heuristics, outlined below, to manage ambiguous scenarios.
+Note: The AI is never explicitly given the location of ships. However, it is immediately notified when a ship has been sunk (along with the name of the ship), allowing it to infer that the most recent hit was responsible for sinking that specific ship. The AI uses additional heuristics, outlined below, to manage ambiguous scenarios.
 
 ---
 
@@ -60,13 +60,13 @@ Two auto-placement modes are available:
 
 - **Refined Random**: Avoids placing ships adjacent to each other, except when the board is small or the ensemble is large enough that meaningful separation is impossible. Even with sufficient space to separate all ships, a limited number of shared borders may be permitted to prevent overly predictable layouts. This mode also adds a slight edge bias, deviating from fully random distribution. This is the placement strategy used by the AI.
 
-When an instrument is selected during setup, players can listen to an audio sample and view fictional RPG-style stats and trivia.
+Players can preview an audio sample of each instrument and view trivia alongside fictional RPG-style stats.
 
 ---
 
 ## AI Targeting Strategy
 
-The AI's move-selection algorithm builds on the hunt/target model described in this excellent [DataGenetics article](http://www.datagenetics.com/blog/december32011/).
+The AI's move-selection algorithm builds on the hunt/target model described in this [DataGenetics article](http://www.datagenetics.com/blog/december32011/).
 
 ### Hunt Mode
 
@@ -94,6 +94,6 @@ Each ensemble is accompanied by a synthesized score featuring its instruments. A
 
 ---
 
-**Created by Andrew Hayhurst**
+*Created by Andrew Hayhurst*
 
 ---
